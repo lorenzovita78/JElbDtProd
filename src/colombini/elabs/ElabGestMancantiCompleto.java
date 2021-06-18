@@ -543,7 +543,7 @@ public class ElabGestMancantiCompleto extends ElabClass{
       addError("Errore in fase di caricamento dei dati relativi al numero di colli della commessa "+commessa+" -->"+s.toString());
     } catch (QueryException q){
       _logger.error("Errore in fase di caricamento dei dati relativi al numero di colli della commessa "+commessa+" -->"+q.getMessage());
-      addError("Errore in fase di caricamento dei dati relativi al numero di colli della commessa "+commessa+" -->"+q.toString());
+      addError("Errore in fase di caricamento dei dati relativi al numero di colli  della commessa "+commessa+" -->"+q.toString());
     }
   }
   
