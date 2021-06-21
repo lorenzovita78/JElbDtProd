@@ -22,7 +22,6 @@ import colombini.query.produzione.QueryColliCommessaFebal;
 import colombini.query.produzione.QueryColliSostFromDesmosColomFebal;
 import colombini.query.produzione.QueryListColliPzCommessa;
 import colombini.query.produzione.R1.QueryPzCommImaAnte;
-import colombini.query.produzione.R1.QueryPzCommImaTop;
 import colombini.query.produzione.R1.QueryPzCommLotto1;
 import colombini.query.produzione.R1.QueryPzHomagR1P1;
 import colombini.query.produzione.R1.QueryPzR1P4;
@@ -62,7 +61,7 @@ import utils.StringUtils;
  * Il dato viene archiviato in ZTAPCI
  * @author lvita
  */
-public class ElabDatiProdCommesse extends ElabClass{
+public class ElabDatiProdCommesse_BK21062021 extends ElabClass{
   
   public final static String DATAETK="$DATA$";
   public final static String COMMETK="$COMM$";
@@ -74,7 +73,7 @@ public class ElabDatiProdCommesse extends ElabClass{
  
   
   
-  public ElabDatiProdCommesse(){
+  public ElabDatiProdCommesse_BK21062021(){
     super(); 
   }
   
@@ -99,7 +98,7 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       loadDatiForatriceRem(apm, commGg, commEx,propsElab);
       loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
-      loadDatiImaTop(apm, commGg, commEx,propsElab);
+      
 //      
       loadDatiAnteAllum(apm, commGg, commEx,propsElab);
 //      
@@ -1065,45 +1064,6 @@ public class ElabDatiProdCommesse extends ElabClass{
     
   }
   
-  private void loadDatiImaTop(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
-    List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_RICCIOIMAANTE_EDPC);
-    //GG Quale CDL dobbiamo inserire??
-    
-    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
-    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
-    
-    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
-    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
-    
-     for(List infoC:commToLoad){
-        Long comm=(Long) infoC.get(0);
-        Long dtC=(Long) infoC.get(1); 
-        //Long comm=Long.valueOf(335);
-        //Long dtC=Long.valueOf(20161130);
-        
-        Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
-        
-        if(comm<400)
-          comm+=400;
-        
-        _logger.info("Caricamento dati Postazione Ima Tops per commessa "+comm+" - "+dtC);
-        //GG Cambiare CDL
-        List<BeanInfoColloComForTAP> beans=getListPzFromImaAnte(TAPWebCostant.CDL_RICCIOIMAANTE_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
-        //checkColori()
-        for(BeanInfoColloComForTAP bean:beans){
-          String codColore=bean.getCodColore();
-          int idx=colorsCodList.indexOf(codColore);
-          if(!StringUtils.isEmpty(codColore) && idx>=0){
-            bean.setCodColore(colorsDescList.get(idx));
-          }else{
-            bean.setCodColore(null);
-          }
-        }
-        apm.storeDtFromBeans((List) beans);
-     }   
-    
-  }
-  
   private void loadDatiImballoAnteSpecialiImaAnteR1P1(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
     List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMBANTESPECIALI_EDPC);
     Connection conSQLS=null;
@@ -1857,28 +1817,6 @@ public class ElabDatiProdCommesse extends ElabClass{
     return result;
   }
   
-    private List getListPzFromImaTops(String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk){
-    Connection con=null;
-    List result=new ArrayList();
-    try{
-      con=ColombiniConnections.getDbColombiniTops();
-      result=getListPzFromImaTops(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk,Boolean.FALSE);
-      
-    }catch(SQLException s){
-      addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
-    } finally{
-      if(con!=null)
-        try {
-          con.close();
-      
-        } catch (SQLException ex) {
-        _logger.error("Errore in fase di chiusura della connessione --> "+ex.getMessage());
-        }
-    }
-    
-    return result;
-  }
-  
   private List<BeanInfoColloComForTAP> getListBeansAnteFebal(Connection conDesmosFeb, String cdL, Long comm, Date dataComm,Boolean withEtk) throws QueryException, SQLException {
     CustomQuery q=null;
     List result=new ArrayList();
@@ -1957,66 +1895,6 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       if(idNr4Brc!=null && idNr4Brc){
         qry.setFilter(QueryPzCommImaAnte.SOSTBARCODEIDNR, "Y");
-      }
-      
-      String s=qry.toSQLString();
-      _logger.info(s);
-      ResultSetHelper.fillListList(con, s, result);
-      
-      
-    }catch(SQLException s){
-      addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
-    } catch (ParseException ex) {
-      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
-    } catch (QueryException ex) {
-      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
-    }
-    
-    if(comm>400 && comm<797){
-      comm-=400;
-    }
-    else if(comm>1000 ){
-      comm-=1000;
-    }
-    
-    
-    return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
-  }
-  
-   private List getListPzFromImaTops(Connection con,String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk,Boolean idNr4Brc){
-    //Modificare questo Metodo
-    List result=new ArrayList();
-    try{
-      
-      QueryPzCommImaTop qry=new QueryPzCommImaTop();
-      
-      if(!StringUtils.IsEmpty(packType))
-        qry.setFilter(QueryPzCommImaTop.PACKTYPEEQ, packType);
-      
-//      if(packType==null)
-//        qry.setFilter(QueryPzCommImaAnte.PACKTYPENOTEQ,"NO");
-      
-      qry.setFilter(QueryPzCommImaTop.COMMISSIONNO, comm);
-      
-      if(dataElab!=null)
-        qry.setFilter(QueryPzCommImaTop.COMMISSIONYEAR, DateUtils.getAnno(dataElab));
-      else
-        qry.setFilter(QueryPzCommImaTop.COMMISSIONDATE, DateUtils.DateToStr(dataComm, "yyyy-MM-dd"));
-      
-      if(lineeLogiche!=null && !lineeLogiche.isEmpty())
-        qry.setFilter(QueryPzCommImaTop.LINEELOG, lineeLogiche.toString());
-      
-      //MODIFICARE CDL!
-      if(TAPWebCostant.CDL_RICCIOIMAANTE_EDPC.equals(cdL)){
-//        qry.setFilter(QueryPzCommImaAnte.CHANGELLOG, "Y");
-//        qry.setFilter(QueryPzCommImaAnte.ADDCOLOR,"Y");
-//        qry.setFilter(QueryPzCommImaAnte.PACKTYPENOTEQ,"NO");
-          qry.setFilter(QueryPzCommImaTop.ISRICCIO,"YES");
-      }  
-      
-      
-      if(idNr4Brc!=null && idNr4Brc){
-        qry.setFilter(QueryPzCommImaTop.SOSTBARCODEIDNR, "Y");
       }
       
       String s=qry.toSQLString();
@@ -2292,7 +2170,7 @@ public class ElabDatiProdCommesse extends ElabClass{
   
   
 
-   private static final Logger _logger = Logger.getLogger(ElabDatiProdCommesse.class);
+   private static final Logger _logger = Logger.getLogger(ElabDatiProdCommesse_BK21062021.class);
 
 
   

@@ -315,8 +315,18 @@ public class ColombiniConnections {
     _logger.info(" Dati connessione db Strettoio Artec :"+srvName+" - "+dbName+" - "+usrName+" - "+pwdUsr);
     return Connections.getSqlServerConnection(srvName, dbName, usrName, pwdUsr);
     
-  }
+  } 
   
+    public static Connection getDbColombiniTops() throws SQLException{
+    String srvName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.SRVPROD0));
+    String dbName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.DBCOLTOP));
+    String usrName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.USRCOLTOP));
+    String pwdUsr=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.PWDCOLTOP));        
+   
+    _logger.info(" Dati connessione db Colombini_Tops :"+srvName+" - "+dbName+" - "+usrName+" - "+pwdUsr);
+    return Connections.getSqlServerConnection(srvName, dbName, usrName, pwdUsr);
+    
+  }
   
   private static final Logger _logger = Logger.getLogger(ColombiniConnections.class);
 }

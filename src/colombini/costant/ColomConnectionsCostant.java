@@ -140,6 +140,10 @@ public class ColomConnectionsCostant {
   public final static String PATHLOCALE_PANNELLIGAL="PATHLOCALE_PANNELLIGAL";
   public final static String ODBC_PANNELLIGAL="ODBC_PANNELLIGAL";
   
- 
+  //database ColombiniTops (cambiare utente a readonly??
+  public final static String SRVPROD0="SRVPROD0";
+  public final static String DBCOLTOP="Colombini_Tops";
+  public final static String USRCOLTOP="sa";
+  public final static String PWDCOLTOP="colombini";
   
 }
