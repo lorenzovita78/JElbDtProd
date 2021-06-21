@@ -4,12 +4,13 @@
  * and open the template in the editor.
  */
 
-package colombini.elabs;
+package colombini.elabs.old;
 
 import db.persistence.PersistenceManager;
 import colombini.conn.ColombiniConnections;
 import colombini.costant.NomiLineeColomb;
 import colombini.costant.TAPWebCostant;
+import colombini.elabs.NameElabs;
 import colombini.logFiles.R1P3.FileTabulatoAnteRem;
 import colombini.model.persistence.BeanInfoColloComForTAP;
 import colombini.model.persistence.BeanInfoAggColloComForTAP;
