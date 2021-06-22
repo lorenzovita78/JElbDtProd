@@ -97,26 +97,26 @@ public class ElabDatiProdCommesse extends ElabClass{
       Map  commEx=getMapCommessePresenti(con);
 //     
       
-      loadDatiForatriceRem(apm, commGg, commEx,propsElab);
-      loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
-      loadDatiImaTop(apm, commGg, commEx,propsElab);
+    //gg  loadDatiForatriceRem(apm, commGg, commEx,propsElab);
+    //gg  loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
+     loadDatiImaTop(apm, commGg, commEx,propsElab);
 //      
-      loadDatiAnteAllum(apm, commGg, commEx,propsElab);
+    //gg  loadDatiAnteAllum(apm, commGg, commEx,propsElab);
 //      
-      loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
+    //gg  loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
       
-      loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
-      loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
-      loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-      loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
+    //gg  loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
+     //gg loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
+    //gg  loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
+     //gg loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
 //        
-      loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
+    //gg  loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
      
-      loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
+     //gg loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
 //      
 //      
-      loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
-      loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
+    //gg  loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
+    //gg  loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 //     
 
       List commsR1P4=getListCommesseR1P4();
@@ -1066,8 +1066,7 @@ public class ElabDatiProdCommesse extends ElabClass{
   }
   
   private void loadDatiImaTop(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
-    List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_RICCIOIMAANTE_EDPC);
-    //GG Quale CDL dobbiamo inserire??
+    List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMATOP_EDPC);
     
     String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
     List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
@@ -1087,8 +1086,7 @@ public class ElabDatiProdCommesse extends ElabClass{
           comm+=400;
         
         _logger.info("Caricamento dati Postazione Ima Tops per commessa "+comm+" - "+dtC);
-        //GG Cambiare CDL
-        List<BeanInfoColloComForTAP> beans=getListPzFromImaAnte(TAPWebCostant.CDL_RICCIOIMAANTE_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
+        List<BeanInfoColloComForTAP> beans=getListPzFromImaTops(TAPWebCostant.CDL_IMATOP_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
         //checkColori()
         for(BeanInfoColloComForTAP bean:beans){
           String codColore=bean.getCodColore();
@@ -2006,7 +2004,7 @@ public class ElabDatiProdCommesse extends ElabClass{
       if(lineeLogiche!=null && !lineeLogiche.isEmpty())
         qry.setFilter(QueryPzCommImaTop.LINEELOG, lineeLogiche.toString());
       
-      //MODIFICARE CDL!
+      //GG MODIFICARE CDL!
       if(TAPWebCostant.CDL_RICCIOIMAANTE_EDPC.equals(cdL)){
 //        qry.setFilter(QueryPzCommImaAnte.CHANGELLOG, "Y");
 //        qry.setFilter(QueryPzCommImaAnte.ADDCOLOR,"Y");
