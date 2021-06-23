@@ -18,5 +18,4 @@ public interface IFermiLinea {
   
   
   public List<InfoFermoCdL> getListFermiLinea(Connection con,InfoTurniCdL infoTCdl,Map causaliFermi) ;
-  
 }

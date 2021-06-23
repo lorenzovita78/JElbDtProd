@@ -318,10 +318,12 @@ public class ColombiniConnections {
   } 
   
     public static Connection getDbColombiniTops() throws SQLException{
-    String srvName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.SRVPROD0));
-    String dbName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.DBCOLTOP));
-    String usrName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.USRCOLTOP));
-    String pwdUsr=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.PWDCOLTOP));        
+    //GG Chiedere quale utente usare!
+    String srvName="SRVPROD0";
+    String dbName="Colombini_Tops";
+    String usrName="sa";
+    String pwdUsr="colombini";        
+
    
     _logger.info(" Dati connessione db Colombini_Tops :"+srvName+" - "+dbName+" - "+usrName+" - "+pwdUsr);
     return Connections.getSqlServerConnection(srvName, dbName, usrName, pwdUsr);

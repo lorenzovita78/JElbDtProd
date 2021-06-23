@@ -1068,11 +1068,11 @@ public class ElabDatiProdCommesse extends ElabClass{
   private void loadDatiImaTop(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
     List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMATOP_EDPC);
     
-    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
-    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
-    
-    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
-    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
+//    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
+//    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
+//    
+//    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
+//    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
     
      for(List infoC:commToLoad){
         Long comm=(Long) infoC.get(0);
@@ -1082,21 +1082,21 @@ public class ElabDatiProdCommesse extends ElabClass{
         
         Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
         
-        if(comm<400)
-          comm+=400;
+//        if(comm<400)
+//          comm+=400;
         
         _logger.info("Caricamento dati Postazione Ima Tops per commessa "+comm+" - "+dtC);
         List<BeanInfoColloComForTAP> beans=getListPzFromImaTops(TAPWebCostant.CDL_IMATOP_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
         //checkColori()
-        for(BeanInfoColloComForTAP bean:beans){
-          String codColore=bean.getCodColore();
-          int idx=colorsCodList.indexOf(codColore);
-          if(!StringUtils.isEmpty(codColore) && idx>=0){
-            bean.setCodColore(colorsDescList.get(idx));
-          }else{
-            bean.setCodColore(null);
-          }
-        }
+//        for(BeanInfoColloComForTAP bean:beans){
+//          String codColore=bean.getCodColore();
+//          int idx=colorsCodList.indexOf(codColore);
+//          if(!StringUtils.isEmpty(codColore) && idx>=0){
+//            bean.setCodColore(colorsDescList.get(idx));
+//          }else{
+//            bean.setCodColore(null);
+//          }
+//        }
         apm.storeDtFromBeans((List) beans);
      }   
     
@@ -2023,19 +2023,19 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       
     }catch(SQLException s){
-      addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
+      addError(" Errore in fase di connessione al database ImaTop--> "+s.getMessage());
     } catch (ParseException ex) {
       addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
     } catch (QueryException ex) {
       addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
     }
     
-    if(comm>400 && comm<797){
-      comm-=400;
-    }
-    else if(comm>1000 ){
-      comm-=1000;
-    }
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+//    else if(comm>1000 ){
+//      comm-=1000;
+//    }
     
     
     return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
