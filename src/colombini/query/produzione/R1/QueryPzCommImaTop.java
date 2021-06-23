@@ -41,11 +41,6 @@ public class QueryPzCommImaTop extends CustomQuery {
 //                     " where 1=1"; 
     
     
-//                select 30 cono, '01035' plgr , barcode, convert(varchar(8),CommissionDate,112) data_commessa, CommissionNo commessa, PackageNo collo,
-//1 prog_collo,  right('00000' + ProductionLine, 5) linea, box, Pedana , orderno, 0 nr_riga, 0 spedizione
-//, refart, ItemDecription , ItemDecription , '' colore, '' tipo_commessa from [Colombini_Tops].[dbo].[tab_ET] 
-//where convert(varchar(8),CommissionDate,112)=20210608 and ProductionLine<>1035 and barcode like '2%'
-//order by ProductionLine
     
     String select=" SELECT 30 cono, '01035' plgr , barcode, convert(varchar(8),CommissionDate,112) data_commessa, CommissionNo commessa, PackageNo collo,\n" +
                   "1 prog_collo,  right('00000' + ProductionLine, 5) linea, Pedana, box , orderno, 0 nr_riga, 0 spedizione\n" +
