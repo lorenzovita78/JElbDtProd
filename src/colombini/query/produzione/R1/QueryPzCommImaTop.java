@@ -42,9 +42,9 @@ public class QueryPzCommImaTop extends CustomQuery {
     
     
     
-    String select=" SELECT 30 cono, '01035' plgr , barcode, convert(varchar(8),CommissionDate,112) data_commessa, CommissionNo commessa, PackageNo collo,\n" +
-                  "1 prog_collo,  right('00000' + ProductionLine, 5) linea, Pedana, box , orderno, 0 nr_riga, 0 spedizione\n" +
-                  ", refart, ItemDecription , ItemDecription , '' colore, '' tipo_commessa";
+    String select=" SELECT PackageNo collo, 1 prog_collo, right('00000' + ProductionLine, 5) linea,\n" +
+                  "box, Pedana , orderno, 0 nr_riga,\n" +
+                  "refart, ItemDecription , ItemDecription,barcode,'' colore";
                         
     
     if(isFilterPresent(ISRICCIO)){

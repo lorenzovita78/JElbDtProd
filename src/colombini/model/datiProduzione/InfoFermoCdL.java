@@ -135,6 +135,15 @@ public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
     this.perc = perc;
   }
 
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
+  }
+  
+  
   @Override
   public String toString() {
     return id.toString()+" - IDTURNO : "+idTurno.toString()+" - IDCAUSALE : "+idCausale+" - DATARIF : "+dataRif.toString(); //To change body of generated methods, choose Tools | Templates.

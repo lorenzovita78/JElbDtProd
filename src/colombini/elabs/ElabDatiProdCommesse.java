@@ -119,17 +119,17 @@ public class ElabDatiProdCommesse extends ElabClass{
     //gg  loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 //     
 
-      List commsR1P4=getListCommesseR1P4();
-       loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
+//      List commsR1P4=getListCommesseR1P4();
+ //      loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
      //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
 //      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
 //      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
 //      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
-      loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4 SKIPPER%' ");      
-      loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
-      loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
-      loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");
-//      
+//      loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4 SKIPPER%' ");      
+//      loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
+//      loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
+//      loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");
+////      
     } catch (SQLException ex) {
       addError("Impossibile caricare la lista di commesse da elaborare :"+ex.getMessage());
     } catch(QueryException qe){
@@ -1859,7 +1859,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     Connection con=null;
     List result=new ArrayList();
     try{
-      con=ColombiniConnections.getDbColombiniTops();
+      con=ColombiniConnections.getDbImaTopConnection();
       result=getListPzFromImaTops(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk,Boolean.FALSE);
       
     }catch(SQLException s){

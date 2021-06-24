@@ -6,6 +6,7 @@
 package colombini.dtProd.R1;
 
 import colombini.conn.ColombiniConnections;
+import colombini.model.CausaliLineeBean;
 import colombini.model.datiProduzione.IFermiLinea;
 import colombini.model.datiProduzione.InfoFermoCdL;
 import colombini.model.datiProduzione.InfoTurniCdL;
@@ -40,40 +41,45 @@ public class FermiLotto1R1P4 implements IFermiLinea {
   
   @Override
   public List<InfoFermoCdL> getListFermiLinea(Connection con,InfoTurniCdL infoTCdl, Map causaliFermi) {
-    List<InfoFermoCdL> listFBenas=new ArrayList();
+    List<InfoFermoCdL> listFBeans=new ArrayList();
     List<List> listF=new ArrayList();
     try {
      
-      listF=getListFermi(infoTCdl.getDataRif(), infoTCdl.getCdl());
+      listF=getListFermi(infoTCdl.getDataRif(), infoTCdl.getCdl(),Boolean.TRUE);
       for(List fermo:listF){
         InfoFermoCdL fermoBean=new InfoFermoCdL(infoTCdl.getIdTurno(), infoTCdl.getCdl(), infoTCdl.getDataRif());
         String codCaus=ClassMapper.classToString(fermo.get(1));
-        Integer idCaus=ClassMapper.classToClass(causaliFermi.get(codCaus),Integer.class);
+        CausaliLineeBean c= (CausaliLineeBean) causaliFermi.get(codCaus);
+        
         Date dataIni=ClassMapper.classToClass(fermo.get(3), Date.class);
         Date dataFin=ClassMapper.classToClass(fermo.get(4), Date.class);
         String note=ClassMapper.classToString(fermo.get(5));
-        
-        
+        fermoBean.setIdCausale(c.getIdCausale().intValue());
+        fermoBean.setOraInizio(dataIni);
+        fermoBean.setOraFine(dataFin);
+        fermoBean.setNote(note);
+        //fermoBean.
+        listFBeans.add(fermoBean);
       }
       
       
     } catch (SQLException ex) {
      // throws new ElabException(ex.getMessage());
     } catch (ParseException ex) {
-      Logger.getLogger(FermiLotto1R1P4.class.getName()).log(Level.SEVERE, null, ex);
+      
     }
     
-    return listFBenas;
+    return listFBeans;
   }
   
   
-  private List getListFermi(Date dataRif,String cdl) throws SQLException, ParseException{
+  private List getListFermi(Date dataRif,String cdl,Boolean isFermo) throws SQLException, ParseException{
     Connection con =null;
     List lfermi=new ArrayList();
     
     try{
       con=ColombiniConnections.getDbLotto1Connection();
-      ResultSetHelper.fillListList(con, getQueryListFermi(dataRif,cdl), lfermi);
+      ResultSetHelper.fillListList(con, getQueryListFermi(dataRif,cdl,isFermo), lfermi);
      
     }finally{
       if(con!=null){
@@ -90,15 +96,24 @@ public class FermiLotto1R1P4 implements IFermiLinea {
   
   
   
-  private String getQueryListFermi(Date dataRif,String cdl) throws ParseException{
+  private String getQueryListFermi(Date dataRif,String cdl,Boolean isFermo) throws ParseException{
     StringBuffer s= new StringBuffer();
     String dataS= DateUtils.DateToStr(dataRif, "yyyy-MM-dd");
     
+    String select = "SELECT idCau , Cod  ,a.Imp    ,[DatOraIni] , [DatOraFin], [Note]";
     
-    s.append(" SELECT idCau , Cod  ,a.Imp   ,convert(date,(datOraIni)) ,convert(time,[DatOraIni]) ,convert(time,[DatOraFin])[Note]      " ).append(
+    if(!isFermo)
+        select =" SELECT min(convert(time,(datOraIni))) ,dateadd(ss,sum(datediff(ss,datOraIni,datOraFin))";
+    
+    s.append( select  ).append(
              "  FROM [dbo].[LOG_FERMI] a left outer join CAUSALI_FERMI b ON idCau=b.id\n").append(
              "  where convert(date,(datOraIni))= ").append(JDBCDataMapper.objectToSQL(dataS)).append(
-             " and Imp=").append(JDBCDataMapper.objectToSQL(getCodiceImp(cdl)));        
+             " and A.Imp=").append(JDBCDataMapper.objectToSQL(getCodiceImp(cdl)));        
+    
+    if(isFermo)
+        s.append(" and Cod is not null");
+    else 
+        s.append(" and Cod is null");
     
     return s.toString();
     
