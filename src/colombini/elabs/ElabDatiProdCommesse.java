@@ -1860,7 +1860,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     List result=new ArrayList();
     try{
       con=ColombiniConnections.getDbImaTopConnection();
-      result=getListPzFromImaTops(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk,Boolean.FALSE);
+      result=getListPzFromImaTops(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk);
       
     }catch(SQLException s){
       addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
@@ -1981,8 +1981,8 @@ public class ElabDatiProdCommesse extends ElabClass{
     return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
   }
   
-   private List getListPzFromImaTops(Connection con,String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk,Boolean idNr4Brc){
-    //Modificare questo Metodo
+   private List getListPzFromImaTops(Connection con,String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk){
+
     List result=new ArrayList();
     try{
       
@@ -1990,10 +1990,7 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       if(!StringUtils.IsEmpty(packType))
         qry.setFilter(QueryPzCommImaTop.PACKTYPEEQ, packType);
-      
-//      if(packType==null)
-//        qry.setFilter(QueryPzCommImaAnte.PACKTYPENOTEQ,"NO");
-      
+
       qry.setFilter(QueryPzCommImaTop.COMMISSIONNO, comm);
       
       if(dataElab!=null)
@@ -2003,19 +2000,6 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       if(lineeLogiche!=null && !lineeLogiche.isEmpty())
         qry.setFilter(QueryPzCommImaTop.LINEELOG, lineeLogiche.toString());
-      
-      //GG MODIFICARE CDL!
-      if(TAPWebCostant.CDL_RICCIOIMAANTE_EDPC.equals(cdL)){
-//        qry.setFilter(QueryPzCommImaAnte.CHANGELLOG, "Y");
-//        qry.setFilter(QueryPzCommImaAnte.ADDCOLOR,"Y");
-//        qry.setFilter(QueryPzCommImaAnte.PACKTYPENOTEQ,"NO");
-          qry.setFilter(QueryPzCommImaTop.ISRICCIO,"YES");
-      }  
-      
-      
-      if(idNr4Brc!=null && idNr4Brc){
-        qry.setFilter(QueryPzCommImaTop.SOSTBARCODEIDNR, "Y");
-      }
       
       String s=qry.toSQLString();
       _logger.info(s);
@@ -2030,12 +2014,6 @@ public class ElabDatiProdCommesse extends ElabClass{
       addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
     }
     
-//    if(comm>400 && comm<797){
-//      comm-=400;
-//    }
-//    else if(comm>1000 ){
-//      comm-=1000;
-//    }
     
     
     return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
