@@ -170,7 +170,7 @@ public class CausaliLineeBean {
     
     return lista;
   }
-  
+
   /**
    * Torna una mappa dove la chiave rappresenta il codice e/o la descrizione della causale e il valore è l'oggetto stesso.
    * Se ci dovessero essere problemi nel reperimento delle causali gestisce l'eccezione e torna una mappa vuota

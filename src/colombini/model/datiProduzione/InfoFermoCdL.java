@@ -5,6 +5,7 @@
  */
 package colombini.model.datiProduzione;
 
+import as400.Utility400;
 import colombini.conn.ColombiniConnections;
 import colombini.costant.CostantsColomb;
 import colombini.model.persistence.DatiProdPWGeneral;
@@ -32,7 +33,7 @@ import utils.DateUtils;
  */
 public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
   
-  private Integer id;
+  private Long id;
   private Integer idTurno;
   private String cdl;
   private Date dataRif;
@@ -65,7 +66,13 @@ public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
     this.cdl = cdl;
     this.dataRif = dataRif;
   }
-
+  public InfoFermoCdL(Long idF,Integer idTurno, String cdl, Date dataRif) {
+    this.id=idF;
+    this.idTurno = idTurno;
+    this.cdl = cdl;
+    this.dataRif = dataRif;
+  }
+  
   public Integer getIdTurno() {
     return idTurno;
   }
@@ -292,4 +299,11 @@ public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
   public String getSequenceName() {
     return SEQUENCE_NAME; //To change body of generated methods, choose Tools | Templates.
   }
+  
+  
+   public void loadIdFermo(Connection con) throws SQLException {
+     if(id==null)
+      this.id=Utility400.getSequenceDbValue(con, getSequenceName());
+  }
+  
 }

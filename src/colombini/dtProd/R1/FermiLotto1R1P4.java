@@ -5,6 +5,7 @@
  */
 package colombini.dtProd.R1;
 
+import as400.Utility400;
 import colombini.conn.ColombiniConnections;
 import colombini.model.CausaliLineeBean;
 import colombini.model.datiProduzione.IFermiLinea;
@@ -12,16 +13,14 @@ import colombini.model.datiProduzione.InfoFermoCdL;
 import colombini.model.datiProduzione.InfoTurniCdL;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
-import exception.ElabException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utils.ClassMapper;
 import utils.DateUtils;
 
@@ -43,17 +42,31 @@ public class FermiLotto1R1P4 implements IFermiLinea {
   public List<InfoFermoCdL> getListFermiLinea(Connection con,InfoTurniCdL infoTCdl, Map causaliFermi) {
     List<InfoFermoCdL> listFBeans=new ArrayList();
     List<List> listF=new ArrayList();
+    List<List> listMF=new ArrayList();
+    
     try {
      
       listF=getListFermi(infoTCdl.getDataRif(), infoTCdl.getCdl(),Boolean.TRUE);
+      listMF=getListFermi(infoTCdl.getDataRif(), infoTCdl.getCdl(),Boolean.FALSE);
+      if(listF!=null){
+        if(listMF!=null)
+          listF.addAll(listMF);
+      }
       for(List fermo:listF){
         InfoFermoCdL fermoBean=new InfoFermoCdL(infoTCdl.getIdTurno(), infoTCdl.getCdl(), infoTCdl.getDataRif());
         String codCaus=ClassMapper.classToString(fermo.get(1));
-        CausaliLineeBean c= (CausaliLineeBean) causaliFermi.get(codCaus);
+        CausaliLineeBean c=null;
         
-        Date dataIni=ClassMapper.classToClass(fermo.get(3), Date.class);
-        Date dataFin=ClassMapper.classToClass(fermo.get(4), Date.class);
-        String note=ClassMapper.classToString(fermo.get(5));
+        if(codCaus!=null){
+           c=(CausaliLineeBean) causaliFermi.get(codCaus);
+        }else{
+           c=getCausMF(causaliFermi);
+        }
+        
+        Date dataIni=ClassMapper.classToClass(fermo.get(2), Date.class);
+        Date dataFin=ClassMapper.classToClass(fermo.get(3), Date.class);
+        String note=ClassMapper.classToString(fermo.get(4));
+        fermoBean.loadIdFermo(con);
         fermoBean.setIdCausale(c.getIdCausale().intValue());
         fermoBean.setOraInizio(dataIni);
         fermoBean.setOraFine(dataFin);
@@ -61,6 +74,8 @@ public class FermiLotto1R1P4 implements IFermiLinea {
         //fermoBean.
         listFBeans.add(fermoBean);
       }
+      
+
       
       
     } catch (SQLException ex) {
@@ -70,6 +85,21 @@ public class FermiLotto1R1P4 implements IFermiLinea {
     }
     
     return listFBeans;
+  }
+  
+  
+  private CausaliLineeBean getCausMF(Map causaliFermi) {
+    CausaliLineeBean cb=null;
+    Long idCausMf=null;
+    
+    Iterator cf = causaliFermi.entrySet().iterator();
+        while(cf.hasNext() && idCausMf==null){
+          cb  = (CausaliLineeBean)cf.next();
+          if(cb.getTipo().equals(CausaliLineeBean.TIPO_CAUS_MICROFRM) ) 
+              continue;
+        }
+        
+    return cb;    
   }
   
   
@@ -100,10 +130,10 @@ public class FermiLotto1R1P4 implements IFermiLinea {
     StringBuffer s= new StringBuffer();
     String dataS= DateUtils.DateToStr(dataRif, "yyyy-MM-dd");
     
-    String select = "SELECT idCau , Cod  ,a.Imp    ,[DatOraIni] , [DatOraFin], [Note]";
+    String select = "SELECT idCau , Cod  ,[DatOraIni] , [DatOraFin], [Note]";
     
     if(!isFermo)
-        select =" SELECT min(convert(time,(datOraIni))) ,dateadd(ss,sum(datediff(ss,datOraIni,datOraFin))";
+        select =" SELECT idCau, Cod, min(convert(time,(datOraIni))) ,dateadd(ss,sum(datediff(ss,datOraIni,datOraFin)),note";
     
     s.append( select  ).append(
              "  FROM [dbo].[LOG_FERMI] a left outer join CAUSALI_FERMI b ON idCau=b.id\n").append(
@@ -119,7 +149,7 @@ public class FermiLotto1R1P4 implements IFermiLinea {
     
   }
   
-  
+
   private String getCodiceImp(String cdl){
     if(LOTTO1A.equals(cdl))
       return LOTTO1A_IMP;

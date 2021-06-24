@@ -89,10 +89,9 @@ public class ElabDtProdPWFermiFromLinee extends ElabClass{
        String classLineaS=(String) propsElab.get(NameElabs.CLASSLINEAFERMIDTPROD+linea);
        String keyCaus=CausaliLineeBean.FLAGCODICE;
        if(propsElab.get(NameElabs.KEYCAUSLINEAFERMIDTPROD+linea)!=null)
-         keyCaus=(String) propsElab.get(NameElabs.KEYCAUSLINEAFERMIDTPROD+linea);
-       
+       keyCaus=(String) propsElab.get(NameElabs.KEYCAUSLINEAFERMIDTPROD+linea);
        Map causaliLinea=CausaliLineeBean.getMapCausaliLinea(con, CostantsColomb.AZCOLOM, linea, keyCaus);
-         
+       
       try {
         Object classeCdl=Class.forName(classLineaS).newInstance();
         Date datatmp=dataInizio;
@@ -100,21 +99,24 @@ public class ElabDtProdPWFermiFromLinee extends ElabClass{
             try{
               InfoTurniCdL infoT=new InfoTurniCdL(CostantsColomb.AZCOLOM, linea, datatmp);
               infoT.retriveInfo(con);
-              List<InfoFermoCdL> listfermilinea=((IFermiLinea)classeCdl).getListFermiLinea(con,infoT,causaliLinea);
-              for(InfoFermoCdL fermo:listfermilinea){
-                try{
-                  pm.storeDtFromBean(fermo);
-                } catch(SQLException s){
-                  addError("Attenzione errore in fase di salvataggio del fermo+ "+fermo.toString()+" -->"+s.getMessage());
-                }
-              }
-              
-              datatmp=DateUtils.addDays(datatmp, 1);
+              if(infoT.getIdTurno() != null) //Faccio storeDtFromBean solo se trovo info sul turno! 
+                 {
+                    List<InfoFermoCdL> listfermilinea=((IFermiLinea)classeCdl).getListFermiLinea(con,infoT,causaliLinea);
+                    for(InfoFermoCdL fermo:listfermilinea){
+                      try{
+                        pm.storeDtFromBean(fermo);
+                      } catch(SQLException s){
+                        addError("Attenzione errore in fase di salvataggio del fermo+ "+fermo.toString()+" -->"+s.getMessage());
+                      }
+                    }
+                    datatmp=DateUtils.addDays(datatmp, 1);
+                 }
             } catch(SQLException s){
               addError("Impossibile reperire le informazioni del Cdl "+linea+" per il giorno"+datatmp+" >>"+s.getMessage());
 //            } catch (ElabException e){
 //              addError("Errore in fase di generazione dati fermi per "+linea+" per il giorno"+datatmp+" >>"+e.getMessage());
            }
+            
             
         }    
       } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
