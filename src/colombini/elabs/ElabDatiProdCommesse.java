@@ -100,6 +100,8 @@ public class ElabDatiProdCommesse extends ElabClass{
     //gg  loadDatiForatriceRem(apm, commGg, commEx,propsElab);
     //gg  loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
      loadDatiImaTop(apm, commGg, commEx,propsElab);
+     loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
+     loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
 //      
     //gg  loadDatiAnteAllum(apm, commGg, commEx,propsElab);
 //      
@@ -1101,6 +1103,44 @@ public class ElabDatiProdCommesse extends ElabClass{
      }   
     
   }
+   private void loadDatiFornitoriP2(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab, String fornitore) {
+    List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMATOP_EDPC);
+    
+//    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
+//    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
+//    
+//    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
+//    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
+    
+     for(List infoC:commToLoad){
+        Long comm=(Long) infoC.get(0);
+        Long dtC=(Long) infoC.get(1); 
+        //Long comm=Long.valueOf(335);
+        //Long dtC=Long.valueOf(20161130);
+        
+        Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
+        
+//        if(comm<400)
+//          comm+=400;
+        
+        _logger.info("Caricamento dati Postazione Ima Tops per commessa "+comm+" - "+dtC);
+        List<BeanInfoColloComForTAP> beans=getListPzFromImaTops(TAPWebCostant.CDL_IMATOP_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
+        //checkColori()
+//        for(BeanInfoColloComForTAP bean:beans){
+//          String codColore=bean.getCodColore();
+//          int idx=colorsCodList.indexOf(codColore);
+//          if(!StringUtils.isEmpty(codColore) && idx>=0){
+//            bean.setCodColore(colorsDescList.get(idx));
+//          }else{
+//            bean.setCodColore(null);
+//          }
+//        }
+        apm.storeDtFromBeans((List) beans);
+     }   
+    
+  }
+  
+  
   
   private void loadDatiImballoAnteSpecialiImaAnteR1P1(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
     List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMBANTESPECIALI_EDPC);
