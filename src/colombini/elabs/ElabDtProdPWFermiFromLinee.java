@@ -99,18 +99,22 @@ public class ElabDtProdPWFermiFromLinee extends ElabClass{
             try{
               InfoTurniCdL infoT=new InfoTurniCdL(CostantsColomb.AZCOLOM, linea, datatmp);
               infoT.retriveInfo(con);
-              if(infoT.getIdTurno() != null) //Faccio storeDtFromBean solo se trovo info sul turno! 
-                 {
-                    List<InfoFermoCdL> listfermilinea=((IFermiLinea)classeCdl).getListFermiLinea(con,infoT,causaliLinea);
-                    for(InfoFermoCdL fermo:listfermilinea){
-                      try{
-                        pm.storeDtFromBean(fermo);
-                      } catch(SQLException s){
-                        addError("Attenzione errore in fase di salvataggio del fermo+ "+fermo.toString()+" -->"+s.getMessage());
-                      }
-                    }
-                    datatmp=DateUtils.addDays(datatmp, 1);
+              if(infoT.getIdTurno() != null){ //Faccio storeDtFromBean solo se trovo info sul turno!
+                 
+                _logger.info("Caricamento dati fermi linea "+linea + " gg-->"+datatmp);
+                 InfoFermoCdL fDelete=new InfoFermoCdL(infoT.getIdTurno(), linea, datatmp);
+                 pm.deleteDt(fDelete, fDelete.getFieldValuesForDelete());
+                 List<InfoFermoCdL> listfermilinea=((IFermiLinea)classeCdl).getListFermiLinea(con,infoT,causaliLinea);
+                 for(InfoFermoCdL fermo:listfermilinea){
+                   try{
+                     pm.storeDtFromBean(fermo);
+                   } catch(SQLException s){
+                     addError("Attenzione errore in fase di salvataggio del fermo+ "+fermo.toString()+" -->"+s.getMessage());
+                   }
                  }
+              }     
+              datatmp=DateUtils.addDays(datatmp, 1);
+                 
             } catch(SQLException s){
               addError("Impossibile reperire le informazioni del Cdl "+linea+" per il giorno"+datatmp+" >>"+s.getMessage());
 //            } catch (ElabException e){

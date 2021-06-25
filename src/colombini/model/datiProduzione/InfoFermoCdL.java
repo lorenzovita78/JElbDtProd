@@ -60,7 +60,6 @@ public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
   public final static String TABLE_NAME="ZDPWFG";
   public final static String SEQUENCE_NAME="SEQ_ZDPWFG";
   
-  
   public InfoFermoCdL(Integer idTurno, String cdl, Date dataRif) {
     this.idTurno = idTurno;
     this.cdl = cdl;
@@ -231,12 +230,23 @@ public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
     fieldsValue.put(FGTMFN, this.oraFine);
     fieldsValue.put(FGNOTE, this.note);
     fieldsValue.put(FGLMUT, CostantsColomb.UTDEFAULT);
-    fieldsValue.put(FGLMDT, DateUtils.getDataSysLong());
+    fieldsValue.put(FGLMDT, new Date());
     
     
     return fieldsValue; 
   }
 
+  public Map<String, Object> getValuesMapForDelete() {
+    Map fieldsValue=new HashMap();
+    
+    fieldsValue.put(FGIDCO, this.idTurno);
+    fieldsValue.put(FGCONO, CostantsColomb.AZCOLOM);
+    fieldsValue.put(FGDTRF, this.dataRif);
+    
+    return fieldsValue; 
+  }
+  
+  
   @Override
   public Map<String, Object> getFieldValuesForDelete() {
     Map fieldsValue=new HashMap();
@@ -297,8 +307,10 @@ public class InfoFermoCdL implements Cloneable,IBeanPersCRUD,ISequence {
 
   @Override
   public String getSequenceName() {
-    return SEQUENCE_NAME; //To change body of generated methods, choose Tools | Templates.
+    return getLibraryName()+"."+ SEQUENCE_NAME; //To change body of generated methods, choose Tools | Templates.
   }
+  
+
   
   
    public void loadIdFermo(Connection con) throws SQLException {

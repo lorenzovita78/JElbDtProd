@@ -21,8 +21,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import utils.ClassMapper;
 import utils.DateUtils;
+import utils.StringUtils;
 
 /**
  *
@@ -56,23 +58,24 @@ public class FermiLotto1R1P4 implements IFermiLinea {
         InfoFermoCdL fermoBean=new InfoFermoCdL(infoTCdl.getIdTurno(), infoTCdl.getCdl(), infoTCdl.getDataRif());
         String codCaus=ClassMapper.classToString(fermo.get(1));
         CausaliLineeBean c=null;
-        
-        if(codCaus!=null){
+        if(codCaus!=null && !StringUtils.IsEmpty(codCaus)){
            c=(CausaliLineeBean) causaliFermi.get(codCaus);
         }else{
            c=getCausMF(causaliFermi);
         }
         
-        Date dataIni=ClassMapper.classToClass(fermo.get(2), Date.class);
-        Date dataFin=ClassMapper.classToClass(fermo.get(3), Date.class);
-        String note=ClassMapper.classToString(fermo.get(4));
-        fermoBean.loadIdFermo(con);
-        fermoBean.setIdCausale(c.getIdCausale().intValue());
-        fermoBean.setOraInizio(dataIni);
-        fermoBean.setOraFine(dataFin);
-        fermoBean.setNote(note);
-        //fermoBean.
-        listFBeans.add(fermoBean);
+        if(c!=null){
+          Date dataIni=ClassMapper.classToClass(fermo.get(2), Date.class);
+          Date dataFin=ClassMapper.classToClass(fermo.get(3), Date.class);
+          String note=ClassMapper.classToString(fermo.get(4));
+          fermoBean.loadIdFermo(con);
+          fermoBean.setIdCausale(c.getIdCausale().intValue());
+          fermoBean.setOraInizio(dataIni);
+          fermoBean.setOraFine(dataFin);
+          fermoBean.setNote(note);
+          //fermoBean.
+          listFBeans.add(fermoBean);
+        }
       }
       
 
@@ -90,16 +93,20 @@ public class FermiLotto1R1P4 implements IFermiLinea {
   
   private CausaliLineeBean getCausMF(Map causaliFermi) {
     CausaliLineeBean cb=null;
-    Long idCausMf=null;
-    
-    Iterator cf = causaliFermi.entrySet().iterator();
-        while(cf.hasNext() && idCausMf==null){
-          cb  = (CausaliLineeBean)cf.next();
-          if(cb.getTipo().equals(CausaliLineeBean.TIPO_CAUS_MICROFRM) ) 
-              continue;
-        }
+    CausaliLineeBean mf=null;
+    Set keys=causaliFermi.keySet();
+    Iterator iter=keys.iterator();
+
+     while(iter.hasNext() && mf==null){
+       String kcaus=(String) iter.next();
+       cb  = (CausaliLineeBean) causaliFermi.get(kcaus);
+
+       if(CausaliLineeBean.TIPO_CAUS_MICROFRM.equals(cb.getTipo()) ) 
+         mf=cb;
+
+     }
         
-    return cb;    
+    return mf;    
   }
   
   
@@ -114,7 +121,7 @@ public class FermiLotto1R1P4 implements IFermiLinea {
     }finally{
       if(con!=null){
         try{
-        con.close();
+          con.close();
         } catch(SQLException s){
           _logger.warn("Errore in fase di chiusura della connessione "+s.getMessage());
         }
@@ -133,7 +140,7 @@ public class FermiLotto1R1P4 implements IFermiLinea {
     String select = "SELECT idCau , Cod  ,[DatOraIni] , [DatOraFin], [Note]";
     
     if(!isFermo)
-        select =" SELECT idCau, Cod, min(convert(time,(datOraIni))) ,dateadd(ss,sum(datediff(ss,datOraIni,datOraFin)),note";
+        select =" SELECT 0 idCau, '' Cod,min(convert(datetime,(datOraIni))) ,dateadd(ss,sum(datediff(ss,datOraIni,datOraFin)),min(datOraIni)),' ' Note";
     
     s.append( select  ).append(
              "  FROM [dbo].[LOG_FERMI] a left outer join CAUSALI_FERMI b ON idCau=b.id\n").append(
