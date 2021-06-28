@@ -123,11 +123,11 @@ public class ElabDatiProdCommesse extends ElabClass{
 //     
 
 //      List commsR1P4=getListCommesseR1P4();
- //      loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
-     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
-//      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
-//      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
-//      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
+//       loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
+//     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
+//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
+//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
+//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
 //      loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4 SKIPPER%' ");      
 //      loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
 //      loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
