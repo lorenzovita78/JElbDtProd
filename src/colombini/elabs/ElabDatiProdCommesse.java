@@ -1124,12 +1124,12 @@ public class ElabDatiProdCommesse extends ElabClass{
 //        if(comm<400)
 //          comm+=400;
         
-        _logger.info("Caricamento dati Postazione Fornitori per commessa "+comm+" - "+dtC);
+        _logger.info("Caricamento dati Postazione Fornitore per commessa "+comm+" - "+dtC);
        List<BeanInfoColloComForTAP> beans = null;
        if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdl_fornitore)) //Se non è CASADEI, è MOROLLI
-         beans=getListPzFromFornitori(TAPWebCostant.CDL_CASADEI_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
+         beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_CASADEI_EDPC, comm, dataC,null,Boolean.FALSE);
         else
-         beans=getListPzFromFornitori(TAPWebCostant.CDL_MOROLLI_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
+         beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_MOROLLI_EDPC, comm, dataC,null,Boolean.FALSE);
         //checkColori()
 //        for(BeanInfoColloComForTAP bean:beans){
 //          String codColore=bean.getCodColore();
@@ -1922,7 +1922,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     return result;
   }
   
-    private List getListPzFromFornitori(String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk){
+    private List getListPzFromFornitoriP2(String cdL,Long comm,Date dataComm,Date dataElab,Boolean withEtk){
     Connection con=null;
     List result=new ArrayList();
     try{
