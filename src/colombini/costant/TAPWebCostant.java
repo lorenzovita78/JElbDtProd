@@ -39,6 +39,5 @@ public class TAPWebCostant {
   public static final String CDL_CQUALITA_EDPC = "CQUALITA";
   
   public static final String CDL_IMATOP_EDPC = "01035";
-  
-  //GG INSERIRE CDL PER IMATOP!
+ 
 }
