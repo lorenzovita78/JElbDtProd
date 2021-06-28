@@ -21,6 +21,7 @@ import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QueryColliCommessaFebal;
 import colombini.query.produzione.QueryColliSostFromDesmosColomFebal;
 import colombini.query.produzione.QueryListColliPzCommessa;
+import colombini.query.produzione.R1.QueryPzCommFornitori;
 import colombini.query.produzione.R1.QueryPzCommImaAnte;
 import colombini.query.produzione.R1.QueryPzCommImaTop;
 import colombini.query.produzione.R1.QueryPzCommLotto1;
@@ -99,7 +100,9 @@ public class ElabDatiProdCommesse extends ElabClass{
       
     //gg  loadDatiForatriceRem(apm, commGg, commEx,propsElab);
     //gg  loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
-     loadDatiImaTop(apm, commGg, commEx,propsElab);
+    // loadDatiImaTop(apm, commGg, commEx,propsElab);
+    // loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
+     loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
 //      
     //gg  loadDatiAnteAllum(apm, commGg, commEx,propsElab);
 //      
@@ -120,11 +123,11 @@ public class ElabDatiProdCommesse extends ElabClass{
 //     
 
 //      List commsR1P4=getListCommesseR1P4();
- //      loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
-     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
-//      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
-//      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
-//      loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
+//       loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
+//     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
+//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
+//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
+//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
 //      loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4 SKIPPER%' ");      
 //      loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
 //      loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
@@ -1101,6 +1104,48 @@ public class ElabDatiProdCommesse extends ElabClass{
      }   
     
   }
+   private void loadDatiFornitoriP2(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab, String cdl_fornitore) {
+    List<List> commToLoad=getListCommToSave(commGg, commEx, cdl_fornitore);
+    
+//    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
+//    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
+//    
+//    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
+//    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
+    
+     for(List infoC:commToLoad){
+        Long comm=(Long) infoC.get(0);
+        Long dtC=(Long) infoC.get(1); 
+        //Long comm=Long.valueOf(335);
+        //Long dtC=Long.valueOf(20161130);
+        
+        Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
+        
+//        if(comm<400)
+//          comm+=400;
+        
+        _logger.info("Caricamento dati Postazione Fornitore per commessa "+comm+" - "+dtC);
+       List<BeanInfoColloComForTAP> beans = null;
+       if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdl_fornitore)) //Se non è CASADEI, è MOROLLI
+         beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_CASADEI_EDPC, comm, dataC,null,Boolean.FALSE);
+        else
+         beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_MOROLLI_EDPC, comm, dataC,null,Boolean.FALSE);
+        //checkColori()
+//        for(BeanInfoColloComForTAP bean:beans){
+//          String codColore=bean.getCodColore();
+//          int idx=colorsCodList.indexOf(codColore);
+//          if(!StringUtils.isEmpty(codColore) && idx>=0){
+//            bean.setCodColore(colorsDescList.get(idx));
+//          }else{
+//            bean.setCodColore(null);
+//          }
+//        }
+        apm.storeDtFromBeans((List) beans);
+     }   
+    
+  }
+  
+  
   
   private void loadDatiImballoAnteSpecialiImaAnteR1P1(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
     List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMBANTESPECIALI_EDPC);
@@ -1877,6 +1922,28 @@ public class ElabDatiProdCommesse extends ElabClass{
     return result;
   }
   
+    private List getListPzFromFornitoriP2(String cdL,Long comm,Date dataComm,Date dataElab,Boolean withEtk){
+    Connection con=null;
+    List result=new ArrayList();
+    try{
+      con=ColombiniConnections.getDbDesmosColProdConnection();
+      result=getListPzFromFornitori(con, cdL, comm, dataComm, dataElab,withEtk);
+      
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Colombini --> "+s.getMessage());
+    } finally{
+      if(con!=null)
+        try {
+          con.close();
+      
+        } catch (SQLException ex) {
+        _logger.error("Errore in fase di chiusura della connessione --> "+ex.getMessage());
+        }
+    }
+    
+    return result;
+  }
+        
   private List<BeanInfoColloComForTAP> getListBeansAnteFebal(Connection conDesmosFeb, String cdL, Long comm, Date dataComm,Boolean withEtk) throws QueryException, SQLException {
     CustomQuery q=null;
     List result=new ArrayList();
@@ -2008,6 +2075,49 @@ public class ElabDatiProdCommesse extends ElabClass{
       
     }catch(SQLException s){
       addError(" Errore in fase di connessione al database ImaTop--> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+    
+    
+    return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
+  }
+   
+   private List getListPzFromFornitori(Connection con,String cdL,Long comm,Date dataComm,Date dataElab,Boolean withEtk){
+
+    List result=new ArrayList();
+    try{
+      
+      QueryPzCommFornitori qry=new QueryPzCommFornitori();
+
+
+      qry.setFilter(QueryPzCommFornitori.COMMISSIONNO, comm);
+      
+      qry.setFilter(QueryPzCommFornitori.FLUSSO, "P2");
+      
+      
+      if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdL)) //Se non è CASADEI, è MOROLLI
+         qry.setFilter(QueryPzCommFornitori.FORNITORE, TAPWebCostant.FRN_CASADEI_EDPC);
+      else
+         qry.setFilter(QueryPzCommFornitori.FORNITORE, TAPWebCostant.FRN_MOROLLI_EDPC);
+      
+      if(dataElab!=null)
+        qry.setFilter(QueryPzCommFornitori.COMMISSIONYEAR, DateUtils.getAnno(dataElab));
+      else
+        qry.setFilter(QueryPzCommFornitori.COMMISSIONDATE, DateUtils.DateToStr(dataComm, "yyyy-MM-dd"));
+      
+     
+      
+      String s=qry.toSQLString();
+      _logger.info(s);
+      ResultSetHelper.fillListList(con, s, result);
+      
+      
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Colombini--> "+s.getMessage());
     } catch (ParseException ex) {
       addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
     } catch (QueryException ex) {
