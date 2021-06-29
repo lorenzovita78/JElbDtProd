@@ -84,7 +84,7 @@ public class FermiLotto1R1P4 implements IFermiLinea {
     } catch (SQLException ex) {
      // throws new ElabException(ex.getMessage());
     } catch (ParseException ex) {
-      
+      //Add error
     }
     
     return listFBeans;

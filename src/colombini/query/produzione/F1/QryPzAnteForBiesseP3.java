@@ -27,7 +27,7 @@ public class QryPzAnteForBiesseP3 extends CustomQuery{
     String db=" DesmosFebal.dbo.";
     
     String where=" where DesmosLancio ="+getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS)+
-                 " and (cid<>'0' or cid not like '%---%') ";
+                 " and (cid<>'0' and cid not like '%---%') ";
     
     q.append("select codice_collo,ROW_NUMBER() over (partition by codice_collo order by codice_collo) as numart, LineaDest,IdBox,Pedana,cod_ordine,num_riga,Codice,descrArt,def_comp,cid ");
     q.append(" from ( \n");

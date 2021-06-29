@@ -98,30 +98,30 @@ public class ElabDatiProdCommesse extends ElabClass{
       Map  commEx=getMapCommessePresenti(con);
 //     
       
-    //gg  loadDatiForatriceRem(apm, commGg, commEx,propsElab);
-    //gg  loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
-    // loadDatiImaTop(apm, commGg, commEx,propsElab);
-    // loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
-     loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
+//    loadDatiForatriceRem(apm, commGg, commEx,propsElab);
+//    loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
+    loadDatiImaTop(apm, commGg, commEx,propsElab);
+    loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
+//    loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
+////      
+//      loadDatiAnteAllum(apm, commGg, commEx,propsElab);
+////      
+//      loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
 //      
-    //gg  loadDatiAnteAllum(apm, commGg, commEx,propsElab);
-//      
-    //gg  loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
-      
-    //gg  loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
-     //gg loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
-    //gg  loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-     //gg loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
-//        
-    //gg  loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
-     
-     //gg loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
-//      
-//      
-    //gg  loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
-    //gg  loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
+//      loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
+//      loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
+//      loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
+//      loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
+////        
+//      loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
 //     
-
+//      loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
+////      
+////      
+//      loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
+//      loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
+////     
+//
 //      List commsR1P4=getListCommesseR1P4();
 //       loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
 //     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
@@ -1069,80 +1069,73 @@ public class ElabDatiProdCommesse extends ElabClass{
   }
   
   private void loadDatiImaTop(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
-    List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMATOP_EDPC);
     
-//    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
-//    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
-//    
-//    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
-//    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
+    List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMATOP_EDPC);
+    Connection conSQLSDesmos=null;
+    try{
+    conSQLSDesmos=ColombiniConnections.getDbDesmosColProdConnection();
     
      for(List infoC:commToLoad){
         Long comm=(Long) infoC.get(0);
         Long dtC=(Long) infoC.get(1); 
-        //Long comm=Long.valueOf(335);
-        //Long dtC=Long.valueOf(20161130);
-        
         Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
+        if(DesmosUtils.getInstance().isElabDesmosColombiniFinished(conSQLSDesmos, comm, dataC))
+        {
+          _logger.info("Caricamento dati Postazione Ima Tops per commessa "+comm+" - "+dtC);
+          List<BeanInfoColloComForTAP> beans=getListPzFromImaTops(TAPWebCostant.CDL_IMATOP_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
+          apm.storeDtFromBeans((List) beans);
+        }  
+     
+     }
+     
+      } catch(SQLException s) {
+         addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+      }  finally{
+        if(conSQLSDesmos!=null)
+          try {
+            conSQLSDesmos.close();
+          } catch (SQLException ex) {
+          _logger.error("Errore in fase di chiusura della connessione a DesmosColombini--> "+ex.getMessage());
+          }
         
-//        if(comm<400)
-//          comm+=400;
-        
-        _logger.info("Caricamento dati Postazione Ima Tops per commessa "+comm+" - "+dtC);
-        List<BeanInfoColloComForTAP> beans=getListPzFromImaTops(TAPWebCostant.CDL_IMATOP_EDPC, comm, dataC,null, null, null,Boolean.FALSE);
-        //checkColori()
-//        for(BeanInfoColloComForTAP bean:beans){
-//          String codColore=bean.getCodColore();
-//          int idx=colorsCodList.indexOf(codColore);
-//          if(!StringUtils.isEmpty(codColore) && idx>=0){
-//            bean.setCodColore(colorsDescList.get(idx));
-//          }else{
-//            bean.setCodColore(null);
-//          }
-//        }
-        apm.storeDtFromBeans((List) beans);
-     }   
-    
+      }  
   }
    private void loadDatiFornitoriP2(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab, String cdl_fornitore) {
     List<List> commToLoad=getListCommToSave(commGg, commEx, cdl_fornitore);
-    
-//    String colors= (String) propsElab.get(NameElabs.LISTCODCLRTOIND);
-//    List<String> colorsCodList=ArrayUtils.getListFromArray(colors.split(","));
-//    
-//    colors= (String) propsElab.get(NameElabs.LISTDESCRCLRTOIND);
-//    List<String> colorsDescList=ArrayUtils.getListFromArray(colors.split(","));
-    
+    Connection conSQLSDesmos=null;
+    try{
+    conSQLSDesmos=ColombiniConnections.getDbDesmosColProdConnection();
      for(List infoC:commToLoad){
         Long comm=(Long) infoC.get(0);
         Long dtC=(Long) infoC.get(1); 
-        //Long comm=Long.valueOf(335);
-        //Long dtC=Long.valueOf(20161130);
-        
         Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
         
-//        if(comm<400)
-//          comm+=400;
-        
-        _logger.info("Caricamento dati Postazione Fornitore per commessa "+comm+" - "+dtC);
-       List<BeanInfoColloComForTAP> beans = null;
-       if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdl_fornitore)) //Se non è CASADEI, è MOROLLI
-         beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_CASADEI_EDPC, comm, dataC,null,Boolean.FALSE);
-        else
-         beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_MOROLLI_EDPC, comm, dataC,null,Boolean.FALSE);
-        //checkColori()
-//        for(BeanInfoColloComForTAP bean:beans){
-//          String codColore=bean.getCodColore();
-//          int idx=colorsCodList.indexOf(codColore);
-//          if(!StringUtils.isEmpty(codColore) && idx>=0){
-//            bean.setCodColore(colorsDescList.get(idx));
-//          }else{
-//            bean.setCodColore(null);
-//          }
-//        }
-        apm.storeDtFromBeans((List) beans);
-     }   
-    
+        if(DesmosUtils.getInstance().isElabDesmosColombiniFinished(conSQLSDesmos, comm, dataC))
+        {
+          _logger.info("Caricamento dati Postazione Fornitore per commessa "+comm+" - "+dtC);
+         List<BeanInfoColloComForTAP> beans = null;
+
+         if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdl_fornitore)) //Se non è CASADEI, è MOROLLI
+           beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_CASADEI_EDPC, comm, dataC,null,Boolean.FALSE);
+          else
+           beans=getListPzFromFornitoriP2(TAPWebCostant.CDL_MOROLLI_EDPC, comm, dataC,null,Boolean.FALSE);
+          apm.storeDtFromBeans((List) beans);
+         }
+      }
+       
+    } catch(SQLException s) {
+       addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+      }  
+      finally{
+        if(conSQLSDesmos!=null)
+          try {
+            conSQLSDesmos.close();
+                } 
+          catch (SQLException ex)
+              {
+          _logger.error("Errore in fase di chiusura della connessione a DesmosColombini--> "+ex.getMessage());
+                }
+          }  
   }
   
   
