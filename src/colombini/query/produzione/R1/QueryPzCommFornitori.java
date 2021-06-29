@@ -34,8 +34,8 @@ public class QueryPzCommFornitori extends CustomQuery {
     
     String select=" select \n" +
         "       collo = A.codice_collo\n" +
-        "       ,prog_collo = A.Progressivo_p\n" +
-        "       ,A.linea\n" +
+        "       ,prog_collo = A.Progressivo_p\n" +    
+        "       ,'P2 MF1' linea\n" +
         "       ,box = A.box_vdl\n" +
         "       ,pedana = A.ped_vdl\n" +
         "       ,orderno = A.riferimento\n" +

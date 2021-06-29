@@ -34,6 +34,7 @@ import colombini.util.InfoMapLineeUtil;
 import db.CustomQuery;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
+import db.persistence.IBeanPersSIMPLE;
 import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import exception.QueryException;
@@ -96,43 +97,43 @@ public class ElabDatiProdCommesse extends ElabClass{
       List<List> commGg=DatiProdUtils.getInstance().getListGgCommesse(con, dataRif, null,Boolean.TRUE);
       _logger.info(" Commesse disponibili n. "+commGg.size()+" --> "+commGg.toString());
       Map  commEx=getMapCommessePresenti(con);
-//     
+     
       
-//    loadDatiForatriceRem(apm, commGg, commEx,propsElab);
-//    loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
+    loadDatiForatriceRem(apm, commGg, commEx,propsElab);
+    loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
     loadDatiImaTop(apm, commGg, commEx,propsElab);
     loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
-//    loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
-////      
-//      loadDatiAnteAllum(apm, commGg, commEx,propsElab);
-////      
-//      loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
+    loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
 //      
-//      loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
-//      loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
-//      loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-//      loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
-////        
-//      loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
+      loadDatiAnteAllum(apm, commGg, commEx,propsElab);
+//      
+      loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
+      
+      loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
+      loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
+      loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
+      loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
+//        
+      loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
+     
+      loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
+//      
+//      
+      loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
+      loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 //     
-//      loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
-////      
-////      
-//      loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
-//      loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
-////     
-//
-//      List commsR1P4=getListCommesseR1P4();
-//       loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
-//     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
-//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
-//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
-//    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
-//      loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4 SKIPPER%' ");      
-//      loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
-//      loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
-//      loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");
-////      
+
+      List commsR1P4=getListCommesseR1P4();
+       loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
+     //  loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4%' ");
+    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SKIPPERR1P4_EDPC, commsR1P4, commEx, propsElab);
+    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_SPINOMALR1P4_EDPC, commsR1P4, commEx, propsElab);
+    //  loadDatiForatriciP4New(apm, TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC, commsR1P4, commEx, propsElab);
+      loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 like 'P4 SKIPPER%' ");      
+      loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
+      loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
+      loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");
+//      
     } catch (SQLException ex) {
       addError("Impossibile caricare la lista di commesse da elaborare :"+ex.getMessage());
     } catch(QueryException qe){
@@ -1899,7 +1900,6 @@ public class ElabDatiProdCommesse extends ElabClass{
     try{
       con=ColombiniConnections.getDbImaTopConnection();
       result=getListPzFromImaTops(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk);
-      
     }catch(SQLException s){
       addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
     } finally{
