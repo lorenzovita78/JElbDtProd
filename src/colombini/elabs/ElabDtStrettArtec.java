@@ -199,7 +199,7 @@ public class ElabDtStrettArtec extends ElabClass{
       fR = new FileReader(fileS);
       bfR=new BufferedReader(fR);
       riga = bfR.readLine(); 
-      while(riga!=null && !riga.isEmpty() && !riga.startsWith("---")){
+      while(riga!=null && !riga.isEmpty()){
         DatiStrettoioSqlS dtS=new DatiStrettoioSqlS(dataComm);
         dtS.loadInfo(riga);
         if(dtS.validate())

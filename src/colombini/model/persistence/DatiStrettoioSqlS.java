@@ -65,6 +65,7 @@ public class DatiStrettoioSqlS implements IBeanPersSIMPLE{
   
   public void loadInfo(String info){
     List lst=ArrayUtils.getListFromArray(info.split(";"));
+    if(lst.size()>1){
     this.commessa=ClassMapper.classToString(lst.get(0));
     this.codiceCollo=ClassMapper.classToString(lst.get(1));
     this.numeroArt=ClassMapper.classToString(lst.get(2));
@@ -76,7 +77,7 @@ public class DatiStrettoioSqlS implements IBeanPersSIMPLE{
     this.nomePrg=ClassMapper.classToString(lst.get(8));
     this.rotazione=ClassMapper.classToString(lst.get(9));
     this.destinazione=ClassMapper.classToString(lst.get(10));
-      
+      }
   }
   
   
@@ -176,7 +177,10 @@ public class DatiStrettoioSqlS implements IBeanPersSIMPLE{
 
   @Override
   public Boolean validate() {
-    return Boolean.TRUE;
+    if(this.commessa!=null){
+      return Boolean.TRUE;
+    } 
+     else return Boolean.FALSE;
   }
 
   public Date getDataCommessa() {
