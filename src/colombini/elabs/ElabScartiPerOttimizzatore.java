@@ -49,7 +49,7 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
   
    
       private final String UPD_CustomerImportParts=" UPDATE IMAIPCNET_2210000136_Transfer.dbo.Customer_Import_Parts"
-                                   + " set State= 5 ,Info9=? ,Update_User='JAVA_BATCH' ,Update_TS= ?"
+                                   + " set State= 150 ,Info9=? ,Update_User='JAVA_BATCH' ,Update_TS= ?"
                                    +" WHERE Barcode = ? ";
                                    
   
@@ -171,9 +171,12 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
     Connection con=null;
     PreparedStatement ps = null;
     String barcode=null;
+
     
     String dateS=DateUtils.getDataSysString();
-    String oraS=DateUtils.getOraSysLong().toString();
+    //String oraS=DateUtils.getOraSysLong().toString();
+    String oraS=DateUtils.getOraString(new Date());
+    
     try{
       con=ColombiniConnections.getDbIPCNetConnection();
       ps=con.prepareStatement(UPD_CustomerImportParts); 

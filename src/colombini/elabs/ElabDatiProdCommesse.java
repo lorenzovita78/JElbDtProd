@@ -1724,7 +1724,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     //linea aggiunta su richiesta di Simone Arduino in data 15/06/2016
     lineeFebal.add("06518");
     lineeFebal.add("36113"); //MOD del 5/5/2021 -->  tolte dalla lista dei pz lotto 1 : solo spunta collo
-    
+    lineeFebal.add("36110");//Fare debug ultima commessa
     try{
       conSQLSDesmos=ColombiniConnections.getDbDesmosColProdConnection();
 
