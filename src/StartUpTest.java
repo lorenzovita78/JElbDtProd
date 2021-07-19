@@ -165,8 +165,7 @@ public class StartUpTest {
            listaElabs.add(parameter);
            checkElab=Boolean.FALSE;
          }
-         
-         
+     
 
 //         System.out.println(test.toString());
                
@@ -211,7 +210,7 @@ public class StartUpTest {
 //     test();    
  //     testConn();   
  //       testXML();
-
+ 
       LuncherElabDtProd lunch=new  LuncherElabDtProd(listaElabs);
       lunch.run(checkElab);
       

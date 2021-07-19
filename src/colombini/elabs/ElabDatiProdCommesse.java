@@ -99,7 +99,7 @@ public class ElabDatiProdCommesse extends ElabClass{
       Map  commEx=getMapCommessePresenti(con);
      
       
-    loadDatiForatriceRem(apm, commGg, commEx,propsElab);
+   // loadDatiForatriceRem(apm, commGg, commEx,propsElab);
     loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
     loadDatiImaTop(apm, commGg, commEx,propsElab);
     loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
