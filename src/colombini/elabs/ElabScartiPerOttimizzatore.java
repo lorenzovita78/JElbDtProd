@@ -171,11 +171,15 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
     Connection con=null;
     PreparedStatement ps = null;
     String barcode=null;
-
+    String oraS=null;
     
     String dateS=DateUtils.getDataSysString();
     //String oraS=DateUtils.getOraSysLong().toString();
-    String oraS=DateUtils.getOraString(new Date());
+    try {
+      oraS = DateUtils.DateToStr(new Date(), "HHmm");
+    } catch (ParseException ex) {
+      _logger.error("Impossibile convertire la data-->ora vuota :"+ex.getMessage());
+    }
     
     try{
       con=ColombiniConnections.getDbIPCNetConnection();
