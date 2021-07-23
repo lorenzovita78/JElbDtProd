@@ -34,14 +34,16 @@ public class QueryPzCommImaTop extends CustomQuery {
 
     
     String select=  " SELECT PackageNo collo, 1 prog_collo, CASE\n" +
-                    "WHEN ProductionLine=36111 THEN 'P4 LSM'\n" +
-                    "WHEN ProductionLine=6030 THEN 'P2 STRETTOI'\n" +
-                    "WHEN ProductionLine=6031 THEN 'P2 STRETTOI'\n" +
-                    "WHEN ProductionLine=6050 THEN 'P4 SCORREVOLI'\n" +
-                    "WHEN ProductionLine=6051 THEN 'P4 SCORREVOLI'\n" +
-                    "WHEN ProductionLine=6148 THEN 'P2 TAVOLI'\n" +
-                    "WHEN ProductionLine=6150 THEN 'P2 TAVOLI'\n" +
-                    "WHEN ProductionLine=6516 THEN 'P4 MF1'\n" +
+                    "WHEN ProductionLine=36111 THEN 'P4LSM'\n" +
+                    "WHEN ProductionLine=6030 THEN 'P2STRETTOI'\n" +
+                    "WHEN ProductionLine=6031 THEN 'P2STRETTOI'\n" +
+                    "WHEN ProductionLine=6050 THEN 'P4SCORREVOLI'\n" +
+                    "WHEN ProductionLine=6051 THEN 'P4SCORREVOLI'\n" +
+                    "WHEN ProductionLine=6148 THEN 'P2TAVOLI'\n" +
+                    "WHEN ProductionLine=6150 THEN 'P2TAVOLI'\n" +
+                    "WHEN ProductionLine=6516 THEN 'P2MF1'\n" +
+                    "WHEN ProductionLine=6145 THEN 'P2TAVOLI'\n" +
+                    "WHEN ProductionLine=6100 THEN 'P4LSM'\n" +
                     "ELSE ProductionLine\n" +
                     "END linea,\n" +
                     "box, Pedana , orderno, 0 nr_riga,\n" +
