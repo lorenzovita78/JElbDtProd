@@ -33,7 +33,7 @@ public class ElabMailCircolareAgnt extends ElabClass{
 
   public final static String STR_OBJ_MAIL="Predisposizioni per Fatturazione Elettronica San Marino";
   public final static String  STR_TEXT_MAIL=
-    " San Marino, 22/10/2019 \n" +
+    " San Marino, 22/10/2030 \n" +
     " Spettabile Agente\n" +
     " \n" +
     " Oggetto: Predisposizioni per Fatturazione Elettronica San Marino\n" +
