@@ -43,7 +43,7 @@ import utils.ParameterMap;
 
 /**
  *
- * @author lvita
+ * @author lvita test
  */
 public class StartUpTest {
 
