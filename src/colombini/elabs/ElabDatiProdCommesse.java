@@ -34,7 +34,6 @@ import colombini.util.InfoMapLineeUtil;
 import db.CustomQuery;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
-import db.persistence.IBeanPersSIMPLE;
 import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import exception.QueryException;
