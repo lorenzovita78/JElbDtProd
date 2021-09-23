@@ -43,7 +43,7 @@ import utils.ParameterMap;
 
 /**
  *
- * @author lvita test 6
+ * @author lvita test 3
  */
 public class StartUpTest {
 
@@ -152,10 +152,12 @@ public class StartUpTest {
         // prm="CODELAB=ELBCOSTISFRIDO;DATAINI=01/03/2021;DATAFIN=31/03/2021";
         
        // prm="CODELAB=ELBDTSTRETTARTEC;DATAINI=CRDAY-3;DATAFIN=CRDAY-3"; //;COMMESSA=64";
-       prm="CODELAB=ELBDATIPRODCOMM;DATAINI=CRDAY;DATAFIN=CRDAY;MAIL=FALSE";
+//       prm="CODELAB=ELBDATIPRODCOMM;DATAINI=24/09/2021;DATAFIN=24/09/2021;MAIL=FALSE";
       // prm="CODELAB=ELBLOADFERMIDTPROD;DATAINI=25/06/2021;DATAFIN=25/06/2021;LINEELAB=01084B";
        //prm="CODELAB=ELBUPDDTAMGAM;DATAINI=23/06/2021;DATAFIN=23/06/2021;MAIL=FALSE";
       //  prm="CODELAB=ELBCARICOCOM;DATAINI=04/06/2021;DATAFIN=04/06/2021;MAIL=FALSE";
+      prm="CODELAB=ELBCIRCOLAREAGNT;DATAINI=CRDAY;DATAFIN=CRDAY;MAIL=FALSE";
+      
          Map parameter =ParameterMap.getParameterMap(prm);         
          if(parameter==null || parameter.isEmpty()){
            System.out.println("Stringa parametri vuota o valorizzata in maniera errata. Impossibile Proseguire");

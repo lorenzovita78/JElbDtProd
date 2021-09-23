@@ -54,6 +54,10 @@ public class QryPzAnteForBiesseP3 extends CustomQuery{
     q.append(select);
     q.append(" from ").append(db).append("ETK_LST_ETIC_PDF_ANTECAM_SMON_ACQ ");
     q.append(where);
+    q.append("\n UNION \n");
+    q.append(select);
+    q.append(" from ").append(db).append("ETK00_LST_ETIC_PDF_ANTECAM_LL_NEW_PROD3 ");
+    q.append(where);
     q.append("\n  ) a ");
     
     return q.toString();

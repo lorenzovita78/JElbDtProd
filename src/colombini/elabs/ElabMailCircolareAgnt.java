@@ -6,7 +6,6 @@
 package colombini.elabs;
 
 import colombini.conn.ColombiniConnections;
-import colombini.elabs.mail.ElabInvioMail;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
 import elabObj.ElabClass;
@@ -31,25 +30,19 @@ import utils.StringUtils;
  */
 public class ElabMailCircolareAgnt extends ElabClass{
 
-  public final static String STR_OBJ_MAIL="Predisposizioni per Fatturazione Elettronica San Marino";
+  public final static String STR_OBJ_MAIL="Circolare Fatturazione Elettronica San Marino";
   public final static String  STR_TEXT_MAIL=
-    " San Marino, 22/10/2030 \n" +
-    " Spettabile Agente\n" +
+    " San Marino, 22/09/2021 \n" +
+    " \n" +
     " \n" +
     " Oggetto: Predisposizioni per Fatturazione Elettronica San Marino\n" +
     " \n" +
-    " In considerazione della futura estensione della fatturazione elettronica alla Repubblica di San Marino, la cui entrata in vigore è in via di definizione, procediamo alla mappatura del codice univoco destinatario dei clienti titolari di un canale di trasmissione già accreditato presso il Sistema di Interscambio (SDI).\n" +
-    " Vi chiediamo di compilare il file excel allegato specificando il Codice Univoco per ogni cliente.\n" +
-    " Vi preghiamo di voler restituire il presente modulo compilato entro e non oltre il 15 dicembre 2019 inviando una mail al seguente indirizzo: \n" +
-    " \n" +
-    " nmazza@colombinigroup.com\n" +
-    " \n" +
-    " Certi dell’attenzione che riserverete alla presente, vogliate gradire cordiali saluti.\n" +
+    " Con la presente Vi preghiamo di prendere nota della comunicazione allegata con cui San Marino, a partire dal 1° Ottobre, aderirà alla fatturazione elettronica.\n" +
+    " Certi di una Vostra presa visione, auguriamo buona giornata e buon lavoro. "+
     " \n" +
     " \n" +
-    " Natascia Mazza\n" +
-    " Direttore Amministrazione"
-    + "\n ";
+    " Cordiali Saluti. "      
+    ;
   
   
   @Override
@@ -57,8 +50,7 @@ public class ElabMailCircolareAgnt extends ElabClass{
     return Boolean.TRUE; //To change body of generated methods, choose Tools | Templates.
   }
 
-  @Override
-  public void exec(Connection con) {
+  public void execOld(Connection con) {
     Connection conSqlS=null;
     List<List> agenti=new ArrayList();
     try {
@@ -110,6 +102,59 @@ public class ElabMailCircolareAgnt extends ElabClass{
     }
   
     
+    @Override
+  public void exec(Connection con) {
+    Connection conSqlS=null;
+    List<List> agenti=new ArrayList();
+    try {
+      conSqlS=ColombiniConnections.getDbNewBI();
+      //String select="SELECT '0000001' ,'MarcoSerofilli' ,'mserofilli@colombinigroup.com'  UNION "
+      //        + " SELECT '0000002' ,'LorenzoVita' ,'lvita@colombinigroup.com'  UNION "
+      //        + " SELECT '0000003' ,'SofiaGjoka' ,'sgjoka@colombinigroup.com'  ";
+      String select="  select 1,1,* FROM [newBI].[dbo].[fornitori_manutenzione]";
+      ResultSetHelper.fillListList(conSqlS, select, agenti);
+      File f= new File("\\\\pegaso\\scambio\\lv\\Circolare_FTE_IND.pdf");
+      
+
+      for(List agente:agenti){
+        String codAgnt=ClassMapper.classToString(agente.get(0));
+        String email=ClassMapper.classToString(agente.get(2));
+        if(!StringUtils.IsEmpty(email)){
+         
+          MailSender ms=new MailSender();
+          MailMessageInfoBean beanMail=new MailMessageInfoBean("MAILCIRCOLAREAGNT");
+          beanMail.setObject(STR_OBJ_MAIL);
+          beanMail.setText(STR_TEXT_MAIL);
+          beanMail.addFileAttach(f);
+          //beanMail.setFileAttachName("\\\\pegaso\\scambio\\lv\\Circolare_FTE_AGE+Leggi.pdf");
+          //beanMail.addFileAttach(f);
+          beanMail.setAddressFrom("info@colombinigroup.com");
+          beanMail.setAddressesTo(Arrays.asList(email));
+          //beanMail.setAddressesBbc(Arrays.asList("nmazza@colombinigroup.com"));
+          ms.send(beanMail);
+          _logger.info("Mail inviata a "+email);
+        }else{
+          addWarning("\n Attenzione Fornitore "+codAgnt+" senza indirizzo mail ");
+        }
+      }
+      
+    } catch(SQLException s){
+      addError("Errore in fase di accesso al db-->"+s.getMessage());
+    
+    } finally {
+      if(conSqlS!=null)
+        try {
+          conSqlS.close();
+      } catch (SQLException ex) {
+        
+      }
+      
+    }
+    
+    }
+  
+  
+  
     private static final org.apache.log4j.Logger _logger = org.apache.log4j.Logger.getLogger(ElabMailCircolareAgnt.class);   
 }
 
