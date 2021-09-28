@@ -48,6 +48,7 @@ public class NameElabs {
   public final static String GGDATIINLINEA="GGDATIINLINEA";
   public final static String LISTCODCLRTOIND="LISTCODCLRTOIND";
   public final static String LISTDESCRCLRTOIND="LISTDESCRCLRTOIND";
+  public final static String PATHETKMAW2="PATHETKMAW2";
   //------------------------------------------------------------------
   
   //-------------Elaborazione  mancanti al carico

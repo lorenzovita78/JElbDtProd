@@ -65,6 +65,8 @@ public class ElabMiddlewareAsVDL extends ElabClass{
       _logger.info("##########--------- Da Incas a VDL ---------##########");
       incasToVdl(con,conVdl);
       
+      _logger.info("##########--------- Da VDL a SQL ---------##########");
+     // vdlToSql(con,conVdl);
       
     }catch(SQLException s){
       addError("Attenzione impossibile stabilire la connessione con db VDL->"+s.getMessage()+" - "+s.getSQLState());

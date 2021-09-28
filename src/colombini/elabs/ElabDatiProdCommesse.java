@@ -671,6 +671,9 @@ public class ElabDatiProdCommesse extends ElabClass{
      List lineeNew=new ArrayList(Arrays.asList("36090"));
      String pathfile=(String) propsElab.get(NameElabs.PATHETKANTEALLUM);
      String pathfileFeb=(String) propsElab.get(NameElabs.PATHETKANTEALLUMFEB);
+     //GG Devo fare nuova pathe per la mia linea
+     //nome file commessa+collo
+     //fare sotollista, 06029 --> comando etk
 
      try{
        conDesmosFeb=ColombiniConnections.getDbDesmosFebalProdConnection();          
@@ -727,6 +730,8 @@ public class ElabDatiProdCommesse extends ElabClass{
    
    private void loadDatiLotto1(PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
      List<List> commToLoad=getListCommToSave(commDisp, commEx, TAPWebCostant.CDL_LOTTO1R1P4_EDPC);
+     String pathfile=(String) propsElab.get(NameElabs.PATHETKMAW2);
+     //GG Manca inserire controllo lineadest='P1 FIANCHI MAW2' e fare la sublista, dopo aggiungere storeDtFromBeans per quella sublista
      Connection conDbDesmos=null;
      _logger.error("Caricamento dati per Sirio Lotto 1 ");
      try{
@@ -1252,7 +1257,7 @@ public class ElabDatiProdCommesse extends ElabClass{
                   colli6253.put(((BeanInfoColloComForTAP)b).getKeyCommColl(),"Y");
                 }  
               }
-            }
+            }   
             //MOD 01062021 --> aggiunta pezzi Ante Gola con dim1>=1276
             q=new  QueryPzHomagR1P1();
             List ll3=Arrays.asList("06257","06258");  
@@ -1527,6 +1532,7 @@ public class ElabDatiProdCommesse extends ElabClass{
           
           q.setFilter(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS, lancioD);
           q.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche1.toString());
+          q.setFilter(QueryPzHomagR1P1.FT_DIM1_GT, 1276 );    
           List l =new ArrayList();
           ResultSetHelper.fillListList(conSQLSDesmos, q.toSQLString(), l);
           if(l!=null){
