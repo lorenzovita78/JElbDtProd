@@ -671,10 +671,7 @@ public class ElabDatiProdCommesse extends ElabClass{
      List lineeNew=new ArrayList(Arrays.asList("36090"));
      String pathfile=(String) propsElab.get(NameElabs.PATHETKANTEALLUM);
      String pathfileFeb=(String) propsElab.get(NameElabs.PATHETKANTEALLUMFEB);
-     //GG Devo fare nuova pathe per la mia linea
-     //nome file commessa+collo
-     //fare sotollista, 06029 --> comando etk
-
+   
      try{
        conDesmosFeb=ColombiniConnections.getDbDesmosFebalProdConnection();          
        for(List infoC:commToLoad){
@@ -730,8 +727,6 @@ public class ElabDatiProdCommesse extends ElabClass{
    
    private void loadDatiLotto1(PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
      List<List> commToLoad=getListCommToSave(commDisp, commEx, TAPWebCostant.CDL_LOTTO1R1P4_EDPC);
-     String pathfile=(String) propsElab.get(NameElabs.PATHETKMAW2);
-     //GG Manca inserire controllo lineadest='P1 FIANCHI MAW2' e fare la sublista, dopo aggiungere storeDtFromBeans per quella sublista
      Connection conDbDesmos=null;
      _logger.error("Caricamento dati per Sirio Lotto 1 ");
      try{
@@ -762,7 +757,7 @@ public class ElabDatiProdCommesse extends ElabClass{
             //per commessa +400
             //List beans2=getListPzFromLotto1(conDbDesmos, TAPWebCostant.CDL_LOTTO1R1P4_EDPC, comm+400, dataC, null, Boolean.FALSE,Boolean.TRUE,null);
             //apm.storeDtFromBeans(beans2);
-            
+             
             Integer totPzLoad=beans.size();//+beans2.size();
             Integer totPzComm=Integer.valueOf(0);
             Object[] obj=ResultSetHelper.SingleRowSelect(conDbDesmos, query);
@@ -801,6 +796,7 @@ public class ElabDatiProdCommesse extends ElabClass{
    private void loadDatiLotto1New(PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
      List<List> commToLoad=getListCommToSaveCkDate(commDisp, commEx, TAPWebCostant.CDL_LOTTO1R1P4_EDPC);
      Connection conDbDesmos=null;
+     String pathfile=(String) propsElab.get(NameElabs.PATHETKMAW2);
      _logger.info("Caricamento dati per Sirio Lotto 1 ");
      try{
         
@@ -818,7 +814,13 @@ public class ElabDatiProdCommesse extends ElabClass{
           
         List beans=getListPzFromLotto1(conDbDesmos, TAPWebCostant.CDL_LOTTO1R1P4_EDPC, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,null,Boolean.TRUE);
         apm.storeDtFromBeans(beans);
-
+      
+        //  28/09/2021 carico etichette MAW2 06029
+        List<BeanInfoColloComForTAP> beanEtk=getListPzFromLotto1Etk(beans);
+        if(beanEtk.size()>0){
+        saveInfoForEtkPz(apm, beanEtk, pathfile,Boolean.TRUE);
+        }
+        
         Integer totPzLoad=beans.size();//+beans2.size();
         
         if(totPzLoad.intValue()>0){
@@ -2188,6 +2190,23 @@ public class ElabDatiProdCommesse extends ElabClass{
     return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
   }
   
+  
+  private List getListPzFromLotto1Etk (List<BeanInfoColloComForTAP> beans){
+
+     List<BeanInfoColloComForTAP> result=new ArrayList(); 
+      
+    if(beans!=null && beans.size()>0){
+                for(Object b:beans){
+                    if(((BeanInfoColloComForTAP)b).getLineaLogica().contains("P1FIMAW2")){
+                      ((BeanInfoColloComForTAP)b).setEtkPresent(Boolean.TRUE);
+                      result.add((BeanInfoColloComForTAP)b);
+                    }
+                }  
+              }
+    return result;
+  }
+  
+
   
   private List getListPzR1P4New(Connection con,String cdL,String comm,Date dataComm,List lineeLogiche,Boolean withEtk,Boolean nComm4P4,String ultimaFaseCond){
     

@@ -30,18 +30,21 @@ import utils.StringUtils;
  */
 public class ElabMailCircolareAgnt extends ElabClass{
 
-  public final static String STR_OBJ_MAIL="Circolare Fatturazione Elettronica San Marino";
+  public final static String STR_OBJ_MAIL="Compilazione codici SDI mancanti";
   public final static String  STR_TEXT_MAIL=
-    " San Marino, 22/09/2021 \n" +
+    " San Marino, 28/09/2021 \n" +
+    " Spettabile Agente\n" +
+    "\n" +
+    " \n" +
+    " Oggetto: Compilazione codici SDI mancanti\n" +
+    " \n" +
+    " Vi chiediamo di compilare il file excel allegato specificando il Codice Univoco per ogni cliente entro e non oltre il 2 Ottobre \n" +
+    " 2021 inviando una mail al seguente indirizzo: \n" + 
+    "mcmorolli@colombinigroup.com \n"+ 
+    "Certi dell’attenzione che riserverete alla presente, vogliate gradire cordiali saluti.\n" +
     " \n" +
     " \n" +
-    " Oggetto: Predisposizioni per Fatturazione Elettronica San Marino\n" +
-    " \n" +
-    " Con la presente Vi preghiamo di prendere nota della comunicazione allegata con cui San Marino, a partire dal 1° Ottobre, aderirà alla fatturazione elettronica.\n" +
-    " Certi di una Vostra presa visione, auguriamo buona giornata e buon lavoro. "+
-    " \n" +
-    " \n" +
-    " Cordiali Saluti. "      
+    " Amministrazione Colombini spa\n"      
     ;
   
   
@@ -50,12 +53,12 @@ public class ElabMailCircolareAgnt extends ElabClass{
     return Boolean.TRUE; //To change body of generated methods, choose Tools | Templates.
   }
 
-  public void execOld(Connection con) {
+  public void exec(Connection con) {
     Connection conSqlS=null;
     List<List> agenti=new ArrayList();
     try {
       conSqlS=ColombiniConnections.getDbNewBI();
-      String select="SELECT distinct Agente,Email_Agenti\n FROM [newBI].[dbo].[Circolare_agenti] ";
+      String select="SELECT distinct Agente,Email_Agenti\n FROM [newBI].[dbo].[Circolare_agenti]";
       String selectCLi="SELECT * FROM [newBI].[dbo].[Circolare_agenti]  \n where Agente=";
       ResultSetHelper.fillListList(conSqlS, select, agenti);
       
@@ -76,7 +79,7 @@ public class ElabMailCircolareAgnt extends ElabClass{
           beanMail.addFileAttach(f);
           beanMail.setAddressFrom("info@colombinigroup.com");
           beanMail.setAddressesTo(Arrays.asList(email));
-          beanMail.setAddressesBbc(Arrays.asList("nmazza@colombinigroup.com","mserofilli@colombinigroup.com"));
+          beanMail.setAddressesBbc(Arrays.asList("mcmorolli@colombinigroup.com","revaristi@colombinigroup.com"));
           ms.send(beanMail);
           _logger.info("Mail inviata a "+email);
         }else{
@@ -102,56 +105,56 @@ public class ElabMailCircolareAgnt extends ElabClass{
     }
   
     
-    @Override
-  public void exec(Connection con) {
-    Connection conSqlS=null;
-    List<List> agenti=new ArrayList();
-    try {
-      conSqlS=ColombiniConnections.getDbNewBI();
-      //String select="SELECT '0000001' ,'MarcoSerofilli' ,'mserofilli@colombinigroup.com'  UNION "
-      //        + " SELECT '0000002' ,'LorenzoVita' ,'lvita@colombinigroup.com'  UNION "
-      //        + " SELECT '0000003' ,'SofiaGjoka' ,'sgjoka@colombinigroup.com'  ";
-      String select="  select 1,1,* FROM [newBI].[dbo].[fornitori_manutenzione]";
-      ResultSetHelper.fillListList(conSqlS, select, agenti);
-      File f= new File("\\\\pegaso\\scambio\\lv\\Circolare_FTE_IND.pdf");
-      
-
-      for(List agente:agenti){
-        String codAgnt=ClassMapper.classToString(agente.get(0));
-        String email=ClassMapper.classToString(agente.get(2));
-        if(!StringUtils.IsEmpty(email)){
-         
-          MailSender ms=new MailSender();
-          MailMessageInfoBean beanMail=new MailMessageInfoBean("MAILCIRCOLAREAGNT");
-          beanMail.setObject(STR_OBJ_MAIL);
-          beanMail.setText(STR_TEXT_MAIL);
-          beanMail.addFileAttach(f);
-          //beanMail.setFileAttachName("\\\\pegaso\\scambio\\lv\\Circolare_FTE_AGE+Leggi.pdf");
-          //beanMail.addFileAttach(f);
-          beanMail.setAddressFrom("info@colombinigroup.com");
-          beanMail.setAddressesTo(Arrays.asList(email));
-          //beanMail.setAddressesBbc(Arrays.asList("nmazza@colombinigroup.com"));
-          ms.send(beanMail);
-          _logger.info("Mail inviata a "+email);
-        }else{
-          addWarning("\n Attenzione Fornitore "+codAgnt+" senza indirizzo mail ");
-        }
-      }
-      
-    } catch(SQLException s){
-      addError("Errore in fase di accesso al db-->"+s.getMessage());
-    
-    } finally {
-      if(conSqlS!=null)
-        try {
-          conSqlS.close();
-      } catch (SQLException ex) {
-        
-      }
-      
-    }
-    
-    }
+//    @Override
+//  public void exec(Connection con) {
+//    Connection conSqlS=null;
+//    List<List> agenti=new ArrayList();
+//    try {
+//      conSqlS=ColombiniConnections.getDbNewBI();
+//      //String select="SELECT '0000001' ,'MarcoSerofilli' ,'mserofilli@colombinigroup.com'  UNION "
+//      //        + " SELECT '0000002' ,'LorenzoVita' ,'lvita@colombinigroup.com'  UNION "
+//      //        + " SELECT '0000003' ,'SofiaGjoka' ,'sgjoka@colombinigroup.com'  ";
+//      String select="  select 1,1,* FROM [newBI].[dbo].[fornitori_manutenzione]";
+//      ResultSetHelper.fillListList(conSqlS, select, agenti);
+//      File f= new File("\\\\pegaso\\scambio\\lv\\Circolare_FTE_IND.pdf");
+//      
+//
+//      for(List agente:agenti){
+//        String codAgnt=ClassMapper.classToString(agente.get(0));
+//        String email=ClassMapper.classToString(agente.get(2));
+//        if(!StringUtils.IsEmpty(email)){
+//         
+//          MailSender ms=new MailSender();
+//          MailMessageInfoBean beanMail=new MailMessageInfoBean("MAILCIRCOLAREAGNT");
+//          beanMail.setObject(STR_OBJ_MAIL);
+//          beanMail.setText(STR_TEXT_MAIL);
+//          beanMail.addFileAttach(f);
+//          //beanMail.setFileAttachName("\\\\pegaso\\scambio\\lv\\Circolare_FTE_AGE+Leggi.pdf");
+//          //beanMail.addFileAttach(f);
+//          beanMail.setAddressFrom("info@colombinigroup.com");
+//          beanMail.setAddressesTo(Arrays.asList(email));
+//          //beanMail.setAddressesBbc(Arrays.asList("nmazza@colombinigroup.com"));
+//          ms.send(beanMail);
+//          _logger.info("Mail inviata a "+email);
+//        }else{
+//          addWarning("\n Attenzione Fornitore "+codAgnt+" senza indirizzo mail ");
+//        }
+//      }
+//      
+//    } catch(SQLException s){
+//      addError("Errore in fase di accesso al db-->"+s.getMessage());
+//    
+//    } finally {
+//      if(conSqlS!=null)
+//        try {
+//          conSqlS.close();
+//      } catch (SQLException ex) {
+//        
+//      }
+//      
+//    }
+//    
+//    }
   
   
   

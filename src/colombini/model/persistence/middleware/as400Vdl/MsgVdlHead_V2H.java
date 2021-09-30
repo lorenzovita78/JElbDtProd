@@ -30,6 +30,7 @@ public class MsgVdlHead_V2H extends AMessageHeadTable {
   public final static String MSG_RepackingContainerData="RepackingContainerData";
   public final static String MSG_UploadShippingData="UploadShippingData";
   public final static String MSG_Error="ERROR";
+  public final static String MSG_UploadColloInfo="UploadColloInfo";
   
   
   @Override
