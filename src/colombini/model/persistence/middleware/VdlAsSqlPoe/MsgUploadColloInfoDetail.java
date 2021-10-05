@@ -42,12 +42,12 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   public final static String FSOURCE__SYSTEMTIME              ="SYSTEMTIME";
   public final static String FSOURCE__IDCOLLO                 ="COLLOID";
   public final static String FSOURCE__COLLODESC               ="COLLODESC";
-  public final static String FSOURCE__STATUS                  ="SATUS";
+  public final static String FSOURCE__STATUS                  ="STATUS";
   public final static String FSOURCE__TIMESTAMP               ="TIMESTAMP";
   public final static String FSOURCE__STORAGETIMESTAMP        ="STORAGETIMESTAMP";
   public final static String FSOURCE__MFSYSTEM                ="MFSYSTEM";
   public final static String FSOURCE__CONTAINERID             ="CONTAINERID";
-  public final static String FSOURCE__BUNDLELD                ="BUNDLELD";
+  public final static String FSOURCE__BUNDLEID                ="BUNDLEID";
   public final static String FSOURCE__BOXID                   ="BOXID";
   public final static String FSOURCE__LAYERID                 ="LAYERID";
   public final static String FSOURCE__PLATEID                 ="PLATEID";
@@ -79,8 +79,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   public final static String FSOURCE__REPACK                  ="REPACK";
   public final static String FSOURCE__SHIPPINGDATESTARTTS     ="SHIPPINGDATESTARTTS";
   public final static String FSOURCE__SHIPPINGTIMESTARTTS     ="SHIPPINGTIMESTARTTS";
-  public final static String FSOURCE__SHIPPINGDATEENDSTS      ="SHIPPINGDATEENDSTS";
-  public final static String FSOURCE__SHIPPINGTIMEENDSTS      ="SHIPPINGTIMEENDSTS";
+  public final static String FSOURCE__SHIPPINGDATEENDTS      ="SHIPPINGDATEENDTS";
+  public final static String FSOURCE__SHIPPINGTIMEENDTS      ="SHIPPINGTIMEENDTS";
   public final static String FSOURCE__SHIPPINGAISLE           ="SHIPPINGAISLE";
   public final static String FSOURCE__DELIVERYZONE            ="DELIVERYZONE";
   
@@ -89,12 +89,12 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   public final static String FDEST__SYSTEMTIME              ="SYSTEMTIME";
   public final static String FDEST__IDCOLLO                 ="COLLOID";
   public final static String FDEST__COLLODESC               ="COLLODESC";
-  public final static String FDEST__STATUS                  ="SATUS";
+  public final static String FDEST__STATUS                  ="STATUS";
   public final static String FDEST__TIMESTAMP               ="TIMESTAMP";
   public final static String FDEST__STORAGETIMESTAMP        ="STORAGETIMESTAMP";
   public final static String FDEST__MFSYSTEM                ="MFSYSTEM";
   public final static String FDEST__CONTAINERID             ="CONTAINERID";
-  public final static String FDEST__BUNDLELD                ="BUNDLELD";
+  public final static String FDEST__BUNDLEID                ="BUNDLEID";
   public final static String FDEST__BOXID                   ="BOXID";
   public final static String FDEST__LAYERID                 ="LAYERID";
   public final static String FDEST__PLATEID                 ="PLATEID";
@@ -126,8 +126,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   public final static String FDEST__REPACK                  ="REPACK";
   public final static String FDEST__SHIPPINGDATESTARTTS     ="SHIPPINGDATESTARTTS";
   public final static String FDEST__SHIPPINGTIMESTARTTS     ="SHIPPINGTIMESTARTTS";
-  public final static String FDEST__SHIPPINGDATEENDSTS      ="SHIPPINGDATEENDSTS";
-  public final static String FDEST__SHIPPINGTIMEENDSTS      ="SHIPPINGTIMEENDSTS";
+  public final static String FDEST__SHIPPINGDATEENDTS      ="SHIPPINGDATEENDTS";
+  public final static String FDEST__SHIPPINGTIMEENDTS      ="SHIPPINGTIMEENDTS";
   public final static String FDEST__SHIPPINGAISLE           ="SHIPPINGAISLE";
   public final static String FDEST__DELIVERYZONE            ="DELIVERYZONE";
     
@@ -137,11 +137,11 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   private Long IDCOLLO;
   private String COLLODESC;              
   private Long STATUS;                 
-  private Date TIMESTAMP;              
+  private String TIMESTAMP;              
   private Date STORAGETIMESTAMP;       
   private String MFSYSTEM;               
   private String CONTAINERID;            
-  private String BUNDLELD;               
+  private String BUNDLEID;               
   private Long BOXID;                  
   private Long LAYERID;                
   private Long PLATEID;                
@@ -165,7 +165,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   private String CUSTOMERNO;             
   private String CUSTOMERNAME;           
   private String CUSTOMERORDERNO;        
-  private Long SEQUENCENO;             
+  private String SEQUENCENO;             
   private Long BATCHID;                
   private Long TRUCKLOADNUMBER;        
   private Date TRUCKLOADDATE;          
@@ -173,8 +173,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   private String REPACK;                 
   private String SHIPPINGDATESTARTTS;    
   private String SHIPPINGTIMESTARTTS;    
-  private String SHIPPINGDATEENDSTS;     
-  private String SHIPPINGTIMEENDSTS;     
+  private String SHIPPINGDATEENDTS;     
+  private String SHIPPINGTIMEENDTS;     
   private Long SHIPPINGAISLE;          
   private String DELIVERYZONE; 
   
@@ -196,7 +196,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         return STATUS;
     }
 
-    public Date getTIMESTAMP() {
+    public String getTIMESTAMP() {
         return TIMESTAMP;
     }
 
@@ -212,8 +212,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         return CONTAINERID;
     }
 
-    public String getBUNDLELD() {
-        return BUNDLELD;
+    public String getBUNDLEID() {
+        return BUNDLEID;
     }
 
     public Long getBOXID() {
@@ -308,7 +308,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         return CUSTOMERORDERNO;
     }
 
-    public Long getSEQUENCENO() {
+    public String getSEQUENCENO() {
         return SEQUENCENO;
     }
 
@@ -340,12 +340,12 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         return SHIPPINGTIMESTARTTS;
     }
 
-    public String getSHIPPINGDATEENDSTS() {
-        return SHIPPINGDATEENDSTS;
+    public String getSHIPPINGDATEENDTS() {
+        return SHIPPINGDATEENDTS;
     }
 
-    public String getSHIPPINGTIMEENDSTS() {
-        return SHIPPINGTIMEENDSTS;
+    public String getSHIPPINGTIMEENDTS() {
+        return SHIPPINGTIMEENDTS;
     }
 
     public Long getSHIPPINGAISLE() {
@@ -372,7 +372,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         this.STATUS = STATUS;
     }
 
-    public void setTIMESTAMP(Date TIMESTAMP) {
+    public void setTIMESTAMP(String TIMESTAMP) {
         this.TIMESTAMP = TIMESTAMP;
     }
 
@@ -388,8 +388,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         this.CONTAINERID = CONTAINERID;
     }
 
-    public void setBUNDLELD(String BUNDLELD) {
-        this.BUNDLELD = BUNDLELD;
+    public void setBUNDLEID(String BUNDLEID) {
+        this.BUNDLEID = BUNDLEID;
     }
 
     public void setBOXID(Long BOXID) {
@@ -484,7 +484,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         this.CUSTOMERORDERNO = CUSTOMERORDERNO;
     }
 
-    public void setSEQUENCENO(Long SEQUENCENO) {
+    public void setSEQUENCENO(String SEQUENCENO) {
         this.SEQUENCENO = SEQUENCENO;
     }
 
@@ -516,12 +516,12 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
         this.SHIPPINGTIMESTARTTS = SHIPPINGTIMESTARTTS;
     }
 
-    public void setSHIPPINGDATEENDSTS(String SHIPPINGDATEENDSTS) {
-        this.SHIPPINGDATEENDSTS = SHIPPINGDATEENDSTS;
+    public void setSHIPPINGDATEENDTS(String SHIPPINGDATEENDTS) {
+        this.SHIPPINGDATEENDTS = SHIPPINGDATEENDTS;
     }
 
-    public void setSHIPPINGTIMEENDSTS(String SHIPPINGTIMEENDSTS) {
-        this.SHIPPINGTIMEENDSTS = SHIPPINGTIMEENDSTS;
+    public void setSHIPPINGTIMEENDTS(String SHIPPINGTIMEENDTS) {
+        this.SHIPPINGTIMEENDTS = SHIPPINGTIMEENDTS;
     }
 
     public void setSHIPPINGAISLE(Long SHIPPINGAISLE) {
@@ -574,11 +574,11 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
       this.setIDCOLLO(ClassMapper.classToClass(obj[2],Long.class));
       this.setCOLLODESC(ClassMapper.classToClass(obj[3],String.class));
       this.setSTATUS(ClassMapper.classToClass(obj[4],Long.class));
-      this.setTIMESTAMP(ClassMapper.classToClass(obj[5],Date.class));
+      this.setTIMESTAMP(ClassMapper.classToClass(obj[5],String.class));
       this.setSTORAGETIMESTAMP(ClassMapper.classToClass(obj[6],Date.class));
       this.setMFSYSTEM(ClassMapper.classToClass(obj[7],String.class));
       this.setCONTAINERID(ClassMapper.classToClass(obj[8],String.class));      
-      this.setBUNDLELD(ClassMapper.classToClass(obj[9],String.class));
+      this.setBUNDLEID(ClassMapper.classToClass(obj[9],String.class));
       this.setBOXID(ClassMapper.classToClass(obj[10],Long.class));
       this.setLAYERID(ClassMapper.classToClass(obj[11],Long.class));
       this.setPLATEID(ClassMapper.classToClass(obj[12],Long.class));
@@ -602,7 +602,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
       this.setCUSTOMERNO(ClassMapper.classToClass(obj[28],String.class));
       this.setCUSTOMERNAME(ClassMapper.classToClass(obj[29],String.class));
       this.setCUSTOMERORDERNO(ClassMapper.classToClass(obj[30],String.class));
-      this.setSEQUENCENO(ClassMapper.classToClass(obj[31],Long.class));
+      this.setSEQUENCENO(ClassMapper.classToClass(obj[31],String.class));
       this.setBATCHID(ClassMapper.classToClass(obj[32],Long.class));
       this.setTRUCKLOADNUMBER(ClassMapper.classToClass(obj[33],Long.class));
       this.setTRUCKLOADDATE(ClassMapper.classToClass(obj[34],Date.class));
@@ -610,8 +610,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
       this.setREPACK(ClassMapper.classToClass(obj[36],String.class));
       this.setSHIPPINGDATESTARTTS(ClassMapper.classToClass(obj[37],String.class));
       this.setSHIPPINGTIMESTARTTS(ClassMapper.classToClass(obj[38],String.class));
-      this.setSHIPPINGDATEENDSTS(ClassMapper.classToClass(obj[39],String.class));
-      this.setSHIPPINGTIMEENDSTS(ClassMapper.classToClass(obj[40],String.class));
+      this.setSHIPPINGDATEENDTS(ClassMapper.classToClass(obj[39],String.class));
+      this.setSHIPPINGTIMEENDTS(ClassMapper.classToClass(obj[40],String.class));
       this.setSHIPPINGAISLE(ClassMapper.classToClass(obj[41],Long.class));
       this.setDELIVERYZONE(ClassMapper.classToClass(obj[42],String.class));
     }
@@ -665,7 +665,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     m.put(FSOURCE__STORAGETIMESTAMP, this.STORAGETIMESTAMP);
     m.put(FSOURCE__MFSYSTEM, this.MFSYSTEM);
     m.put(FSOURCE__CONTAINERID, this.CONTAINERID);  
-    m.put(FSOURCE__BUNDLELD, this.BUNDLELD);
+    m.put(FSOURCE__BUNDLEID, this.BUNDLEID);
     m.put(FSOURCE__BOXID, this.BOXID);
     m.put(FSOURCE__LAYERID, this.LAYERID);
     m.put(FSOURCE__PLATEID, this.PLATEID);
@@ -697,8 +697,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     m.put(FSOURCE__REPACK, this.REPACK);
     m.put(FSOURCE__SHIPPINGDATESTARTTS, this.SHIPPINGDATESTARTTS);
     m.put(FSOURCE__SHIPPINGTIMESTARTTS, this.SHIPPINGTIMESTARTTS);
-    m.put(FSOURCE__SHIPPINGDATEENDSTS, this.SHIPPINGDATEENDSTS);
-    m.put(FSOURCE__SHIPPINGTIMEENDSTS, this.SHIPPINGTIMEENDSTS);
+    m.put(FSOURCE__SHIPPINGDATEENDTS, this.SHIPPINGDATEENDTS);
+    m.put(FSOURCE__SHIPPINGTIMEENDTS, this.SHIPPINGTIMEENDTS);
     m.put(FSOURCE__SHIPPINGAISLE, this.SHIPPINGAISLE);
     m.put(FSOURCE__DELIVERYZONE, this.DELIVERYZONE);
 
@@ -719,7 +719,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     m.put(FDEST__STORAGETIMESTAMP, this.STORAGETIMESTAMP);
     m.put(FDEST__MFSYSTEM, this.MFSYSTEM);
     m.put(FDEST__CONTAINERID, this.CONTAINERID);  
-    m.put(FDEST__BUNDLELD, this.BUNDLELD);
+    m.put(FDEST__BUNDLEID, this.BUNDLEID);
     m.put(FDEST__BOXID, this.BOXID);
     m.put(FDEST__LAYERID, this.LAYERID);
     m.put(FDEST__PLATEID, this.PLATEID);
@@ -751,8 +751,8 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     m.put(FDEST__REPACK, this.REPACK);
     m.put(FDEST__SHIPPINGDATESTARTTS, this.SHIPPINGDATESTARTTS);
     m.put(FDEST__SHIPPINGTIMESTARTTS, this.SHIPPINGTIMESTARTTS);
-    m.put(FDEST__SHIPPINGDATEENDSTS, this.SHIPPINGDATEENDSTS);
-    m.put(FDEST__SHIPPINGTIMEENDSTS, this.SHIPPINGTIMEENDSTS);
+    m.put(FDEST__SHIPPINGDATEENDTS, this.SHIPPINGDATEENDTS);
+    m.put(FDEST__SHIPPINGTIMEENDTS, this.SHIPPINGTIMEENDTS);
     m.put(FDEST__SHIPPINGAISLE, this.SHIPPINGAISLE);
     m.put(FDEST__DELIVERYZONE, this.DELIVERYZONE);
 
@@ -762,12 +762,12 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
 
   @Override
   public List<String> getFieldsDestination() {
-    return Arrays.asList(FDEST__MESSAGEID,FDEST__SYSTEMTIME,FDEST__IDCOLLO,FDEST__COLLODESC,FDEST__STATUS,FDEST__TIMESTAMP,FDEST__STORAGETIMESTAMP,FDEST__MFSYSTEM,FDEST__CONTAINERID,FDEST__BUNDLELD,FDEST__BOXID,FDEST__LAYERID,FDEST__PLATEID,FDEST__WEIGHT,FDEST__HEIGHT,FDEST__BOXCREATOR,FDEST__COMMISSIONID,FDEST__INTERNALSEQ,FDEST__PRODUCTIONLINE,FDEST__WAREHOUSE,FDEST__AREA,FDEST__AISLE,FDEST__SIDE,FDEST__X,FDEST__Y,FDEST__Z,FDEST__RETURNCODE,FDEST__RETURNINFO,FDEST__DELIVERYID,FDEST__CLIENTID,FDEST__CUSTOMERNO,FDEST__CUSTOMERNAME,FDEST__CUSTOMERORDERNO,FDEST__SEQUENCENO,FDEST__BATCHID,FDEST__TRUCKLOADNUMBER,FDEST__TRUCKLOADDATE,FDEST__TRUCKERNAME,FDEST__REPACK,FDEST__SHIPPINGDATESTARTTS,FDEST__SHIPPINGTIMESTARTTS,FDEST__SHIPPINGDATEENDSTS,FDEST__SHIPPINGTIMEENDSTS,FDEST__SHIPPINGAISLE,FDEST__DELIVERYZONE);
+    return Arrays.asList(FDEST__MESSAGEID,FDEST__SYSTEMTIME,FDEST__IDCOLLO,FDEST__COLLODESC,FDEST__STATUS,FDEST__TIMESTAMP,FDEST__STORAGETIMESTAMP,FDEST__MFSYSTEM,FDEST__CONTAINERID,FDEST__BUNDLEID,FDEST__BOXID,FDEST__LAYERID,FDEST__PLATEID,FDEST__WEIGHT,FDEST__HEIGHT,FDEST__BOXCREATOR,FDEST__COMMISSIONID,FDEST__INTERNALSEQ,FDEST__PRODUCTIONLINE,FDEST__WAREHOUSE,FDEST__AREA,FDEST__AISLE,FDEST__SIDE,FDEST__X,FDEST__Y,FDEST__Z,FDEST__RETURNCODE,FDEST__RETURNINFO,FDEST__DELIVERYID,FDEST__CLIENTID,FDEST__CUSTOMERNO,FDEST__CUSTOMERNAME,FDEST__CUSTOMERORDERNO,FDEST__SEQUENCENO,FDEST__BATCHID,FDEST__TRUCKLOADNUMBER,FDEST__TRUCKLOADDATE,FDEST__TRUCKERNAME,FDEST__REPACK,FDEST__SHIPPINGDATESTARTTS,FDEST__SHIPPINGTIMESTARTTS,FDEST__SHIPPINGDATEENDTS,FDEST__SHIPPINGTIMEENDTS,FDEST__SHIPPINGAISLE,FDEST__DELIVERYZONE);
   }
 
   @Override
   public List<String> getFieldsSource() {
-    return Arrays.asList(FSOURCE__MESSAGEID,FSOURCE__SYSTEMTIME,FSOURCE__IDCOLLO,FSOURCE__COLLODESC,FSOURCE__STATUS,FSOURCE__TIMESTAMP,FSOURCE__STORAGETIMESTAMP,FSOURCE__MFSYSTEM,FSOURCE__CONTAINERID,FSOURCE__BUNDLELD,FSOURCE__BOXID,FSOURCE__LAYERID,FSOURCE__PLATEID,FSOURCE__WEIGHT,FSOURCE__HEIGHT,FSOURCE__BOXCREATOR,FSOURCE__COMMISSIONID,FSOURCE__INTERNALSEQ,FSOURCE__PRODUCTIONLINE,FSOURCE__WAREHOUSE,FSOURCE__AREA,FSOURCE__AISLE,FSOURCE__SIDE,FSOURCE__X,FSOURCE__Y,FSOURCE__Z,FSOURCE__RETURNCODE,FSOURCE__RETURNINFO,FSOURCE__DELIVERYID,FSOURCE__CLIENTID,FSOURCE__CUSTOMERNO,FSOURCE__CUSTOMERNAME,FSOURCE__CUSTOMERORDERNO,FSOURCE__SEQUENCENO,FSOURCE__BATCHID,FSOURCE__TRUCKLOADNUMBER,FSOURCE__TRUCKLOADDATE,FSOURCE__TRUCKERNAME,FSOURCE__REPACK,FSOURCE__SHIPPINGDATESTARTTS,FSOURCE__SHIPPINGTIMESTARTTS,FSOURCE__SHIPPINGDATEENDSTS,FSOURCE__SHIPPINGTIMEENDSTS,FSOURCE__SHIPPINGAISLE,FSOURCE__DELIVERYZONE);
+    return Arrays.asList(FSOURCE__MESSAGEID,FSOURCE__SYSTEMTIME,FSOURCE__IDCOLLO,FSOURCE__COLLODESC,FSOURCE__STATUS,FSOURCE__TIMESTAMP,FSOURCE__STORAGETIMESTAMP,FSOURCE__MFSYSTEM,FSOURCE__CONTAINERID,FSOURCE__BUNDLEID,FSOURCE__BOXID,FSOURCE__LAYERID,FSOURCE__PLATEID,FSOURCE__WEIGHT,FSOURCE__HEIGHT,FSOURCE__BOXCREATOR,FSOURCE__COMMISSIONID,FSOURCE__INTERNALSEQ,FSOURCE__PRODUCTIONLINE,FSOURCE__WAREHOUSE,FSOURCE__AREA,FSOURCE__AISLE,FSOURCE__SIDE,FSOURCE__X,FSOURCE__Y,FSOURCE__Z,FSOURCE__RETURNCODE,FSOURCE__RETURNINFO,FSOURCE__DELIVERYID,FSOURCE__CLIENTID,FSOURCE__CUSTOMERNO,FSOURCE__CUSTOMERNAME,FSOURCE__CUSTOMERORDERNO,FSOURCE__SEQUENCENO,FSOURCE__BATCHID,FSOURCE__TRUCKLOADNUMBER,FSOURCE__TRUCKLOADDATE,FSOURCE__TRUCKERNAME,FSOURCE__REPACK,FSOURCE__SHIPPINGDATESTARTTS,FSOURCE__SHIPPINGTIMESTARTTS,FSOURCE__SHIPPINGDATEENDTS,FSOURCE__SHIPPINGTIMEENDTS,FSOURCE__SHIPPINGAISLE,FSOURCE__DELIVERYZONE);
   }
 
   @Override

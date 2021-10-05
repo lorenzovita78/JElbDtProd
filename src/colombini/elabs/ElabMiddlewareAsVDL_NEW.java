@@ -61,13 +61,16 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
       conSql=ColombiniConnections.getDbAvanzamentoVdlConnection();
       //test(conVdl);
       _logger.info("##########--------- Da AS400 a VDL ---------##########");
-      asToVdl(con, conVdl);
+      //GG debug
+      //asToVdl(con, conVdl);
       
       _logger.info("##########--------- Da VDL ad AS400 ---------##########");
-      vdlToAs(con, conVdl);
+      //GG debug
+      //vdlToAs(con, conVdl);
     
       _logger.info("##########--------- Da Incas a VDL ---------##########");
-      incasToVdl(con,conVdl);
+      //GG debug
+      //incasToVdl(con,conVdl);
       
       _logger.info("##########--------- Da VDL a SQL POE ---------##########");
       vdlToSql(conSql,conVdl);
@@ -185,14 +188,14 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
   private void elabMsgUploadColloInfo(Connection conSql , Connection conVdl){
    
     MsgUploadColloInfoDetail bean=new MsgUploadColloInfoDetail();
-    elabMsgFromVdlToPoe(conSql, conVdl, bean, MsgVdlHead_V2H.MSG_UploadColloInfo);
+    elabMsgFromVdlToSql(conSql, conVdl, bean, MsgVdlHead_V2H.MSG_UploadColloInfo);
     
   }
     
    private void elabMsgColloInfo(Connection conSql , Connection conVdl){
    
     MsgColloInfoHead bean=new MsgColloInfoHead();
-    elabMsgFromVdlToPoe(conSql, conVdl, bean, MsgVdlHead_V2H.MSG_UploadColloInfo);
+    elabMsgFromVdlToSql(conSql, conVdl, bean, MsgVdlHead_V2H.MSG_UploadColloInfo);
     
   }
   
@@ -269,7 +272,7 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
   }
   
   //GG Nuovo per infocollo
-    private void elabMsgFromVdlToPoe(Connection SqlPoe , Connection conVdl,ABeanPersCRUD4Middleware bean ,String typeMsg){
+    private void elabMsgFromVdlToSql(Connection SqlPoe , Connection conVdl,ABeanPersCRUD4Middleware bean ,String typeMsg){
     Statement stm=null;
     Integer totR=Integer.valueOf(0);
     Integer proc=Integer.valueOf(0);
@@ -297,7 +300,7 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
             bean.loadInfoBeanFromSource(conVdl);
             bean.setTypeObj(ABeanPersCRUD4Middleware.TYPE_DESTINATION);
           }
-          _logger.info("Save Head >>"+elHead.toString());
+         // _logger.info("Save Head >>"+elHead.toString());
           pmSqlPoe.saveListDt(new TabMsgHAs400_FromVdl(), Arrays.asList(elHead));
           
           
@@ -361,50 +364,12 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
     List listEHead=new ArrayList();
     
     listEHead.add(idMsg);
-    listEHead.add(rs.getDate(1));
-    listEHead.add(rs.getLong(2));
+    listEHead.add(rs.getString(2));
     listEHead.add(rs.getString(3));
-    listEHead.add(rs.getLong(4));
-    listEHead.add(rs.getDate(5));
-    listEHead.add(rs.getDate(6));
-    listEHead.add(rs.getString(7));
-    listEHead.add(rs.getString(8));
-    listEHead.add(rs.getString(9));
-    listEHead.add(rs.getLong(10));
-    listEHead.add(rs.getLong(11));
-    listEHead.add(rs.getLong(12));
-    listEHead.add(rs.getLong(13));
-    listEHead.add(rs.getLong(14));
-    listEHead.add(rs.getString(15));
-    listEHead.add(rs.getLong(16));
-    listEHead.add(rs.getLong(17));
-    listEHead.add(rs.getString(18));
-    listEHead.add(rs.getLong(19));
-    listEHead.add(rs.getLong(20));
-    listEHead.add(rs.getLong(21));
-    listEHead.add(rs.getLong(22));
-    listEHead.add(rs.getLong(23));
-    listEHead.add(rs.getLong(24));
-    listEHead.add(rs.getLong(25));
-    listEHead.add(rs.getLong(26));
-    listEHead.add(rs.getString(27));
-    listEHead.add(rs.getLong(28));
-    listEHead.add(rs.getString(29));
-    listEHead.add(rs.getString(30));
-    listEHead.add(rs.getString(31));
-    listEHead.add(rs.getString(32));
-    listEHead.add(rs.getLong(33));
-    listEHead.add(rs.getLong(34));
-    listEHead.add(rs.getLong(35));
-    listEHead.add(rs.getDate(36));
-    listEHead.add(rs.getString(37));
-    listEHead.add(rs.getString(38));
-    listEHead.add(rs.getString(39));
-    listEHead.add(rs.getString(40));
-    listEHead.add(rs.getString(41));
-    listEHead.add(rs.getString(42));
-    listEHead.add(rs.getLong(43));
-    listEHead.add(rs.getString(44));
+    listEHead.add(rs.getTimestamp(4));
+    listEHead.add(null); //datafine
+    listEHead.add(null);
+    listEHead.add(null);
 
     return listEHead;
   }
