@@ -23,7 +23,7 @@ import utils.ListUtils;
  *
  * @author ggraziani
  */
-public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
+public class MsgColloInfoHead extends  ABeanPersCRUD4Middleware{
   
   
   private static final String LIBRARY_SOURCE_VDL = "COLOMBINI";
@@ -31,57 +31,53 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   
   
   private static final String LIBRARY_DESTINATION_SQLPOE = "AvanzamentoVDL";
-  private static final String TABLE_DESTINATION_SQLPOE = "V2H_ColloInfo_Detail";
+  private static final String TABLE_DESTINATION_SQLPOE = "V2H_ColloInfo_Header";
   
   
-  public final static String FSOURCE__MESSAGEID               ="MESSAGEID";
   public final static String FSOURCE__IDCOLLO                 ="COLLOID";
-  public final static String FSOURCE__STATUS                  ="SATUS";
-  public final static String FSOURCE__TIMESTAMP               ="TIMESTAMP";
-  public final static String FSOURCE__STORAGETIMESTAMP        ="STORAGETIMESTAMP";
-  public final static String FSOURCE__MFSYSTEM                ="MFSYSTEM";
-  public final static String FSOURCE__CONTAINERID             ="CONTAINERID";
-  public final static String FSOURCE__BOXCREATOR              ="BOXCREATOR";
-  public final static String FSOURCE__AREA                    ="AREA";
-  public final static String FSOURCE__AISLE                   ="AISLE";  
-  public final static String FSOURCE__SIDE                    ="SIDE";
-  public final static String FSOURCE__X                       ="X";
-  public final static String FSOURCE__Y                       ="Y";
-  public final static String FSOURCE__Z                       ="Z";
-  public final static String FSOURCE__RETURNCODE              ="RETURNCODE";
-  public final static String FSOURCE__SEQUENCENO              ="SEQUENCENO";
-  public final static String FSOURCE__BATCHID                 ="BATCHID";
-  public final static String FSOURCE__REPACK                  ="REPACK";
-  public final static String FSOURCE__SHIPPINGDATESTARTTS     ="SHIPPINGDATESTARTTS";
-  public final static String FSOURCE__SHIPPINGTIMESTARTTS     ="SHIPPINGTIMESTARTTS";
-  public final static String FSOURCE__SHIPPINGDATEENDSTS      ="SHIPPINGDATEENDSTS";
-  public final static String FSOURCE__SHIPPINGTIMEENDSTS      ="SHIPPINGTIMEENDSTS";
-  public final static String FSOURCE__SHIPPINGAISLE           ="SHIPPINGAISLE";
+  public final static String FSOURCE__COLLODESC               ="COLLODESC";
+  public final static String FSOURCE__BUNDLELD                ="BUNDLELD";
+  public final static String FSOURCE__BOXID                   ="BOXID";
+  public final static String FSOURCE__LAYERID                 ="LAYERID";
+  public final static String FSOURCE__PLATEID                 ="PLATEID";
+  public final static String FSOURCE__WEIGHT                  ="WEIGHT";
+  public final static String FSOURCE__HEIGHT                  ="HEIGHT";
+  public final static String FSOURCE__COMMISSIONID            ="COMMISSIONID";  
+  public final static String FSOURCE__INTERNALSEQ             ="INTERNALSEQ";
+  public final static String FSOURCE__PRODUCTIONLINE          ="PRODUCTIONLINE";
+  public final static String FSOURCE__WAREHOUSE               ="WAREHOUSE";
+  public final static String FSOURCE__DELIVERYID              ="DELIVERYID";
+  public final static String FSOURCE__CLIENTID                ="CLIENTID";
+  public final static String FSOURCE__CUSTOMERNO              ="CUSTOMERNO";
+  public final static String FSOURCE__CUSTOMERNAME            ="CUSTOMERNAME";
+  public final static String FSOURCE__CUSTOMERORDERNO         ="CUSTOMERORDERNO";
+  public final static String FSOURCE__TRUCKLOADNUMBER         ="TRUCKLOADNUMBER";
+  public final static String FSOURCE__TRUCKLOADDATE           ="TRUCKLOADDATE";
+  public final static String FSOURCE__TRUCKERNAME             ="TRUCKERNAME";
+  public final static String FSOURCE__DELIVERYZONE            ="DELIVERYZONE";
   
   
-  public final static String FDEST__MESSAGEID               ="MESSAGEID";
   public final static String FDEST__IDCOLLO                 ="COLLOID";
-  public final static String FDEST__STATUS                  ="SATUS";
-  public final static String FDEST__TIMESTAMP               ="TIMESTAMP";
-  public final static String FDEST__STORAGETIMESTAMP        ="STORAGETIMESTAMP";
-  public final static String FDEST__MFSYSTEM                ="MFSYSTEM";
-  public final static String FDEST__CONTAINERID             ="CONTAINERID";
-  public final static String FDEST__BOXCREATOR              ="BOXCREATOR";
-  public final static String FDEST__AREA                    ="AREA";
-  public final static String FDEST__AISLE                   ="AISLE";  
-  public final static String FDEST__SIDE                    ="SIDE";
-  public final static String FDEST__X                       ="X";
-  public final static String FDEST__Y                       ="Y";
-  public final static String FDEST__Z                       ="Z";
-  public final static String FDEST__RETURNCODE              ="RETURNCODE";
-  public final static String FDEST__SEQUENCENO              ="SEQUENCENO";
-  public final static String FDEST__BATCHID                 ="BATCHID";
-  public final static String FDEST__REPACK                  ="REPACK";
-  public final static String FDEST__SHIPPINGDATESTARTTS     ="SHIPPINGDATESTARTTS";
-  public final static String FDEST__SHIPPINGTIMESTARTTS     ="SHIPPINGTIMESTARTTS";
-  public final static String FDEST__SHIPPINGDATEENDSTS      ="SHIPPINGDATEENDSTS";
-  public final static String FDEST__SHIPPINGTIMEENDSTS      ="SHIPPINGTIMEENDSTS";
-  public final static String FDEST__SHIPPINGAISLE           ="SHIPPINGAISLE";
+  public final static String FDEST__COLLODESC               ="COLLODESC";
+  public final static String FDEST__BUNDLELD                ="BUNDLELD";
+  public final static String FDEST__BOXID                   ="BOXID";
+  public final static String FDEST__LAYERID                 ="LAYERID";
+  public final static String FDEST__PLATEID                 ="PLATEID";
+  public final static String FDEST__WEIGHT                  ="WEIGHT";
+  public final static String FDEST__HEIGHT                  ="HEIGHT";
+  public final static String FDEST__COMMISSIONID            ="COMMISSIONID";  
+  public final static String FDEST__INTERNALSEQ             ="INTERNALSEQ";
+  public final static String FDEST__PRODUCTIONLINE          ="PRODUCTIONLINE";
+  public final static String FDEST__WAREHOUSE               ="WAREHOUSE";
+  public final static String FDEST__DELIVERYID              ="DELIVERYID";
+  public final static String FDEST__CLIENTID                ="CLIENTID";
+  public final static String FDEST__CUSTOMERNO              ="CUSTOMERNO";
+  public final static String FDEST__CUSTOMERNAME            ="CUSTOMERNAME";
+  public final static String FDEST__CUSTOMERORDERNO         ="CUSTOMERORDERNO";
+  public final static String FDEST__TRUCKLOADNUMBER         ="TRUCKLOADNUMBER";
+  public final static String FDEST__TRUCKLOADDATE           ="TRUCKLOADDATE";
+  public final static String FDEST__TRUCKERNAME             ="TRUCKERNAME";
+  public final static String FDEST__DELIVERYZONE            ="DELIVERYZONE";
   
   
   
@@ -93,11 +89,11 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
   private Date dataInserimento;
   
   
-  public MsgUploadColloInfoDetail (){
+  public MsgColloInfoHead (){
     super();
   }
   
-  public MsgUploadColloInfoDetail (Long idMs){
+  public MsgColloInfoHead (Long idMs){
     super();
     setIdMsg(idMs);
   }
@@ -224,7 +220,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     Map m=new HashMap();
     m.put(FSOURCE__MESSAGEID,this.getIdMsg());
     m.put(FSOURCE__IDCOLLO,this.idCollo);
-    m.put(FSOURCE__RETURNCODE,this.returnCode);
+  //  m.put(FSOURCE__RETURNCODE,this.returnCode);
 
     
     return m;
@@ -235,7 +231,7 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     Map m=new HashMap();
     m.put(FDEST__MESSAGEID,this.getIdMsg());
     m.put(FDEST__IDCOLLO,this.idCollo);
-    m.put(FDEST__RETURNCODE,this.returnCode);
+   // m.put(FDEST__RETURNCODE,this.returnCode);
 
     
     return m;
@@ -243,12 +239,12 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
 
   @Override
   public List<String> getFieldsDestination() {
-    return Arrays.asList(FDEST__MESSAGEID,FDEST__IDCOLLO,FDEST__STATUS,FDEST__TIMESTAMP,FDEST__STORAGETIMESTAMP,FDEST__MFSYSTEM,FDEST__CONTAINERID,FDEST__BOXCREATOR,FDEST__AREA,FDEST__AISLE,FDEST__SIDE,FDEST__X,FDEST__Y,FDEST__Z,FDEST__RETURNCODE,FDEST__SEQUENCENO,FDEST__BATCHID,FDEST__REPACK,FDEST__SHIPPINGDATESTARTTS,FDEST__SHIPPINGTIMESTARTTS,FDEST__SHIPPINGDATEENDSTS,FDEST__SHIPPINGTIMEENDSTS,FDEST__SHIPPINGAISLE);
+    return Arrays.asList(FDEST__IDCOLLO,FDEST__COLLODESC,FDEST__BUNDLELD,FDEST__BOXID,FDEST__LAYERID,FDEST__PLATEID,FDEST__WEIGHT,FDEST__HEIGHT,FDEST__COMMISSIONID,FDEST__INTERNALSEQ,FDEST__PRODUCTIONLINE,FDEST__WAREHOUSE,FDEST__DELIVERYID,FDEST__CLIENTID,FDEST__CUSTOMERNO,FDEST__CUSTOMERNAME,FDEST__CUSTOMERORDERNO,FDEST__TRUCKLOADNUMBER,FDEST__TRUCKLOADDATE,FDEST__TRUCKERNAME,FDEST__DELIVERYZONE);
   }
 
   @Override
   public List<String> getFieldsSource() {
-return Arrays.asList(FSOURCE__MESSAGEID,FSOURCE__IDCOLLO,FSOURCE__STATUS,FSOURCE__TIMESTAMP,FSOURCE__STORAGETIMESTAMP,FSOURCE__MFSYSTEM,FSOURCE__CONTAINERID,FSOURCE__BOXCREATOR,FSOURCE__AREA,FSOURCE__AISLE,FSOURCE__SIDE,FSOURCE__X,FSOURCE__Y,FSOURCE__Z,FSOURCE__RETURNCODE,FSOURCE__SEQUENCENO,FSOURCE__BATCHID,FSOURCE__REPACK,FSOURCE__SHIPPINGDATESTARTTS,FSOURCE__SHIPPINGTIMESTARTTS,FSOURCE__SHIPPINGDATEENDSTS,FSOURCE__SHIPPINGTIMEENDSTS,FSOURCE__SHIPPINGAISLE);
+    return Arrays.asList(FSOURCE__IDCOLLO,FSOURCE__COLLODESC,FSOURCE__BUNDLELD,FSOURCE__BOXID,FSOURCE__LAYERID,FSOURCE__PLATEID,FSOURCE__WEIGHT,FSOURCE__HEIGHT,FSOURCE__COMMISSIONID,FSOURCE__INTERNALSEQ,FSOURCE__PRODUCTIONLINE,FSOURCE__WAREHOUSE,FSOURCE__DELIVERYID,FSOURCE__CLIENTID,FSOURCE__CUSTOMERNO,FSOURCE__CUSTOMERNAME,FSOURCE__CUSTOMERORDERNO,FSOURCE__TRUCKLOADNUMBER,FSOURCE__TRUCKLOADDATE,FSOURCE__TRUCKERNAME,FSOURCE__DELIVERYZONE);
   }
 
   @Override
@@ -268,7 +264,7 @@ return Arrays.asList(FSOURCE__MESSAGEID,FSOURCE__IDCOLLO,FSOURCE__STATUS,FSOURCE
 
   @Override
   public String getTableNameDestination() {
-    return LIBRARY_DESTINATION_SQLPOE;
+    return TABLE_DESTINATION_SQLPOE;
   }
 
   @Override

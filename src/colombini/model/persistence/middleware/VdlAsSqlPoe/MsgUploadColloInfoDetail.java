@@ -268,7 +268,7 @@ return Arrays.asList(FSOURCE__MESSAGEID,FSOURCE__IDCOLLO,FSOURCE__STATUS,FSOURCE
 
   @Override
   public String getTableNameDestination() {
-    return LIBRARY_DESTINATION_SQLPOE;
+    return TABLE_DESTINATION_SQLPOE;
   }
 
   @Override

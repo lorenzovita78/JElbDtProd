@@ -140,5 +140,9 @@ public class ColomConnectionsCostant {
   public final static String PATHLOCALE_PANNELLIGAL="PATHLOCALE_PANNELLIGAL";
   public final static String ODBC_PANNELLIGAL="ODBC_PANNELLIGAL";
  
-  
+  //avanzamentoVDL
+  public final static String SRVAVANVDL="SRVAVANVDL";
+  public final static String DBAVANVDL="DBAVANVDL";
+  public final static String USRAVANDVL="USRAVANDVL";
+  public final static String PWDAVANVDL="PWDAVANVDL";
 }
