@@ -157,7 +157,7 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
      //Inserire condizione 
     elabMsgUploadColloInfo(conSql,conVdl); //Detaglio (lo inserisco sempre)
     
-    elabMsgColloInfo(conSql,conVdl); //Testata (lo inserisco solo se il collo è nuovo)
+   // elabMsgColloInfo(conSql,conVdl); //Testata (lo inserisco solo se il collo è nuovo)
     
   }
     
@@ -289,7 +289,7 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
           idMsg=rs.getLong(vdlMsgH.getClmMessageId());
           _logger.info("Processing Msg Id-->"+idMsg);
           
-          List elHead=getListInfoForHMsgSqlPoe(idMsg, rs);
+          List elHead=getListInfoForHMsgSql(idMsg, rs);
           
           //carico le info di dettaglio se mi è stato fornito un bean valido
           if(bean!=null){
@@ -357,17 +357,55 @@ public class ElabMiddlewareAsVDL_NEW extends ElabClass{
   }
   
   
-   private List getListInfoForHMsgSqlPoe(Long idMsg,ResultSet rs ) throws SQLException{
+   private List getListInfoForHMsgSql(Long idMsg,ResultSet rs ) throws SQLException{
     List listEHead=new ArrayList();
     
     listEHead.add(idMsg);
-    listEHead.add(rs.getString(2));
+    listEHead.add(rs.getDate(1));
+    listEHead.add(rs.getLong(2));
     listEHead.add(rs.getString(3));
-    listEHead.add(rs.getTimestamp(4));
-    listEHead.add(null); //datafine
-    listEHead.add(null);
-    listEHead.add(null);
-    
+    listEHead.add(rs.getLong(4));
+    listEHead.add(rs.getDate(5));
+    listEHead.add(rs.getDate(6));
+    listEHead.add(rs.getString(7));
+    listEHead.add(rs.getString(8));
+    listEHead.add(rs.getString(9));
+    listEHead.add(rs.getLong(10));
+    listEHead.add(rs.getLong(11));
+    listEHead.add(rs.getLong(12));
+    listEHead.add(rs.getLong(13));
+    listEHead.add(rs.getLong(14));
+    listEHead.add(rs.getString(15));
+    listEHead.add(rs.getLong(16));
+    listEHead.add(rs.getLong(17));
+    listEHead.add(rs.getString(18));
+    listEHead.add(rs.getLong(19));
+    listEHead.add(rs.getLong(20));
+    listEHead.add(rs.getLong(21));
+    listEHead.add(rs.getLong(22));
+    listEHead.add(rs.getLong(23));
+    listEHead.add(rs.getLong(24));
+    listEHead.add(rs.getLong(25));
+    listEHead.add(rs.getLong(26));
+    listEHead.add(rs.getString(27));
+    listEHead.add(rs.getLong(28));
+    listEHead.add(rs.getString(29));
+    listEHead.add(rs.getString(30));
+    listEHead.add(rs.getString(31));
+    listEHead.add(rs.getString(32));
+    listEHead.add(rs.getLong(33));
+    listEHead.add(rs.getLong(34));
+    listEHead.add(rs.getLong(35));
+    listEHead.add(rs.getDate(36));
+    listEHead.add(rs.getString(37));
+    listEHead.add(rs.getString(38));
+    listEHead.add(rs.getString(39));
+    listEHead.add(rs.getString(40));
+    listEHead.add(rs.getString(41));
+    listEHead.add(rs.getString(42));
+    listEHead.add(rs.getLong(43));
+    listEHead.add(rs.getString(44));
+
     return listEHead;
   }
   
