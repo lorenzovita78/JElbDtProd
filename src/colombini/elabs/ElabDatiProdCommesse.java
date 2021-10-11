@@ -104,7 +104,8 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiImaTop(apm, commGg, commEx,propsElab);
         loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
         loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
-
+        
+        
         loadDatiAnteAllum(apm, commGg, commEx,propsElab);
         loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
         loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
@@ -1138,7 +1139,7 @@ public class ElabDatiProdCommesse extends ElabClass{
   }
   
   
-  
+    
   private void loadDatiImballoAnteSpecialiImaAnteR1P1(PersistenceManager apm, List<List> commGg, Map commEx,Map propsElab) {
     List<List> commToLoad=getListCommToSave(commGg, commEx, TAPWebCostant.CDL_IMBANTESPECIALI_EDPC);
     Connection conSQLS=null;

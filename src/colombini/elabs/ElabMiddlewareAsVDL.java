@@ -18,6 +18,8 @@ import colombini.model.persistence.middleware.as400Vdl.MsgVdlHead_V2H;
 import colombini.model.persistence.middleware.MsgAs400Dett_ToVdl;
 import colombini.model.persistence.middleware.VdlAs400.MsgRepackingContainer;
 import colombini.model.persistence.middleware.VdlAs400.MsgUploadShipDetail;
+import colombini.model.persistence.middleware.VdlAsSqlPoe.MsgColloInfoHead;
+import colombini.model.persistence.middleware.VdlAsSqlPoe.MsgUploadColloInfoDetail;
 import db.ResultSetHelper;
 import db.persistence.ABeanPersCRUD4Middleware;
 import db.persistence.PersistenceManager;
@@ -51,10 +53,12 @@ public class ElabMiddlewareAsVDL extends ElabClass{
   @Override
   public void exec(Connection con) {
      Connection conVdl=null;
+     Connection conSql=null;
     _logger.info("Inizio elaborazione ..trasferimento dati da As400 a ");
     try{
       //conVdl=Connections.getOracleConnection("192.168.112.13", "ORCL", "DBS_HV", "DBS_HV");
       conVdl=ColombiniConnections.getDbVDLVisionConnection();
+      conSql=ColombiniConnections.getDbAvanzamentoVdlConnection();
       //test(conVdl);
       _logger.info("##########--------- Da AS400 a VDL ---------##########");
       asToVdl(con, conVdl);
@@ -65,8 +69,8 @@ public class ElabMiddlewareAsVDL extends ElabClass{
       _logger.info("##########--------- Da Incas a VDL ---------##########");
       incasToVdl(con,conVdl);
       
-      _logger.info("##########--------- Da VDL a SQL ---------##########");
-     // vdlToSql(con,conVdl);
+      _logger.info("##########--------- Da VDL a SQL POE ---------##########");
+      vdlToSql(conSql,conVdl);
       
     }catch(SQLException s){
       addError("Attenzione impossibile stabilire la connessione con db VDL->"+s.getMessage()+" - "+s.getSQLState());
@@ -148,7 +152,12 @@ public class ElabMiddlewareAsVDL extends ElabClass{
   }
   
   
-  
+  private void vdlToSql(Connection conSql , Connection conVdl){
+    
+    elabMsgUploadColloInfo(conSql,conVdl); 
+    
+  }
+    
   private void elabMsgRepacking(Connection conAs400 , Connection conVdl){
     MsgRepackingContainer bean=new MsgRepackingContainer();
     elabMsgFromVdlToAs(conAs400, conVdl, bean, MsgVdlHead_V2H.MSG_RepackingContainerData);
@@ -162,12 +171,27 @@ public class ElabMiddlewareAsVDL extends ElabClass{
     
   }
   
+  
   private void elabMsgError(Connection conAs400 , Connection conVdl){
    
     
     elabMsgFromVdlToAs(conAs400, conVdl, null, MsgVdlHead_V2H.MSG_Error);
     
   }
+  
+  private void elabMsgUploadColloInfo(Connection conSql , Connection conVdl){
+   
+    MsgUploadColloInfoDetail bean=new MsgUploadColloInfoDetail();
+    elabMsgFromVdlToSql(conSql, conVdl, bean, MsgVdlHead_V2H.MSG_UploadColloInfo);
+    
+  }
+    
+//   private void elabMsgColloInfo(Connection conSql , Connection conVdl){
+//   
+//    MsgColloInfoHead bean=new MsgColloInfoHead();
+//    elabMsgFromVdlToSql(conSql, conVdl, bean, MsgVdlHead_V2H.MSG_UploadColloInfo);
+//    
+//  }
   
   private void elabMsgFromVdlToAs(Connection conAs400 , Connection conVdl,ABeanPersCRUD4Middleware bean ,String typeMsg){
     Statement stm=null;
@@ -197,8 +221,8 @@ public class ElabMiddlewareAsVDL extends ElabClass{
             bean.loadInfoBeanFromSource(conVdl);
             bean.setTypeObj(ABeanPersCRUD4Middleware.TYPE_DESTINATION);
           }
-          _logger.info("Save Head >>"+elHead.toString());
-          pmAs400.saveListDt(new TabMsgHAs400_FromVdl(), Arrays.asList(elHead));
+         // _logger.info("Save Head >>"+elHead.toString());
+         // pmAs400.saveListDt(new TabMsgHAs400_FromVdl(), Arrays.asList(elHead));
           
           
           //salvo le info di dettaglio se mi è stato fornito un bean valido
@@ -241,6 +265,88 @@ public class ElabMiddlewareAsVDL extends ElabClass{
     }  
   }
   
+  //GG Nuovo per infocollo
+    private void elabMsgFromVdlToSql(Connection Sql , Connection conVdl,ABeanPersCRUD4Middleware bean ,String typeMsg){
+    Statement stm=null;
+    Integer totR=Integer.valueOf(0);
+    Integer proc=Integer.valueOf(0);
+    
+    String qryVdl=getSqlReadMsgHfromVdl(MsgMiddlewareConstant.STATUS_MSG_RELEASED,typeMsg);
+    MsgVdlHead_V2H vdlMsgH=new MsgVdlHead_V2H();
+    PersistenceManager pmSqlPoe=new PersistenceManager(Sql);
+    
+    try{
+      stm=conVdl.createStatement();
+      _logger.info("Read msg Vdl --> "+qryVdl);
+      ResultSet rs=stm.executeQuery(qryVdl);
+      Long idMsg=Long.valueOf(0);
+      try{
+        while(rs.next()){
+          totR++;
+          idMsg=rs.getLong(vdlMsgH.getClmMessageId());
+          _logger.info("Processing Msg Id-->"+idMsg);
+          
+          List elHead=getListInfoForHMsgSql(idMsg, rs);
+          
+          //carico le info di dettaglio se mi è stato fornito un bean valido
+          if(bean!=null){
+            bean.setIdMsg(idMsg);
+            bean.loadInfoBeanFromSource(conVdl);
+            bean.setTypeObj(ABeanPersCRUD4Middleware.TYPE_DESTINATION);
+          }
+         // _logger.info("Save Head >>"+elHead.toString());
+         //  pmSqlPoe.saveListDt(new TabMsgHAs400_FromVdl(), Arrays.asList(elHead));
+          
+         //Copio i dati del bean to Bean Header
+          if(bean!=null){
+              MsgColloInfoHead beanHeader=new MsgColloInfoHead((MsgUploadColloInfoDetail) bean);
+              beanHeader.setTypeObj(ABeanPersCRUD4Middleware.TYPE_DESTINATION);
+              if(!pmSqlPoe.checkExist(beanHeader,beanHeader.getFieldValuesMapDestinationForCheck())){
+                   _logger.info("Save Testata >>"+beanHeader.toString());
+                  pmSqlPoe.storeDtFromBean(beanHeader);
+              }
+          }
+         
+          //salvo le info di dettaglio se mi è stato fornito un bean valido
+          if(bean!=null){ 
+            _logger.info("Save Detail >>"+bean.toString());
+            pmSqlPoe.storeDtFromBean(bean);
+          }
+          
+          _logger.info("Update State on VDL");
+          updateStatusMsgVdl(conVdl, idMsg, MsgMiddlewareConstant.STATUS_MSG_PROCESSED);
+          proc++;
+        }  
+          
+      } catch(SQLException s){
+        System.out.println("Errore in fase di processing msg "+idMsg+" -->"+s.getMessage());
+        addError("Errore in fase di processig del msg : "+idMsg+" -->"+s.toString());
+      } catch(Exception e ){
+        _logger.error("Attenzione eccezione generica -->"+e.getMessage());
+        addError(" Attenzione eccezione generica -->"+e.getMessage());
+      } finally{
+        try{
+        rs.close();
+        }catch(SQLException s){
+          addWarning("Errore in fase di chiusura del resultset ");
+        }
+      }       
+          
+    }catch(SQLException s){
+      addError("Impossibile eseguire uno statment su db Oracle -->"+s.getMessage());
+    }finally{
+      _logger.info("Tipo messaggio"+ typeMsg +"Righe lette -->"+totR+" righe processate -->"+proc);
+      try{
+      if(stm!=null)
+        stm.close();
+      if(pmSqlPoe!=null)
+        pmSqlPoe=null;
+      }catch(SQLException s){
+        addWarning("Errore in fase di chiusura dello Statment");
+      }
+    }  
+  }
+  
   
   private List getListInfoForHMsgAs400(Long idMsg,ResultSet rs ) throws SQLException{
     List listEHead=new ArrayList();
@@ -256,6 +362,20 @@ public class ElabMiddlewareAsVDL extends ElabClass{
     return listEHead;
   }
   
+  
+   private List getListInfoForHMsgSql(Long idMsg,ResultSet rs ) throws SQLException{
+    List listEHead=new ArrayList();
+    
+    listEHead.add(idMsg);
+    listEHead.add(rs.getString(2));
+    listEHead.add(rs.getString(3));
+    listEHead.add(rs.getTimestamp(4));
+    listEHead.add(null); //datafine
+    listEHead.add(null);
+    listEHead.add(null);
+
+    return listEHead;
+  }
   
   private void incasToVdl(Connection conAs400, Connection conVdl) {
     Connection conDbIncas=null;

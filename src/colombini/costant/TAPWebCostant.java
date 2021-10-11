@@ -27,6 +27,7 @@ public class TAPWebCostant {
   public static final String CDL_SPINOMALR1P4_EDPC = "01086OM";
   public static final String CDL_STEMAPASCIAR1P4_EDPC = "01086SP";
   public static final String CDL_LSMCARRP4_EDPC = "01030";
+  public static final String CDL_LSMCUCINE_EDPC = "01030";
   
   //public static final String CDL_ANTESPECIALI_EDPC = "01008AS";
   public static final String CDL_LAVMISURAIMB_EDPC = "6100IMB";
