@@ -27,6 +27,7 @@ import colombini.query.produzione.R1.QueryPzCommImaTop;
 import colombini.query.produzione.R1.QueryPzCommLotto1;
 import colombini.query.produzione.R1.QueryPzHomagR1P1;
 import colombini.query.produzione.R1.QueryPzR1P4;
+import colombini.query.produzione.R1.QueryPzR1P41LSM;
 import colombini.util.DatiCommUtils;
 import colombini.util.DatiProdUtils;
 import colombini.util.DesmosUtils;
@@ -34,7 +35,6 @@ import colombini.util.InfoMapLineeUtil;
 import db.CustomQuery;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
-import db.persistence.IBeanPersSIMPLE;
 import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import exception.QueryException;
@@ -888,9 +888,11 @@ public class ElabDatiProdCommesse extends ElabClass{
    private void loadDatiP4New(PersistenceManager apm,String cdl ,List commDisp,Map commEx,Map propsElab,String condFaseP4){
      List<List> commToLoad=getListCommToSaveCkDate(commDisp, commEx, cdl);
      Connection conDbDesmos=null;
+     Connection conDbAs400=null;
      try{
         
       conDbDesmos=ColombiniConnections.getDbDesmosColProdConnection();
+      conDbAs400=ColombiniConnections.getAs400ColomConnection();
       for(List infoC:commToLoad){
         Long dtC=ClassMapper.classToClass(infoC.get(0),Long.class);
         Long comm=ClassMapper.classToClass(infoC.get(1),Long.class);
@@ -908,6 +910,12 @@ public class ElabDatiProdCommesse extends ElabClass{
         String commS=DatiProdUtils.getInstance().getStringNComm(comm);
         List beans=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
         apm.storeDtFromBeans(beans);
+        
+        //Gaston LSM
+        if(TAPWebCostant.CDL_LSMCARRP4_EDPC.equals(cdl)){
+            List beans2=getListPzR1P4LSM(conDbAs400, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
+            apm.storeDtFromBeans(beans2);
+        }
                         
       }
 
@@ -2220,10 +2228,53 @@ public class ElabDatiProdCommesse extends ElabClass{
       qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
        
      //gaston - LSM CUCINE
-      if(TAPWebCostant.CDL_LSMCARRP4_EDPC.equals(cdL))
-        qry.setFilter(QueryPzR1P4.FT_LSM_CUCINE,Boolean.TRUE);
-      
+//      if(TAPWebCostant.CDL_LSMCARRP4_EDPC.equals(cdL))
+//        qry.setFilter(QueryPzR1P4.FT_LSM_CUCINE,Boolean.TRUE);
+//      
       //qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyy-MM-dd"));
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
+      if(ultimaFaseCond!=null && !ultimaFaseCond.isEmpty())
+        qry.setFilter(QueryPzR1P4.FT_ULTIMAFASEP4, ultimaFaseCond);
+      
+      if(lineeLogiche!=null && !lineeLogiche.isEmpty())
+        qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());
+      
+      ResultSetHelper.fillListList(con, qry.toSQLString(), result);
+     
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+
+    //per convertire comessa Febal in numerazione Colombini
+    if(comm.length()==7 && !nComm4P4){
+      String scomm=comm.toString().substring(4, 7);
+      comm=(scomm);
+    }
+    if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+    
+    return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
+  }
+ 
+    private List getListPzR1P4LSM(Connection con,String cdL,String comm,Date dataComm,List lineeLogiche,Boolean withEtk,Boolean nComm4P4,String ultimaFaseCond){
+    
+    List result=new ArrayList();
+    try{
+      
+      QueryPzR1P41LSM qry=new QueryPzR1P41LSM();
+      
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
+      
       qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
       if(ultimaFaseCond!=null && !ultimaFaseCond.isEmpty())
         qry.setFilter(QueryPzR1P4.FT_ULTIMAFASEP4, ultimaFaseCond);
