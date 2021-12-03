@@ -110,6 +110,7 @@ public class ElabGestLibretti extends ElabClass{
           _logger.info("Processing commessa N."+commessa);
           filesToProcess.addAll(elabFiles(pathSource+"/Colombini", pathDest+"/Colombini", commessa, dataComm, dataElbComm,commFiles ));
           filesToProcess.addAll(elabFiles(pathSource+"/Artec", pathDest+"/Artec", commessa, dataComm,dataElbComm, commFiles ));
+          filesToProcess.addAll(elabFiles(pathSource+"/Febal", pathDest+"/Febal", commessa, dataComm,dataElbComm, commFiles ));
         } else{
           addWarning("!!! Attenzione elaborazione DESMOS per commessa "+commessa+" non ancora terminata !!!");
         }

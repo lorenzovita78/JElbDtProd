@@ -39,7 +39,14 @@ public class ElabFilesTwbxForBI extends ElabClass{
   //comandi
   public final static String CMD_LOGIN= " $TABCMD$ login -s http://$IPSRVTBL$:80 -u $UTSRVTBL$ -p $PWDSRVTBL$ ";
   public final static String CMD_REFRESHEXTRACT= " tabcmd refreshextracts --synchronous --workbook $WRBKNM$ --project $PRJNM$ ";
-  public final static String CMD_COPYTWBX=" tabcmd  get \"http://$IPSRVTBL$:80//workbooks/$WRBKNM$.twbx\" -f $PATHFILEDEST$.twbx ";
+ // public final static String CMD_COPYTWBX=" tabcmd  get \"http://$IPSRVTBL$:80//workbooks/$WRBKNM$.twbx\" -f $PATHFILEDEST$.twbx ";
+ // public final static String CMD_COPYTWBX=" tabcmd  get \"http://$IPSRVTBL$:80//workbooks/$WRBKNM$.twbx\" -f $PATHFILEDEST$.pdf ";
+  
+
+  //tabcmd export "Provvigioni_agenzia/Prov_Italia2" --pdf -f
+  public final static String CMD_COPYTWBX=" tabcmd  export \"$WRBKNM$/$DASH$\" --$EXT$ -f $PATHFILEDEST$.pdf ";
+
+  
   public final static String CMD_LOGOUT= " $TABCMD$ logout";
   
  
@@ -50,8 +57,9 @@ public class ElabFilesTwbxForBI extends ElabClass{
   public final static String $UTSRVTBL$="$UTSRVTBL$";
   public final static String $PWDSRVTBL$="$PWDSRVTBL$";
   public final static String $WRBKNM$="$WRBKNM$";
-  public final static String $PRJNM$="$PRJNM$";
   public final static String $PATHFILEDEST$="$PATHFILEDEST$";
+  public final static String $DASH$="$DASH$";
+  public final static String $EXT$="$EXT$";
   
   //proprietà da valorizzare nel file xml
   public final static String $DATEFILE$="$DATEFILE$";
@@ -68,9 +76,14 @@ public class ElabFilesTwbxForBI extends ElabClass{
   public final static String PTYPEDEST="TYPEDEST"; // tipologia destinatario A - Agente ; M- Area Manager ;K -Key account
   public final static String PMACROMERC="MACROM";  // tipologia macromercato I - Italia ; E - Estero;
   public final static String CODDESTINATARIO="CODDEST";
+  public final static String DASHBOARD="DASHBOARDTABLEAU";
+  public final static String EXT="EXT";
+
   
   private String workbookName=null;
   private String projectName=null;
+  private String dashboard=null;
+  private String extension=null;
   
   private String macroM=null;
   private String tipoDestinatario=null;
@@ -118,7 +131,13 @@ public class ElabFilesTwbxForBI extends ElabClass{
       return Boolean.FALSE;
     }
     
+    if(parameter.get(DASHBOARD)!=null){
+      this.dashboard=ClassMapper.classToString(parameter.get(DASHBOARD));
+    } 
     
+    if(parameter.get(EXT)!=null){
+      this.extension=ClassMapper.classToString(parameter.get(EXT));
+    } 
     
     
     return Boolean.TRUE;
@@ -354,7 +373,7 @@ public class ElabFilesTwbxForBI extends ElabClass{
     String extract=CMD_REFRESHEXTRACT;
     //extract=extract.replace($TABCMD$, tabcmd);
     extract=extract.replace($WRBKNM$, workbookName);
-    extract=extract.replace($PRJNM$, projectName);
+    
     
     //commands.add(extract);
     
@@ -369,6 +388,10 @@ public class ElabFilesTwbxForBI extends ElabClass{
     copyFile=copyFile.replace($IPSRVTBL$, ipSrvTableau);
     copyFile=copyFile.replace($WRBKNM$, workbookName.replace("\"", ""));
     copyFile=copyFile.replace($PATHFILEDEST$, pathFileComplete );
+    copyFile=copyFile.replace($DASH$, dashboard);
+    copyFile=copyFile.replace($EXT$, extension);
+
+
     //comando per copia file
     //commands.add(extract+" \n "+copyFile);
     //creazione file bat

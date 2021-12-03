@@ -64,13 +64,13 @@ public class ElabMiddlewareAsVDL extends ElabClass{
       asToVdl(con, conVdl);
       
       _logger.info("##########--------- Da VDL ad AS400 ---------##########");
-      vdlToAs(con, conVdl);
+       vdlToAs(con, conVdl);
     
       _logger.info("##########--------- Da Incas a VDL ---------##########");
-      incasToVdl(con,conVdl);
+       incasToVdl(con,conVdl);
       
-      _logger.info("##########--------- Da VDL a SQL POE ---------##########");
-      vdlToSql(conSql,conVdl);
+      _logger.info("##########--------- Da VDL a SQL ---------##########");
+       vdlToSql(conSql,conVdl);
       
     }catch(SQLException s){
       addError("Attenzione impossibile stabilire la connessione con db VDL->"+s.getMessage()+" - "+s.getSQLState());

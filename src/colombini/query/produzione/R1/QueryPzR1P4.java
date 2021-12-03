@@ -18,7 +18,6 @@ import utils.StringUtils;
 public class QueryPzR1P4 extends CustomQuery {
 
   public final static String FT_ULTIMAFASEP4="FT_ULTIMAFASEP4";
-  //public final static String FT_LSM_CUCINE="FT_LSM_CUCINE";
   
   
   //public final static String TAB_PRODP4="[AvanzamentoProd].[dbo].[TBL_DatiProduzione]";
