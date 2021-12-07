@@ -1940,7 +1940,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     
     return result;
   }
-  
+      
     private List getListPzFromFornitoriP2(String cdL,Long comm,Date dataComm,Date dataElab,Boolean withEtk){
     Connection con=null;
     List result=new ArrayList();

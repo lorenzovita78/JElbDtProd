@@ -57,6 +57,7 @@ public class ElabFilesTwbxForBI extends ElabClass{
   public final static String $UTSRVTBL$="$UTSRVTBL$";
   public final static String $PWDSRVTBL$="$PWDSRVTBL$";
   public final static String $WRBKNM$="$WRBKNM$";
+  public final static String $PRJNM$="$PRJNM$";
   public final static String $PATHFILEDEST$="$PATHFILEDEST$";
   public final static String $DASH$="$DASH$";
   public final static String $EXT$="$EXT$";
@@ -373,7 +374,7 @@ public class ElabFilesTwbxForBI extends ElabClass{
     String extract=CMD_REFRESHEXTRACT;
     //extract=extract.replace($TABCMD$, tabcmd);
     extract=extract.replace($WRBKNM$, workbookName);
-    
+    extract=extract.replace($PRJNM$, projectName);
     
     //commands.add(extract);
     
