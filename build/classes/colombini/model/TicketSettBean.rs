@@ -1,1 +1,0 @@
-objBean.TicketSettBean

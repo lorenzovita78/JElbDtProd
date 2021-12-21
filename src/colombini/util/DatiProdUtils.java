@@ -421,6 +421,22 @@ public class DatiProdUtils {
     return s;
   }
   
+    public String getStringNArt(Integer nArt){
+    String s="";
+    
+    if(nArt==null)
+      return s;  
+    
+    int len=nArt.toString().length();
+    while(len<2){
+      s+="0";
+      len++;
+    }
+    s+=nArt.toString();
+    
+    return s;
+  }
+  
   public String getStringNComm(Long ncomm){
     String s="";
     if(ncomm==null)

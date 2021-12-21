@@ -31,7 +31,7 @@ public final static String numArt1="numArt1";
 
     StringBuilder cond=new StringBuilder(" where 1=1 and DesmosLancio =" +getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + "\n");
     
-    if(isFilterPresent(isFebal)){
+    if(isFilterPresent(isFebal) || isFilterPresent(numArt1)){
     select="select Codice_Collo,0 NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa ";
     } 
     

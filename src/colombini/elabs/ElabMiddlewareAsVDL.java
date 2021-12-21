@@ -61,7 +61,7 @@ public class ElabMiddlewareAsVDL extends ElabClass{
       conSql=ColombiniConnections.getDbAvanzamentoVdlConnection();
       //test(conVdl);
       _logger.info("##########--------- Da AS400 a VDL ---------##########");
-      asToVdl(con, conVdl);
+       asToVdl(con, conVdl);
       
       _logger.info("##########--------- Da VDL ad AS400 ---------##########");
        vdlToAs(con, conVdl);
@@ -303,18 +303,30 @@ public class ElabMiddlewareAsVDL extends ElabClass{
               beanHeader.setTypeObj(ABeanPersCRUD4Middleware.TYPE_DESTINATION);
               if(!pmSqlPoe.checkExist(beanHeader,beanHeader.getFieldValuesMapDestinationForCheck())){
                    _logger.info("Save Testata >>"+beanHeader.toString());
-                  pmSqlPoe.storeDtFromBean(beanHeader);
+                    try{
+                        pmSqlPoe.storeDtFromBean(beanHeader);
+                    } catch(SQLException s){
+                            addError("Errore in fase di processig del msg : "+idMsg+" -->"+s.toString());
+                            updateStatusMsgVdl(conVdl, idMsg, MsgMiddlewareConstant.STATUS_MSG_REJECTED);
+                    }
               }
           }
          
           //salvo le info di dettaglio se mi è stato fornito un bean valido
           if(bean!=null){ 
             _logger.info("Save Detail >>"+bean.toString());
-            pmSqlPoe.storeDtFromBean(bean);
+            try{
+                pmSqlPoe.storeDtFromBean(bean);
+                _logger.info("Update State on VDL");
+                updateStatusMsgVdl(conVdl, idMsg, MsgMiddlewareConstant.STATUS_MSG_PROCESSED);
+            } catch(SQLException s){
+                            addError("Errore in fase di processig (insert) del msg : "+idMsg+" -->"+s.toString());
+                            updateStatusMsgVdl(conVdl, idMsg, MsgMiddlewareConstant.STATUS_MSG_REJECTED);
+            }
           }
           
-          _logger.info("Update State on VDL");
-          updateStatusMsgVdl(conVdl, idMsg, MsgMiddlewareConstant.STATUS_MSG_PROCESSED);
+          //_logger.info("Update State on VDL");
+          //updateStatusMsgVdl(conVdl, idMsg, MsgMiddlewareConstant.STATUS_MSG_PROCESSED);
           proc++;
         }  
           

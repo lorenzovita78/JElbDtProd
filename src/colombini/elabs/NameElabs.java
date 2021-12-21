@@ -35,6 +35,7 @@ public class NameElabs {
   //Elaborazione carico dati commessa per tracciatura pz/colli
   public final static String ELBDATIPRODCOMM="ELBDATIPRODCOMM";
   
+  public final static String PATHETKCUCINER1P4="PATHETKCUCINER1P4";
   public final static String PATHETKANTEALLUM="PATHETKANTEALLUM";
   public final static String PATHETKANTEALLUMFEB="PATHETKANTEALLUMFEB";
   public final static String PATHFILELOCANTEALLUM="PATHFILELOCANTEALLUM";
