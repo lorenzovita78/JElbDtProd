@@ -197,10 +197,10 @@ public class MsgUploadColloInfoDetail extends  ABeanPersCRUD4Middleware{
     public Date getSYSTEMDATE() {
         Date date = null;
         try {
-        int ore;
+        int minuti;
         date=DateUtils.StrToDate(SYSTEMDATE, "yyyyMMdd");
-        ore=DateUtils.Ora(SYSTEMTIME);
-        date=DateUtils.addMinutes(date, ore);
+        minuti=DateUtils.getDurataMin(SYSTEMTIME);
+        date=DateUtils.addMinutes(date, minuti);
         } catch (Exception e) {
             e.printStackTrace();
         }
