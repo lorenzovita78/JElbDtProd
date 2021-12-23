@@ -294,8 +294,7 @@ public class ElabMiddlewareAsVDL extends ElabClass{
             bean.loadInfoBeanFromSource(conVdl);
             bean.setTypeObj(ABeanPersCRUD4Middleware.TYPE_DESTINATION);
           }
-         // _logger.info("Save Head >>"+elHead.toString());
-         //  pmSqlPoe.saveListDt(new TabMsgHAs400_FromVdl(), Arrays.asList(elHead));
+       
           
          //Copio i dati del bean to Bean Header
           if(bean!=null){

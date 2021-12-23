@@ -26,7 +26,7 @@ public class QueryPzHomagR1P1 extends CustomQuery{
                                       " FROM   DesmosColombini.DBO.LDLMVX102_TXT_MACC_HOMAG_B\n").append(
                                    " where 1=1" );
     
-    q.append(" AND DesmosLancio=").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS));
+    q.append(" AND DesmosGruppoStampa = 0 AND DesmosLancio=").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS));
     
     
     if(isFilterPresent(FilterFieldCostantXDtProd.FT_LINEE)){
