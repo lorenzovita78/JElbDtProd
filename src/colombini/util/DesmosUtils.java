@@ -284,6 +284,17 @@ public class DesmosUtils {
     return finish;
   }
   
+  public Boolean isDatiProduzioneValorizzata(Connection conDbDesmos,String lancio) throws SQLException{
+   Boolean finish=Boolean.FALSE;
+   
+   String qry="select top 10 * from datiProduzione where commessa=" + JDBCDataMapper.objectToSQL(lancio);
+   Object [] obj=ResultSetHelper.SingleRowSelect(conDbDesmos, qry);
+   if(obj!=null && obj.length>0){
+      finish=Boolean.TRUE;
+   }
+   
+   return finish;
+  }
   
 // FROM ElabDatiProdCOmmesse
 //  private Boolean isElabDesmosFebalFinish(Connection conDesmosFeb,Long comm,Date dataComm) throws SQLException{

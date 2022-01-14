@@ -560,7 +560,30 @@ public class DatiCommUtils {
     
    }
   
+   public Boolean isLotto1Valorizzata(Connection conDb,Long lancio) throws SQLException{
+   Boolean finish=Boolean.FALSE;
    
+   String qry="select top 10 * from tab_ET where commissionNo=" + JDBCDataMapper.objectToSQL(lancio);
+   Object [] obj=ResultSetHelper.SingleRowSelect(conDb, qry);
+   if(obj!=null && obj.length>0){
+      finish=Boolean.TRUE;
+   }
+   
+   return finish;
+  }
+   
+  public Boolean isImaAnteValorizzata(Connection conDb,String lancio) throws SQLException{
+   Boolean finish=Boolean.FALSE;
+   
+   String qry="select top 10 * from tab_ET where commissionNo=" + JDBCDataMapper.objectToSQL(lancio);
+   Object [] obj=ResultSetHelper.SingleRowSelect(conDb, qry);
+   if(obj!=null && obj.length>0){
+      finish=Boolean.TRUE;
+   }
+   
+   return finish;
+  }
+    
   private static final Logger _logger = Logger.getLogger(DatiCommUtils.class);   
   
 }

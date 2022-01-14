@@ -22,18 +22,24 @@ public class QueryPzCommImaTop extends CustomQuery {
   public final static String COMMISSIONDATE="COMMISSIONDATE";
   public final static String COMMISSIONYEAR="COMMISSIONYEAR";
   public final static String LINEELOG="LINEELOG";
+  public final static String ISSCORR="ISSCORR";
 
   
   
   @Override
   public String toSQLString() throws QueryException {
-    StringBuilder cond=new StringBuilder(
-
-                                       " where 1=1 and ProductionLine<>1035 and barcode like '2%' \n");
+      
+     StringBuilder cond=new StringBuilder(" where 1=1  \n");
     
+    if(!isFilterPresent(ISSCORR)){
+              cond.append(" and ProductionLine<>1035 and barcode like '2%' ");}
 
-    
-    String select=  " SELECT PackageNo collo, 1 prog_collo, CASE\n" +
+    String select= " SELECT PackageNo collo, 1 prog_collo, ProductionLine,\n" +
+                    "box, Pedana , orderno, 0 nr_riga,\n" +
+                    "refart, ItemDecription , ItemDecription,barcode,'' colore";
+
+    if(!isFilterPresent(ISSCORR)){
+     select=  " SELECT PackageNo collo, 1 prog_collo, CASE\n" +
                     "WHEN ProductionLine=36111 THEN 'P4LSM'\n" +
                     "WHEN ProductionLine=6030 THEN 'P2STRETTOI'\n" +
                     "WHEN ProductionLine=6031 THEN 'P2STRETTOI'\n" +
@@ -48,7 +54,7 @@ public class QueryPzCommImaTop extends CustomQuery {
                     "END linea,\n" +
                     "box, Pedana , orderno, 0 nr_riga,\n" +
                     "refart, ItemDecription , ItemDecription,barcode,'' colore";
-
+    }
     
     select+= " from tab_ET ";
     

@@ -22,6 +22,7 @@ import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QueryColliCommessaFebal;
 import colombini.query.produzione.QueryColliSostFromDesmosColomFebal;
 import colombini.query.produzione.QueryListColliPzCommessa;
+import colombini.query.produzione.R1.QueryPzCommAntesScorrDatiProd;
 import colombini.query.produzione.R1.QueryPzCommCucineR1P4;
 import colombini.query.produzione.R1.QueryPzCommFornitori;
 import colombini.query.produzione.R1.QueryPzCommImaAnte;
@@ -115,8 +116,15 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
         loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
         loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
-       // loadDatiAnteCucineR1P4(apm, commGg, commEx,propsElab);
+        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
+         
+       
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);
 
+                        
+        
         loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
 
         loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
@@ -369,6 +377,8 @@ public class ElabDatiProdCommesse extends ElabClass{
         bean.setDataComN(DateUtils.getDataForMovex(dtComm));
 
         String linea=ClassMapper.classToString(rec.get(2));
+        //Modifica GG per antes scorr
+        linea=linea.replace(".", "");
         if(!TAPWebCostant.CDL_RICCIOIMAANTE_EDPC.equals(cdL) && linea!=null && linea.length()==4)
           linea="0"+linea;
         
@@ -683,6 +693,112 @@ public class ElabDatiProdCommesse extends ElabClass{
      }
    }
    
+     private void loadDatiAnteScorrevoli(PersistenceManager apm,String cdl,List commDisp,Map commEx,Map propsElab){
+     Connection conDesmosCol=null;
+     Connection conImaAnte=null;
+     Connection conImaTop=null;
+     String pathfileScorr=(String) propsElab.get(NameElabs.PATHETKANTESCORR);
+
+     
+     List<List> commToLoad=getListCommToSave(commDisp, commEx, cdl);
+     List linee=new ArrayList();
+     List linee2=new ArrayList();
+     //Verifica CDL e dipende qual'è prendo la linea logica
+     //if(!TAPWebCostant.CDL_RICCIOIMAANTE_EDPC.equals(cdl))
+     switch(cdl){
+         case TAPWebCostant.CDL_ANTESCORR_EDPC:
+             linee.add("6050");
+             linee2.add("06050");
+             break;
+         case TAPWebCostant.CDL_ANTEQUADR_EDPC:
+             linee.add("6051");
+             linee.add("6052");
+             linee2.add("06051");
+             linee2.add("06052");
+             break;
+         case TAPWebCostant.CDL_ANTESSPEC_EDPC:
+             linee.add("6049");
+             linee2.add("06049");
+             break;
+     }
+         
+         
+     //Paso 1 -->Lotto1 - Ima Top
+     //Paso 2-->Ima Ante
+     //Paso 3-->DatiProduzione
+     //Paso 4-->SCXXXCOL
+   
+     
+     try{
+        conDesmosCol=ColombiniConnections.getDbDesmosColProdConnection();
+        conImaAnte=ColombiniConnections.getDbImaAnteConnection();
+        conImaTop=ColombiniConnections.getDbImaTopConnection();
+
+        for(List infoC:commToLoad){
+          Long comm=(Long) infoC.get(0);
+          Long dtC=(Long) infoC.get(1);
+          Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
+          String commS=DatiProdUtils.getInstance().getStringNComm(comm);
+
+          if(DesmosUtils.getInstance().isElabDesmosColombiniFinished(comm, dataC)){
+            if(DesmosUtils.getInstance().isDatiProduzioneValorizzata(conDesmosCol,commS) && DatiCommUtils.getInstance().isImaAnteValorizzata(conImaAnte, commS) && DatiCommUtils.getInstance().isLotto1Valorizzata(conImaTop, comm)){
+              _logger.info("Caricamento dati  AnteScorr  per commessa "+comm+" - "+dtC);
+
+          //Paso 1 --> Lotto 1 Ima Top
+          List<BeanInfoColloComForTAP> beans=getListPzFromImaTopScorr(cdl, comm, dataC,null, null, linee,Boolean.TRUE);
+          
+          //Paso 2 --> ImaAnte
+          List<BeanInfoColloComForTAP> beans2=getListPzFromImaAnte(cdl, comm, dataC,null, null, linee2,Boolean.TRUE);
+
+          //Paso 3 --> DatiProduzione Desmos
+          List<BeanInfoColloComForTAP> beans3=getListPzAnteScorrDatiProd(conDesmosCol, cdl, commS, linee, dataC ,Boolean.TRUE,Boolean.FALSE);
+          
+          //Paso 4 --> SCxxCOL
+          //List<BeanInfoColloComForTAP> beans4=getListBeansFromSCXXXCol(apm.getConnection(), cdl, comm, dataC, null, linee2, Boolean.FALSE);
+          List<BeanInfoColloComForTAP> beans4=getListBeansFromSCXXXCol(apm.getConnection(), cdl, comm, dataC, null, linee2, Boolean.FALSE, null,Boolean.TRUE);
+          
+          //Metto insieme i beans
+          beans.addAll(beans2);
+          beans.addAll(beans3);
+          
+          Map colli=new HashMap();
+
+          //Aggiungo redors da scxxxcol che non ci sono sulle altre tabelle
+          if(beans!=null && beans.size()>0){
+                for(Object b:beans){
+                  colli.put(((BeanInfoColloComForTAP)b).getKeyCommColl(),"Y");
+                }  
+           }
+          
+           if(beans4!=null){
+              for(Object b:beans4){
+                if(!colli.containsKey(((BeanInfoColloComForTAP)b).getKeyCommColl()) )
+                  beans.add((BeanInfoColloComForTAP)b);
+              }
+            }  
+          
+                    
+          //Inserisco Benas
+          apm.storeDtFromBeans((List)beans);
+          //Inseristo etichette
+          saveInfoForEtkPz(apm, beans, pathfileScorr,Boolean.FALSE);
+
+           }
+          }
+        }
+      } catch(SQLException s ){
+        _logger.error(" Errore in fase di collegamento al db Desmos Col  -->"+s.getMessage()); 
+      } finally { 
+        if(conDesmosCol!=null)
+         try {
+           conDesmosCol.close();
+         } catch (SQLException ex) {
+          _logger.error("Errore in fase di chiusura della connessione al db DesmosCol --> "+ex.getMessage());
+         }
+   
+     }
+   }
+   
    
    
    private void loadDatiAnteAllum( PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
@@ -771,11 +887,11 @@ public class ElabDatiProdCommesse extends ElabClass{
    }  
   
    
-    private void loadDatiAnteCucineR1P4( PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
-     List<List> commToLoad=getListCommToSave(commDisp, commEx, TAPWebCostant.CDL_CUCINER1P4_EDPC);
+    private void loadDatiEtichettaturaP3( PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
+     List<List> commToLoad=getListCommToSave(commDisp, commEx, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC);
      Connection conDesmosCol=null;
      
-     String pathfile=(String) propsElab.get(NameElabs.PATHETKCUCINER1P4);
+     String pathfile=(String) propsElab.get(NameElabs.PATHETKP3);
    
      try{
        conDesmosCol=ColombiniConnections.getDbDesmosColProdConnection();
@@ -790,8 +906,8 @@ public class ElabDatiProdCommesse extends ElabClass{
          
          try{  
            if(DesmosUtils.getInstance().isElabsDesmosFebalFinish(apm.getConnection(), comm, dtC)){
-             List<BeanInfoColloComForTAP> beansFebal=getListPzCucineR1P4(conDesmosCol, TAPWebCostant.CDL_CUCINER1P4_EDPC, commFebal, dataC ,Boolean.TRUE,Boolean.FALSE);
-             List<BeanInfoColloComForTAP> beans=getListPzCucineR1P4(conDesmosCol, TAPWebCostant.CDL_CUCINER1P4_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE);
+             List<BeanInfoColloComForTAP> beansFebal=getListPzEtichettaturaP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commFebal, dataC ,Boolean.TRUE,Boolean.FALSE);
+             List<BeanInfoColloComForTAP> beans=getListPzEtichettaturaP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE);
 
 
              //pz standard Febal  con etichetta
@@ -1384,8 +1500,10 @@ public class ElabDatiProdCommesse extends ElabClass{
               inCondition="( "+comm+" )";
 
            List colliComm=new ArrayList();
+           // Gaston10/01/2022 cambiato queryC --> dataC invece di dataElab 
+
            String queryC=" select distinct PackageNo  from dbo.tab_et where commissionNo in  "+inCondition+ 
-                    " and year(CommissionDate) = "+JDBCDataMapper.objectToSQL(DateUtils.getYear(dataElab));
+                    " and year(CommissionDate) = "+JDBCDataMapper.objectToSQL(DateUtils.getYear(dataC));
 
            ResultSetHelper.fillListList(conSQLS, queryC, colliComm);
            String lancioD=DesmosUtils.getInstance().getLancioDesmosColombini(comm, dataC);
@@ -1786,8 +1904,9 @@ public class ElabDatiProdCommesse extends ElabClass{
             inCondition="( "+comm+" )";
         
           List colliComm=new ArrayList();
+          // Gaston10/01/2022 cambiato queryC --> dataC invece di dataElab 
           String queryC=" select distinct PackageNo  from dbo.tab_et where commissionNo in "+inCondition +
-                    " and year(CommissionDate) = "+JDBCDataMapper.objectToSQL(DateUtils.getYear(dataElab));
+                    " and year(CommissionDate) = "+JDBCDataMapper.objectToSQL(DateUtils.getYear(dataC));
           
           
 
@@ -2081,12 +2200,35 @@ public class ElabDatiProdCommesse extends ElabClass{
     return result;
   }
   
+  
+  
     private List getListPzFromImaTops(String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk){
     Connection con=null;
     List result=new ArrayList();
     try{
       con=ColombiniConnections.getDbImaTopConnection();
       result=getListPzFromImaTops(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk);
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
+    } finally{
+      if(con!=null)
+        try {
+          con.close();
+      
+        } catch (SQLException ex) {
+        _logger.error("Errore in fase di chiusura della connessione --> "+ex.getMessage());
+        }
+    }
+    
+    return result;
+  }
+    
+   private List getListPzFromImaTopScorr(String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk){
+    Connection con=null;
+    List result=new ArrayList();
+    try{
+      con=ColombiniConnections.getDbImaTopConnection();
+      result=getListPzFromImaTopScorr(con, cdL, comm, dataComm, dataElab, packType, lineeLogiche,withEtk);
     }catch(SQLException s){
       addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
     } finally{
@@ -2292,6 +2434,48 @@ public class ElabDatiProdCommesse extends ElabClass{
     return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
   }
    
+   private List getListPzFromImaTopScorr(Connection con,String cdL,Long comm,Date dataComm,Date dataElab,String packType,List lineeLogiche,Boolean withEtk){
+
+    List result=new ArrayList();
+    try{
+      
+      QueryPzCommImaTop qry=new QueryPzCommImaTop();
+      
+      if(!StringUtils.IsEmpty(packType))
+      qry.setFilter(QueryPzCommImaTop.PACKTYPEEQ, packType);
+
+      qry.setFilter(QueryPzCommImaTop.COMMISSIONNO, comm);
+      
+      if(dataElab!=null)
+        qry.setFilter(QueryPzCommImaTop.COMMISSIONYEAR, DateUtils.getAnno(dataElab));
+      else
+        qry.setFilter(QueryPzCommImaTop.COMMISSIONDATE, DateUtils.DateToStr(dataComm, "yyyy-MM-dd"));
+      
+      if(lineeLogiche!=null && !lineeLogiche.isEmpty())
+        qry.setFilter(QueryPzCommImaTop.LINEELOG, lineeLogiche.toString());
+      
+      if(TAPWebCostant.CDL_ANTESCORR_EDPC.equals(cdL) || TAPWebCostant.CDL_ANTEQUADR_EDPC.equals(cdL) || TAPWebCostant.CDL_ANTESSPEC_EDPC.equals(cdL))
+        qry.setFilter(QueryPzCommImaTop.ISSCORR,"YES");
+       
+       
+      String s=qry.toSQLString();
+      _logger.info(s);
+      ResultSetHelper.fillListList(con, s, result);
+      
+      
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database ImaTop--> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+    
+    
+    return getInfoColloBeansFromList(result, cdL, comm, dataComm,withEtk);
+  }
+   
    private List getListPzFromFornitori(Connection con,String cdL,Long comm,Date dataComm,Date dataElab,Boolean withEtk){
 
     List result=new ArrayList();
@@ -2448,7 +2632,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
   }
   
-  private List getListPzCucineR1P4(Connection con,String cdL,String comm,Date dataComm,Boolean withEtk,Boolean nComm4P4){
+  private List getListPzEtichettaturaP3(Connection con,String cdL,String comm,Date dataComm,Boolean withEtk,Boolean nComm4P4){
     
     List result=new ArrayList();
     try{
@@ -2457,6 +2641,46 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       
       qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
+      
+      ResultSetHelper.fillListList(con, qry.toSQLString(), result);
+     
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+
+    //per convertire comessa Febal in numerazione Colombini
+    if(comm.length()==7 && !nComm4P4){
+      String scomm=comm.toString().substring(4, 7);
+      comm=(scomm);
+    }
+    if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+    
+    return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
+  }
+  
+  private List getListPzAnteScorrDatiProd(Connection con,String cdL,String comm,List lineeLogiche,Date dataComm,Boolean withEtk,Boolean nComm4P4){
+    
+    List result=new ArrayList();
+    try{
+
+      QueryPzCommAntesScorrDatiProd qry=new QueryPzCommAntesScorrDatiProd();
+      
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());
       
       qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
       
