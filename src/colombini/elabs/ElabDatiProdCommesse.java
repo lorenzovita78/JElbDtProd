@@ -121,9 +121,7 @@ public class ElabDatiProdCommesse extends ElabClass{
        
         loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
         loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);
-
-                        
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);           
         
         loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
 
@@ -377,8 +375,10 @@ public class ElabDatiProdCommesse extends ElabClass{
         bean.setDataComN(DateUtils.getDataForMovex(dtComm));
 
         String linea=ClassMapper.classToString(rec.get(2));
-        //Modifica GG per antes scorr
+        //14/01/22 Modifica per antescorr - Gaston
+        if(TAPWebCostant.CDL_ANTESCORR_EDPC.equals(cdL) || TAPWebCostant.CDL_ANTESSPEC_EDPC.equals(cdL) || TAPWebCostant.CDL_ANTEQUADR_EDPC.equals(cdL))
         linea=linea.replace(".", "");
+        
         if(!TAPWebCostant.CDL_RICCIOIMAANTE_EDPC.equals(cdL) && linea!=null && linea.length()==4)
           linea="0"+linea;
         
