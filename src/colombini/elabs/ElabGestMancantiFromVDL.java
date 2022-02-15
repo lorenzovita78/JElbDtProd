@@ -128,6 +128,8 @@ public class ElabGestMancantiFromVDL extends ElabClass{
       comm=nCommForce;  
     }else{
       comm=getCommessa(con,giornoCorrenteN);
+      //comm=getCommessa(con,giornoCorrenteN-1); //per casi dove la Data commessa è spostata
+
     }
     
     if(comm==null){

@@ -17,13 +17,15 @@ import exception.QueryException;
 public class QryPzAnteAllumDesmosPortale extends CustomQuery{
 public final static String isFebal="isFebal";
 public final static String numArt1="numArt1";
+public final static String barcodeSenzaArt="barcodeSenzaArt";
+public final static String filtroFor="filtroFor";
+
 
   @Override
   public String toSQLString() throws QueryException {
     StringBuilder q=new StringBuilder();
     
     String select="select Codice_Collo,NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa ";
-
           
     String db="DesmosColombini.dbo.";
     if(isFilterPresent(isFebal)){
@@ -31,11 +33,14 @@ public final static String numArt1="numArt1";
 
     StringBuilder cond=new StringBuilder(" where 1=1 and DesmosLancio =" +getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + "\n");
     
-    if(isFilterPresent(isFebal) || isFilterPresent(numArt1)){
-    select="select Codice_Collo,0 NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa ";
+    //if(isFilterPresent(isFebal) || isFilterPresent(numArt1)){
+    if(isFilterPresent(isFebal) || isFilterPresent(numArt1) ){
+        select="select Codice_Collo,0 NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa ";
     } 
     
-
+    if(isFilterPresent(filtroFor)){
+        select="select Codice_Collo,NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa ";
+    }
     
     q.append(select);
     q.append(" from ").append(db).append("desmosPortale ");
@@ -44,12 +49,12 @@ public final static String numArt1="numArt1";
     if(isFilterPresent(numArt1)){
         q.append(" AND NumArticolo = 1");
     }
-   
     
+    if(isFilterPresent(filtroFor)){
+        q.append(" AND foratrice <> ''");
+    }
     return q.toString();
     
   }
- 
-  
   
 }

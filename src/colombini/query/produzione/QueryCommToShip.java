@@ -53,6 +53,7 @@ public class QueryCommToShip extends CustomQuery {
     
     if(!isFilterPresent(NOCHECKGGLAV)){
       s.append("\n and cdwdpc=100" );
+      //s.append("\n and cdwdpc=0" ); //Per casi speciali dove la data commessa è spostata
     }
     
     

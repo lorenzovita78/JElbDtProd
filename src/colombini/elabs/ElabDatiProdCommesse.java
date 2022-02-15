@@ -805,7 +805,7 @@ public class ElabDatiProdCommesse extends ElabClass{
      List<List> commToLoad=getListCommToSave(commDisp, commEx, TAPWebCostant.CDL_ANTEALLUM_EDPC);
      Connection conDesmosFeb=null;
      Connection conDesmosCol=null;
-     List linee=new ArrayList(Arrays.asList("36090,6060"));
+     List linee=new ArrayList(Arrays.asList("36090","6060"));
      List lineeF=new ArrayList(Arrays.asList("06590"));
      List lineeAgg=new ArrayList(Arrays.asList("38023","36092"));
      List lineeNew=new ArrayList(Arrays.asList("36090"));
@@ -837,15 +837,15 @@ public class ElabDatiProdCommesse extends ElabClass{
 //            List<BeanInfoColloComForTAP> beansCol2=getListBeansFromSCXXXCol(apm.getConnection(), TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC, null, lineeAgg, Boolean.TRUE);
 //            List<BeanInfoColloComForTAP> beansFebal2=getListBeansColliFebal(TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC, lineeAgg,Boolean.FALSE);
 
-             
+
              List<BeanInfoColloComForTAP> beansCol=getListBeansDesmosPortale(conDesmosCol, TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC, linee, Boolean.TRUE,Boolean.FALSE,Boolean.FALSE);
              List<BeanInfoColloComForTAP> beansFeb=getListBeansDesmosPortale(conDesmosFeb, TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC,lineeF, Boolean.TRUE, Boolean.TRUE,Boolean.TRUE);
-             List<BeanInfoColloComForTAP> beansArtecFeb=getListBeansDesmosPortale(conDesmosFeb, TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC,lineeNew,Boolean.TRUE, Boolean.TRUE,Boolean.TRUE);
+             List<BeanInfoColloComForTAP> beansArtecFeb=getListBeansDesmosPortale(conDesmosFeb, TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC,lineeNew,Boolean.TRUE, Boolean.TRUE,Boolean.FALSE);
              List<BeanInfoColloComForTAP> beansCol2=getListBeansDesmosPortale(conDesmosCol, TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC, lineeAgg, Boolean.FALSE, Boolean.FALSE,Boolean.TRUE);
              List<BeanInfoColloComForTAP> beansFebal2=getListBeansDesmosPortale(conDesmosFeb,TAPWebCostant.CDL_ANTEALLUM_EDPC, comm, dataC, lineeAgg,Boolean.FALSE,Boolean.TRUE,Boolean.TRUE);
+               
              
-     
-             
+
              //pz standard Colombini  con etichetta
              apm.storeDtFromBeans((List)beansCol);
              saveInfoForEtkPz(apm, beansCol, pathfile,Boolean.FALSE);
@@ -2304,6 +2304,9 @@ public class ElabDatiProdCommesse extends ElabClass{
       q.setFilter(FilterQueryProdCostant.FTLINEELAV, lineeLogiche.toString());
       if(isFebal){q.setFilter(QryPzAnteAllumDesmosPortale.isFebal, isFebal);}
       if(numArt1){q.setFilter(QryPzAnteAllumDesmosPortale.numArt1, numArt1);}
+      if(isFebal && lineeLogiche.contains("36090")){q.setFilter(QryPzAnteAllumDesmosPortale.filtroFor, true);}
+      //Modifica fatta per non aggiungere il noArt al barcode per la linea casetti 36090 - Gaston 24/01/2022
+      //if(lineeLogiche.contains("36090")){q.setFilter(QryPzAnteAllumDesmosPortale.barcodeSenzaArt, true);}
     }
     
     
@@ -2486,13 +2489,18 @@ public class ElabDatiProdCommesse extends ElabClass{
 
       qry.setFilter(QueryPzCommFornitori.COMMISSIONNO, comm);
       
-      qry.setFilter(QueryPzCommFornitori.FLUSSO, "P2");
-      
-      
-      if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdL)) //Se non è CASADEI, è MOROLLI
+     
+      if(TAPWebCostant.CDL_CASADEI_EDPC.equals(cdL)){ //Se non è CASADEI, è MOROLLI
          qry.setFilter(QueryPzCommFornitori.FORNITORE, TAPWebCostant.FRN_CASADEI_EDPC);
-      else
+         List<String> flussi=new ArrayList();
+         flussi.add("P2");
+         flussi.add("SC");
+         qry.setFilter(QueryPzCommFornitori.FLUSSO, flussi.toString());
+         }
+      else{
          qry.setFilter(QueryPzCommFornitori.FORNITORE, TAPWebCostant.FRN_MOROLLI_EDPC);
+         qry.setFilter(QueryPzCommFornitori.FLUSSO, "P2");
+         }
       
       if(dataElab!=null)
         qry.setFilter(QueryPzCommFornitori.COMMISSIONYEAR, DateUtils.getAnno(dataElab));
