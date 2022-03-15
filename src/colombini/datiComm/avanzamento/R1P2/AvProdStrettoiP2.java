@@ -24,7 +24,7 @@ public class AvProdStrettoiP2 extends AvProdLineaStd{
     +" data per lettura dati"+getDataForLogFile());
     
     Map commMap=getDatiFromVDL(conAs400);
-    storeDatiProdComm(conAs400, commMap);  
+    storeDatiProdComm(conAs400, commMap); 
   }
 
   @Override

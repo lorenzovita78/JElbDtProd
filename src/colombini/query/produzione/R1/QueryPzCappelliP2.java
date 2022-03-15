@@ -15,7 +15,7 @@ import utils.StringUtils;
  *
  * @author lvita
  */
-public class QueryPzR1P4 extends CustomQuery {
+public class QueryPzCappelliP2 extends CustomQuery {
 
   public final static String FT_ULTIMAFASEP4="FT_ULTIMAFASEP4";
   
@@ -49,7 +49,7 @@ public class QueryPzR1P4 extends CustomQuery {
                " ,[CodSemilavorato] \n" +
                " ,substring([Descrizione],1,30)  as descAbb \n" +
                " ,[Descrizione]\n" +
-               " ,[PartNumber] as barcode "+
+               " ,commessa + collo as barcode "+
               "\n FROM ").append(TAB_PRODP4).append(
                "\n WHERE 1=1 ").append(
                 addAND((ultimaFaseCondition)));
@@ -70,7 +70,7 @@ public class QueryPzR1P4 extends CustomQuery {
      
       
       sql.append(" ( ").append(sqlSub1).append( " ) a  inner join ( ").append(
-                               sqlSub2).append("  ) b  on  a.lineadestinazione=b.lineadestinazione ");//collate database_default ");
+                               sqlSub2).append("  ) b  on  a.lineadestinazione=b.lineadestinazione where ncollo=1");//collate database_default ");
       
       
      

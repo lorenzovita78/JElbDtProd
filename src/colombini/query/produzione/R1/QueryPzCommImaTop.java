@@ -53,7 +53,7 @@ public class QueryPzCommImaTop extends CustomQuery {
                     "ELSE ProductionLine\n" +
                     "END linea,\n" +
                     "box, Pedana , orderno, 0 nr_riga,\n" +
-                    "refart, ItemDecription , ItemDecription,barcode,'' colore";
+                    "refart, ItemDecription , DescriptionArt,barcode,'' colore";
     }
     
     select+= " from tab_ET ";

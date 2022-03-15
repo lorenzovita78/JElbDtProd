@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
  *
  * @author lvita
  */
-public class DtAnteRemArtec extends CaricoComOnTAP {
+public class DtAnteGola extends CaricoComOnTAP {
 
 //  public static final String PATHFANTEREM="//pegaso/flussi/FileProd/ARTEC/ANTEREM/ANTE";
 //
@@ -63,17 +63,12 @@ public class DtAnteRemArtec extends CaricoComOnTAP {
 
   @Override
   public String getCodLineaOnTAP() {
-    return TAPWebCostant.CDL_ANTEREM_EDPC;
+    return TAPWebCostant.CDL_ANTEGOLAP2_EDPC;
   }
 
-  @Override
-  public String getUniqueCodDivi() {
-    return CostantsColomb.BUARTEC; //To change body of generated methods, choose Tools | Templates.
-  }
-
+    
   
   
   
-  
-  private static final Logger _logger = Logger.getLogger(DtAnteRemArtec.class);   
+  private static final Logger _logger = Logger.getLogger(DtAnteGola.class);   
 }

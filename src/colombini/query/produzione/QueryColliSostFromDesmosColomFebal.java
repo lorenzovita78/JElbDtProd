@@ -50,7 +50,8 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          "\n inner join  (select okcuno from [MVX2DESMOS].[dbo].[OCUSMA_FASCECLI] where FASCECLIENTE in ('AAA','AAA*') group by okcuno) b on cliente=OKCUNO ").append(
          "\n WHERE 1=1").append(
          " and Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
-         " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(      
+         " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(
+         " and ").append(notInStatement("Linea",LINEETOEXCLUDEFEBAL)).append(
          " and [£5FRE1]='SOST' ").append( 
          " and [£5DIVI]<>'RS1' ").append( 
          "\n UNION " ).append(
@@ -60,7 +61,8 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          "\n inner join  (select ZAORNO,zafost from [MVX2DESMOS].[dbo].[ZZHEAD2] where commessa=" ).append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append( " and ZAFOST<>'' and ZAFOST>'1' ) b on NumeroOrdine =ZAORNO ").append(
          "\n WHERE 1=1").append( 
          "\n and Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
-         " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(       
+         " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(    
+         " and ").append(notInStatement("Linea",LINEETOEXCLUDEFEBAL)).append(
          " and [£5FRE1]='SOST' ").append( 
          " and [£5DIVI]<>'RS1' ").append( 
          "\n UNION " ).append(
@@ -69,6 +71,7 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          "\n WHERE 1=1").append(
          "\n and CLCOMM= ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
          "\n and COMMESSA= ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
+         "\n and ").append(notInStatement("CLLINP",LINEETOEXCLUDECOLOM)).append(
          "\n and ZAFOST<>'' and ZAFOST>'1' ").append(
          "\n and CLNART=0 ").append( 
          "\n UNION ").append( 
@@ -78,6 +81,7 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          "\n WHERE 1=1").append(
          "\n and CLCOMM= ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
          "\n and COMMESSA= ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
+         "\n and ").append(notInStatement("CLLINP",LINEETOEXCLUDECOLOM)).append(
          "\n and ZAFOST<>'' ").append( 
          "\n and CLNART=0 ");
     

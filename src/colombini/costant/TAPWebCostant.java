@@ -52,7 +52,7 @@ public class TAPWebCostant {
   public static final String CDL_ANTESCORR_EDPC = "01032SC";
   public static final String CDL_ANTEQUADR_EDPC = "01032QU";
   public static final String CDL_ANTESSPEC_EDPC = "01032SP";
-
-      
+  
+  public static final String CDL_CAPPELLI_EDPC = "01041";
 
 }

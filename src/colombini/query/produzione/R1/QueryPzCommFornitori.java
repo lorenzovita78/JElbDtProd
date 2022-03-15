@@ -35,7 +35,7 @@ public class QueryPzCommFornitori extends CustomQuery {
     String select=" select \n" +
         "       collo = A.codice_collo\n" +
         "       ,prog_collo = A.Progressivo_p\n" +    
-        "       ,'P2MF1' linea\n" +
+        "       ,CASE WHEN Flusso='P2' THEN 'P2MF1' WHEN Flusso='SC' THEN 'P0MP0' ELSE 'P2MF1' END as linea\n" + 
         "       ,box = A.box_vdl\n" +
         "       ,pedana = A.ped_vdl\n" +
         "       ,orderno = A.riferimento\n" +

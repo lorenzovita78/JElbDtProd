@@ -4,20 +4,21 @@
  * and open the template in the editor.
  */
 
-package colombini.datiComm.avanzamento.R1P3;
+package colombini.datiComm.avanzamento.R1P2;
 
 import colombini.costant.TAPWebCostant;
+import colombini.datiComm.avanzamento.R1P3.AvProdLineeOnTAP;
 
 
 /**
  *
  * @author lvita
  */
-public class AvProdForRem extends AvProdLineeOnTAP{
+public class AvProdAnteGolaP2 extends AvProdLineeOnTAP{
 
   @Override
   public String getCodLineaOnTAP() {
-    return TAPWebCostant.CDL_ANTEREM_EDPC;
+    return TAPWebCostant.CDL_ANTEGOLAP2_EDPC;
   } 
   
   
@@ -53,7 +54,7 @@ public class AvProdForRem extends AvProdLineeOnTAP{
   
   
   
-  private static final org.apache.log4j.Logger _logger = org.apache.log4j.Logger.getLogger(AvProdForRem.class);
+  private static final org.apache.log4j.Logger _logger = org.apache.log4j.Logger.getLogger(AvProdAnteGolaP2.class);
 
   
 }

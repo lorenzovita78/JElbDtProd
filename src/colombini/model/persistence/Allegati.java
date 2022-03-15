@@ -13,128 +13,158 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import db.persistence.IBeanPersSIMPLE;
+import java.text.SimpleDateFormat;
 
 /**
  *
  * @author lvita
  */
-public class LogCopiaLibretti implements IBeanPersSIMPLE{
+public class Allegati implements IBeanPersSIMPLE{
 
-  public final static String TABLENAME="LogCopiaLibretti";
+  public final static String TABLENAME="ZZBSTO";
   
+  public final static String Z2CONO="Z2CONO";  
+  public final static String Z2ORNO="Z2ORNO";
+  public final static String Z2TDOC="Z2TDOC";
+  public final static String Z2PTHS="Z2PTHS";
+  public final static String Z2TITL="Z2TITL";
+  public final static String Z2DMAG="Z2DMAG";
+  public final static String Z2DDIP="Z2DDIP";
+  public final static String Z2DDFP="Z2DDFP";
+  public final static String Z2PTHD="Z2PTHD";
   
-  public final static String COMMESSA="Commessa";
-  public final static String DATACOMMESSA="DataCommessa";
-  public final static String DATAGENERAZIONE="DataGenerazione";
-  public final static String NOMEFILE="NomeFile";
-  public final static String NUMEROPAGINE="NumeroPagine";
-  public final static String DATAORAINSERIMENTO="DataOraInserimento";
-  
-  
-  private String commessa;
-  private Date dataCommessa;
-  private Date dataGenerazione;
-  private String fileName;
-  private Integer numeroPagine;
-  
-
-  private String pathSource;
+  private String cono;
+  private String ordine;
+  private String tipoDoc;
+  private String path;
+  private String titolo;
+  private Date dataUltAggior;
+  private String dataPresaCarico;
+  private Date dataFineCarico;
   private String pathDest;
-  
-  
-  
-  public LogCopiaLibretti(String commessa,Date dataCommessa,String nomeFile){
-    this.fileName=nomeFile;
-    this.commessa=commessa;
-    this.dataCommessa=dataCommessa;
+
+
+    public Date getDataFineCarico() {
+        return dataFineCarico;
+    }
+
+    public void setDataFineCarico(Date dataFineCarico) {
+        this.dataFineCarico = dataFineCarico;
+    }
+
+    public String getCono() {
+        return cono;
+    }
+
+    public void setCono(String cono) {
+        this.cono = cono;
+    }
+
+    public Date getDataUltAggior() {
+        return dataUltAggior;
+    }
+
+    public void setDataUltAggior(Date dataUltAggior) {
+        this.dataUltAggior = dataUltAggior;
+    }
     
-  }
+    public String getOrdine() {
+        return ordine;
+    }
 
-  public Date getDataGenerazione() {
-    return dataGenerazione;
-  }
+    public void setOrdine(String ordine) {
+        this.ordine = ordine;
+    }
 
-  public void setDataGenerazione(Date dataGenerazione) {
-    this.dataGenerazione = dataGenerazione;
-  }
+    public String getTipoDoc() {
+        return tipoDoc;
+    }
 
-  public Integer getNumeroPagine() {
-    return numeroPagine;
-  }
+    public void setTipoDoc(String tipoDoc) {
+        this.tipoDoc = tipoDoc;
+    }
 
-  public void setNumeroPagine(Integer numeroPagine) {
-    this.numeroPagine = numeroPagine;
-  }
+    public String getPath() {
+        return path;
+    }
 
-  public String getPathSource() {
-    return pathSource;
-  }
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-  public void setPathSource(String pathSource) {
-    this.pathSource = pathSource;
-  }
+    public String getTitolo() {
+        return titolo;
+    }
 
-  public String getPathDest() {
-    return pathDest;
-  }
+    public void setTitolo(String titolo) {
+        this.titolo = titolo;
+    }
 
-  public void setPathDest(String pathDest) {
-    this.pathDest = pathDest;
-  }
+    public String getDataPresaCarico() {
+        return dataPresaCarico;
+    }
 
-  public String getCommessa() {
-    return commessa;
-  }
+    public void setDataPresaCarico(String dataPresaCarico) {
+        this.dataPresaCarico = dataPresaCarico;
+    }
 
-  public Date getDataCommessa() {
-    return dataCommessa;
-  }
+    public String getPathDest() {
+        return pathDest;
+    }
 
-  public String getFileName() {
-    return fileName;
-  }
+    public void setPathDest(String pathDest) {
+        this.pathDest = pathDest;
+    }
+    
+      public Allegati( ){
+//    this.ordine=ordine;
+//    this.tipoDoc=tipoDoc;
+//    this.path=path;
+//    this.cono=cono;
+//    this.dataUltAggior=dataUltAggior;
+//    this.titolo=titolo;
+      }
+
   
-  
-  
-  
-  public String getCompleteFileNameSource(){
-    return this.pathSource+"/"+this.fileName;
-  }
-  
-  
-  public String getCompleteFileNameDest(){
-    return this.pathDest+"/"+this.fileName;
-  }
+
   
   @Override
   public Map<String, Object> getFieldValuesMap() {
     Map fieldsValue=new HashMap();
-    fieldsValue.put(COMMESSA, this.commessa);
-    fieldsValue.put(DATACOMMESSA, this.dataCommessa);
-    fieldsValue.put(DATAGENERAZIONE, this.dataGenerazione);
-    fieldsValue.put(NOMEFILE, this.fileName);
-    fieldsValue.put(NUMEROPAGINE, this.numeroPagine);
-    fieldsValue.put(DATAORAINSERIMENTO, new Date());
-    
-    
-    
+    fieldsValue.put(Z2CONO, this.cono);
+    fieldsValue.put(Z2ORNO, this.ordine);
+    fieldsValue.put(Z2TDOC, this.tipoDoc);
+    fieldsValue.put(Z2PTHS, this.path);
+    fieldsValue.put(Z2TITL, this.titolo);
+    fieldsValue.put(Z2DMAG, this.dataUltAggior);
+    fieldsValue.put(Z2DDIP, this.dataPresaCarico);
+    fieldsValue.put(Z2DDFP, this.dataFineCarico);
+    fieldsValue.put(Z2PTHD, this.pathDest);
     return fieldsValue;
   }
 
   @Override
   public Map<String, Object> getFieldValuesForDelete() {
     Map fields=new HashMap();
-    fields.put(COMMESSA, this.commessa);
-    fields.put(DATACOMMESSA, this.dataCommessa);
-    fields.put(NOMEFILE, this.dataGenerazione);
-    
-    
+    fields.put(Z2CONO, this.cono);
+    fields.put(Z2ORNO, this.ordine);
+    fields.put(Z2TDOC, this.tipoDoc);
+    fields.put(Z2DMAG, this.dataUltAggior);
     return fields;
   }
 
+  public Map<String, Object> getFieldValuesForUpdate() {
+    Map fields=new HashMap();
+
+    fields.put(Z2PTHD, this.pathDest);    
+    fields.put(Z2DDFP, this.dataFineCarico);
+    return fields;
+  }
+  
   @Override
   public String getLibraryName() {
-    return "GestoreStampe2.dbo";
+      //Modifica fatta per test
+    return "mcobmoddem";
   }
 
   @Override
@@ -142,41 +172,48 @@ public class LogCopiaLibretti implements IBeanPersSIMPLE{
     return TABLENAME;
   }
 
+  
   @Override
   public List<String> getFields() {
     List l=new ArrayList();
-    l.add(COMMESSA);l.add(DATACOMMESSA);l.add(DATAGENERAZIONE);
-    l.add(NOMEFILE);l.add(NUMEROPAGINE);l.add(DATAORAINSERIMENTO);
-    
-
+    l.add(Z2CONO);
+    l.add(Z2ORNO);
+    l.add(Z2TDOC);
+    l.add(Z2PTHS);
+    l.add(Z2TITL);
+    l.add(Z2DMAG);
+    l.add(Z2DDIP);
+    l.add(Z2DDFP);
+    l.add(Z2PTHD);
     return l;
   }
 
   @Override
   public List<String> getKeyFields() {
     List l=new ArrayList();
-    l.add(COMMESSA);l.add(DATACOMMESSA);l.add(NOMEFILE);
-    
+    l.add(Z2CONO);
+    l.add(Z2ORNO);
+    l.add(Z2TDOC);
+    l.add(Z2DMAG);
     return l;
   }
 
   @Override
   public List<Integer> getFieldTypes() {
     List<Integer> types=new ArrayList();
-    
-    types.add(Types.CHAR);   //commessa
-    types.add(Types.DATE); //dataCOmmessa
-    types.add(Types.DATE); //dataElaborazione
-    
-    types.add(Types.CHAR);      //nomeFile
-    
-    types.add(Types.INTEGER);    //numeroPagine
-    types.add(Types.TIMESTAMP); //dataOraInserimento
-    
-    
+    types.add(Types.VARCHAR); //CONO
+    types.add(Types.VARCHAR); //ORDINE
+    types.add(Types.VARCHAR); //TIPODOC
+    types.add(Types.VARCHAR); //PATHSORGENTE
+    types.add(Types.VARCHAR); //TITOLO
+    types.add(Types.TIMESTAMP); //DATAULTAGGIOR
+    types.add(Types.VARCHAR); //DATAPRESACARICO
+    types.add(Types.TIMESTAMP); //DATAFINECARICO
+    types.add(Types.VARCHAR); //PATHDEST
     return types;
   }
 
+  
   @Override
   public Boolean validate() {
     return Boolean.TRUE;

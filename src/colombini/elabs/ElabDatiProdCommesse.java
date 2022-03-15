@@ -22,6 +22,7 @@ import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QueryColliCommessaFebal;
 import colombini.query.produzione.QueryColliSostFromDesmosColomFebal;
 import colombini.query.produzione.QueryListColliPzCommessa;
+import colombini.query.produzione.R1.QueryPzCappelliP2;
 import colombini.query.produzione.R1.QueryPzCommAntesScorrDatiProd;
 import colombini.query.produzione.R1.QueryPzCommCucineR1P4;
 import colombini.query.produzione.R1.QueryPzCommFornitori;
@@ -102,29 +103,27 @@ public class ElabDatiProdCommesse extends ElabClass{
       _logger.info(" Commesse disponibili n. "+commGg.size()+" --> "+commGg.toString());
       Map  commEx=getMapCommessePresenti(con);
      
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);    
       
         loadDatiForatriceRem(apm, commGg, commEx,propsElab);
         loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
         loadDatiImaTop(apm, commGg, commEx,propsElab);
-        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
-        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
-        
         
         loadDatiAnteAllum(apm, commGg, commEx,propsElab);
         loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
         loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
         loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
         loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);
-        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
-         
-       
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);           
+        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);  
+        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
+        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
+        loadDatiCapRipianiP2(apm,TAPWebCostant.CDL_CAPPELLI_EDPC,commGg, commEx, propsElab," lineadestinazione='P2 CAPP RIPIANI' ");
         
         loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
-
+        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
+        
         loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
         loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
         loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
@@ -1209,6 +1208,41 @@ public class ElabDatiProdCommesse extends ElabClass{
      }   
       
    }
+   
+    private void loadDatiCapRipianiP2(PersistenceManager apm,String cdl ,List commDisp,Map commEx,Map propsElab,String condFaseP4){
+     List<List> commToLoad=getListCommToSaveCkDate(commDisp, commEx, cdl);
+     Connection conDbDesmos=null;
+     Connection conDbAs400=null;
+     List linee=new ArrayList(Arrays.asList("6080","6081","6082","6083","6084","6086","6087","6089"));
+     try{
+        
+      conDbDesmos=ColombiniConnections.getDbDesmosColProdConnection();
+      conDbAs400=ColombiniConnections.getAs400ColomConnection();
+      for(List infoC:commToLoad){
+        Long dtC=ClassMapper.classToClass(infoC.get(0),Long.class);
+        Long comm=ClassMapper.classToClass(infoC.get(1),Long.class);
+        Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd"); 
+        
+        String commS=DatiProdUtils.getInstance().getStringNComm(comm);
+        List beans=getListPzCapelliP2(conDbDesmos, cdl, commS, dataC, linee, Boolean.FALSE,Boolean.TRUE,null);
+        apm.storeDtFromBeans(beans);
+                              
+      }
+
+     } catch(SQLException s){
+       _logger.error("Errore in fase di collegamento  al db DesmosFebal"+s.getMessage());
+       addError("Errore in fase di collegamento  al db DesmosFebal"+s.toString());
+     } finally{
+       if(conDbDesmos!=null)
+         try {
+           conDbDesmos.close();
+         } catch (SQLException ex) {
+          _logger.error("Errore in fase di chiusura della connessione --> "+ex.getMessage());
+         }
+     }   
+      
+   }
+   
    
    
    private Boolean isElabDesmosFinished(Connection con, Long comm,Date dataC,Integer tipo) throws SQLException{
@@ -2639,6 +2673,52 @@ public class ElabDatiProdCommesse extends ElabClass{
     
     return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
   }
+  
+  
+  private List getListPzCapelliP2(Connection con,String cdL,String comm,Date dataComm,List lineeLogiche,Boolean withEtk,Boolean nComm4P4,String ultimaFaseCond){
+    
+    List result=new ArrayList();
+    try{
+
+        QueryPzCappelliP2 qry=new QueryPzCappelliP2();
+      
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
+       
+    
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
+      if(ultimaFaseCond!=null && !ultimaFaseCond.isEmpty())
+        qry.setFilter(QueryPzR1P4.FT_ULTIMAFASEP4, ultimaFaseCond);
+      
+      if(lineeLogiche!=null && !lineeLogiche.isEmpty())
+        qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());
+      
+      ResultSetHelper.fillListList(con, qry.toSQLString(), result);
+     
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+
+    //per convertire comessa Febal in numerazione Colombini
+    if(comm.length()==7 && !nComm4P4){
+      String scomm=comm.toString().substring(4, 7);
+      comm=(scomm);
+    }
+    if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+    
+    return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
+  }
+  
   
   private List getListPzEtichettaturaP3(Connection con,String cdL,String comm,Date dataComm,Boolean withEtk,Boolean nComm4P4){
     

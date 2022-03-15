@@ -206,7 +206,7 @@ public class ElabGestLibretti extends ElabClass{
    * @param filesProc
    * @return 
    */
-  private Map <String,Map> getCommesseMap(List<List> filesProc){
+private Map <String,Map> getCommesseMap(List<List> filesProc){
     Map commMap=new HashMap <String,Map> ();
     for(List infoF:filesProc){
       String nomeFTmp=ClassMapper.classToString(infoF.get(0));
@@ -227,6 +227,7 @@ public class ElabGestLibretti extends ElabClass{
     
     return commMap;
   }
+  
   
   private class FileInfo{
     
