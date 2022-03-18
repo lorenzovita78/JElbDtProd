@@ -1,2 +1,4 @@
 /nbproject/private/
 dir_to_ignore/build
+/dist/
+*.rit
