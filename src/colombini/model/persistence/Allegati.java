@@ -13,7 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import db.persistence.IBeanPersSIMPLE;
-import java.text.SimpleDateFormat;
+import exception.QueryException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Calendar;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -32,16 +38,29 @@ public class Allegati implements IBeanPersSIMPLE{
   public final static String Z2DDIP="Z2DDIP";
   public final static String Z2DDFP="Z2DDFP";
   public final static String Z2PTHD="Z2PTHD";
+  public final static String Z2NOTE="Z2NOTE";
   
+  
+
+    
   private String cono;
   private String ordine;
   private String tipoDoc;
   private String path;
   private String titolo;
   private Date dataUltAggior;
-  private String dataPresaCarico;
+  private Date dataPresaCarico;
   private Date dataFineCarico;
   private String pathDest;
+  private String note;
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 
 
     public Date getDataFineCarico() {
@@ -100,11 +119,11 @@ public class Allegati implements IBeanPersSIMPLE{
         this.titolo = titolo;
     }
 
-    public String getDataPresaCarico() {
+    public Date getDataPresaCarico() {
         return dataPresaCarico;
     }
 
-    public void setDataPresaCarico(String dataPresaCarico) {
+    public void setDataPresaCarico(Date dataPresaCarico) {
         this.dataPresaCarico = dataPresaCarico;
     }
 
@@ -140,6 +159,7 @@ public class Allegati implements IBeanPersSIMPLE{
     fieldsValue.put(Z2DDIP, this.dataPresaCarico);
     fieldsValue.put(Z2DDFP, this.dataFineCarico);
     fieldsValue.put(Z2PTHD, this.pathDest);
+    fieldsValue.put(Z2NOTE, this.note);
     return fieldsValue;
   }
 
@@ -158,8 +178,15 @@ public class Allegati implements IBeanPersSIMPLE{
 
     fields.put(Z2PTHD, this.pathDest);    
     fields.put(Z2DDFP, this.dataFineCarico);
+    
     return fields;
   }
+  
+////  public Map<String, Object> getFieldValuesForErrorUpdate() {
+////    Map fields=new HashMap();
+////    fields.put(Z2NOTE, "Errore copia file");    
+////    return fields;
+////  }
   
   @Override
   public String getLibraryName() {
@@ -185,6 +212,7 @@ public class Allegati implements IBeanPersSIMPLE{
     l.add(Z2DDIP);
     l.add(Z2DDFP);
     l.add(Z2PTHD);
+    l.add(Z2NOTE);
     return l;
   }
 
@@ -194,7 +222,8 @@ public class Allegati implements IBeanPersSIMPLE{
     l.add(Z2CONO);
     l.add(Z2ORNO);
     l.add(Z2TDOC);
-    l.add(Z2DMAG);
+    //l.add(Z2DDIP);
+    //l.add(Z2DMAG);
     return l;
   }
 
@@ -207,9 +236,10 @@ public class Allegati implements IBeanPersSIMPLE{
     types.add(Types.VARCHAR); //PATHSORGENTE
     types.add(Types.VARCHAR); //TITOLO
     types.add(Types.TIMESTAMP); //DATAULTAGGIOR
-    types.add(Types.VARCHAR); //DATAPRESACARICO
+    types.add(Types.TIMESTAMP); //DATAPRESACARICO
     types.add(Types.TIMESTAMP); //DATAFINECARICO
     types.add(Types.VARCHAR); //PATHDEST
+    types.add(Types.VARCHAR); //NOTE
     return types;
   }
 
@@ -219,4 +249,40 @@ public class Allegati implements IBeanPersSIMPLE{
     return Boolean.TRUE;
   }
   
+   public void updateAllegati(PreparedStatement ps,Connection con,String cono,String tipoFile,String ordine,java.sql.Date dataFineCarico, String pathDest) throws QueryException, SQLException{
+    
+    boolean rs = true;
+    try{
+      ps.setString(1, pathDest);
+      ps.setDate(2, dataFineCarico);
+      ps.setString(3, cono);
+      ps.setString(4, ordine); 
+      ps.setString(5, tipoFile);
+      rs=ps.execute();
+    }
+     catch (SQLException ex)
+     {
+         _logger.error("Errore query update -->"+ps.executeQuery().toString());
+      }
+
+  }
+   
+  public void updateErrorAllegati(PreparedStatement ps,Connection con,String cono,String tipoFile,String ordine, String Nota) throws QueryException, SQLException{
+    
+    boolean rs = true;
+    try{
+      ps.setString(1, Nota);
+      ps.setString(2, cono);
+      ps.setString(3, ordine); 
+      ps.setString(4, tipoFile);
+      rs=ps.execute();
+    }
+     catch (SQLException ex)
+     {
+         _logger.error("Errore query update -->"+ps.executeQuery().toString());
+      }
+
+  }
+    
+  private static final Logger _logger = Logger.getLogger(Allegati.class); 
 }
