@@ -64,8 +64,6 @@ public class ElabGestAllegati extends ElabClass{
     try {
        conDbAS400=ColombiniConnections.getAs400ColomConnection();
        
-       
-       
       //Paso 1: Prendo tutti allegati con dataPresaCarico Null --> Update dataPresaCarico a data attuale
       //Data attuale
       Date dataPresaCarico=new Date();

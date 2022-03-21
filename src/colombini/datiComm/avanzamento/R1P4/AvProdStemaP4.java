@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package colombini.datiComm.avanzamento.R1P2;
+package colombini.datiComm.avanzamento.R1P4;
 
+import colombini.datiComm.avanzamento.R1P2.*;
 import colombini.costant.TAPWebCostant;
 import colombini.datiComm.avanzamento.R1P3.AvProdLineeOnTAP;
 
@@ -14,11 +15,11 @@ import colombini.datiComm.avanzamento.R1P3.AvProdLineeOnTAP;
  *
  * @author lvita
  */
-public class AvProdAnteGolaP2 extends AvProdLineeOnTAP{
+public class AvProdStemaP4 extends AvProdLineeOnTAP{
 
   @Override
   public String getCodLineaOnTAP() {
-    return TAPWebCostant.CDL_ANTEGOLAP2_EDPC;
+    return TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC;
   } 
   
   
@@ -54,7 +55,7 @@ public class AvProdAnteGolaP2 extends AvProdLineeOnTAP{
   
   
   
-  private static final org.apache.log4j.Logger _logger = org.apache.log4j.Logger.getLogger(AvProdAnteGolaP2.class);
+  private static final org.apache.log4j.Logger _logger = org.apache.log4j.Logger.getLogger(AvProdStemaP4.class);
 
   
 }
