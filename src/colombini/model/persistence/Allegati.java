@@ -29,7 +29,8 @@ public class Allegati implements IBeanPersSIMPLE{
 
   public final static String TABLENAME="ZZBSTO";
   
-  public final static String Z2CONO="Z2CONO";  
+  public final static String Z2CONO="Z2CONO"; 
+  public final static String Z2IDUN="Z2IDUN"; 
   public final static String Z2ORNO="Z2ORNO";
   public final static String Z2TDOC="Z2TDOC";
   public final static String Z2PTHS="Z2PTHS";
@@ -39,11 +40,14 @@ public class Allegati implements IBeanPersSIMPLE{
   public final static String Z2DDFP="Z2DDFP";
   public final static String Z2PTHD="Z2PTHD";
   public final static String Z2NOTE="Z2NOTE";
+  public final static String Z2NOTD="Z2NOTD";
+  
   
   
 
     
   private String cono;
+  private int idSequence;
   private String ordine;
   private String tipoDoc;
   private String path;
@@ -53,6 +57,15 @@ public class Allegati implements IBeanPersSIMPLE{
   private Date dataFineCarico;
   private String pathDest;
   private String note;
+  private String noteInt;
+
+    public String getNoteInt() {
+        return noteInt;
+    }
+
+    public void setNoteInt(String noteInt) {
+        this.noteInt = noteInt;
+    }
 
     public String getNote() {
         return note;
@@ -62,6 +75,13 @@ public class Allegati implements IBeanPersSIMPLE{
         this.note = note;
     }
 
+      public int getIdSequence() {
+        return idSequence;
+    }
+
+    public void setIdSequence(int idSequence) {
+        this.idSequence = idSequence;
+    }
 
     public Date getDataFineCarico() {
         return dataFineCarico;
@@ -160,6 +180,7 @@ public class Allegati implements IBeanPersSIMPLE{
     fieldsValue.put(Z2DDFP, this.dataFineCarico);
     fieldsValue.put(Z2PTHD, this.pathDest);
     fieldsValue.put(Z2NOTE, this.note);
+    fieldsValue.put(Z2NOTD, this.noteInt);
     return fieldsValue;
   }
 
@@ -191,7 +212,7 @@ public class Allegati implements IBeanPersSIMPLE{
   @Override
   public String getLibraryName() {
       //Modifica fatta per test
-    return "mcobmoddem";
+    return "mcobmoddta";
   }
 
   @Override
@@ -240,6 +261,7 @@ public class Allegati implements IBeanPersSIMPLE{
     types.add(Types.TIMESTAMP); //DATAFINECARICO
     types.add(Types.VARCHAR); //PATHDEST
     types.add(Types.VARCHAR); //NOTE
+    types.add(Types.VARCHAR);//NOTA INTERNA
     return types;
   }
 
@@ -249,15 +271,14 @@ public class Allegati implements IBeanPersSIMPLE{
     return Boolean.TRUE;
   }
   
-   public void updateAllegati(PreparedStatement ps,Connection con,String cono,String tipoFile,String ordine,java.sql.Date dataFineCarico, String pathDest) throws QueryException, SQLException{
+   public void updateAllegati(PreparedStatement ps,Connection con,int Id,java.sql.Date dataFineCarico, String pathDest, String elab) throws QueryException, SQLException{
     
     boolean rs = true;
     try{
       ps.setString(1, pathDest);
       ps.setDate(2, dataFineCarico);
-      ps.setString(3, cono);
-      ps.setString(4, ordine); 
-      ps.setString(5, tipoFile);
+      ps.setString(3, elab);
+      ps.setInt(4, Id);
       rs=ps.execute();
     }
      catch (SQLException ex)
@@ -267,14 +288,12 @@ public class Allegati implements IBeanPersSIMPLE{
 
   }
    
-  public void updateErrorAllegati(PreparedStatement ps,Connection con,String cono,String tipoFile,String ordine, String Nota) throws QueryException, SQLException{
+  public void updateErrorAllegati(PreparedStatement ps,Connection con,int Id, String Nota) throws QueryException, SQLException{
     
     boolean rs = true;
     try{
       ps.setString(1, Nota);
-      ps.setString(2, cono);
-      ps.setString(3, ordine); 
-      ps.setString(4, tipoFile);
+      ps.setInt(2, Id);
       rs=ps.execute();
     }
      catch (SQLException ex)

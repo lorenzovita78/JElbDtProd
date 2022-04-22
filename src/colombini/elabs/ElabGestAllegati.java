@@ -47,8 +47,8 @@ public class ElabGestAllegati extends ElabClass{
     }  
   return true;
   }
-  String libraryMvx = "MVXBDTADEM.";
-  String libraryMvxPersonalizzata = "MCOBMODDEM.";
+  String libraryMvx = "MVXBDTA.";
+  String libraryMvxPersonalizzata = "MCOBMODDTA.";
  
  
   
@@ -83,10 +83,10 @@ public class ElabGestAllegati extends ElabClass{
       filesAllegati=elabFiles(files,dataPresaCarico,tipoFilesDest);
       
        PreparedStatement psUpdFineCarico = null;
-       psUpdFineCarico = conDbAS400.prepareStatement(getUpdateFinePresaCarico(dataPresaCarico));
+       psUpdFineCarico = conDbAS400.prepareStatement(getUpdateFinePresaCarico());
        
        PreparedStatement psUpdErroreCarico = null;
-       psUpdErroreCarico = conDbAS400.prepareStatement(getUpdateErroreCopy(dataPresaCarico));
+       psUpdErroreCarico = conDbAS400.prepareStatement(getUpdateErroreCopy());
   
       for(Allegati rec:filesAllegati){
         try {
@@ -98,10 +98,10 @@ public class ElabGestAllegati extends ElabClass{
           rec.setDataFineCarico(dateFineCar);
           
           if(sorgente.exists()){
-          rec.updateAllegati(psUpdFineCarico,conDbAS400,rec.getCono(),rec.getTipoDoc(),rec.getOrdine(),dateFineCar,rec.getPathDest());
+          rec.updateAllegati(psUpdFineCarico,conDbAS400,rec.getIdSequence(),dateFineCar,rec.getPathDest(),"U");
             }
           else {
-          rec.updateErrorAllegati(psUpdErroreCarico, conDbAS400, rec.getCono(), rec.getTipoDoc(), rec.getOrdine(), "Errore copy file");
+          rec.updateErrorAllegati(psUpdErroreCarico, conDbAS400, rec.getIdSequence(), "Errore copy file");
           }
           //pm.updateDt(rec, rec.getFieldValuesForUpdate()); UPDATE BEAN non funziona per formato dataPresaCaric
           if(ps!=null)
@@ -110,8 +110,10 @@ public class ElabGestAllegati extends ElabClass{
         catch (IOException ex) 
             {
                 addError("Errore in fase di copia file -->"+ex.getMessage());
-                try{rec.updateErrorAllegati(psUpdErroreCarico, conDbAS400, rec.getCono(), rec.getTipoDoc(), rec.getOrdine(), "Errore copy file");}
-                catch (Exception err) {addError("Errore generica -->"+err.getMessage());}
+                try{
+                    rec.updateErrorAllegati(psUpdErroreCarico, conDbAS400, rec.getIdSequence(), "Errore copy file");
+                }
+                 catch (Exception err) {addError("Errore generica -->"+err.getMessage());}
 
              }
          catch (SQLException ex) 
@@ -153,27 +155,22 @@ public class ElabGestAllegati extends ElabClass{
 
  }
   
-  private String getUpdateFinePresaCarico (Date data){
+  private String getUpdateFinePresaCarico (){
    
    String query=" UPDATE "+libraryMvxPersonalizzata+ "ZZBSTO "
                                        +" SET Z2PTHD=?"
-                                       +" ,Z2DDFP=?"  
-                                       +" WHERE Z2CONO=?"            
-                                       +" and Z2ORNO=?"       
-                                       +" and Z2TDOC=?"
-                                       +" and Z2DDIP ="+JDBCDataMapper.objectToSQL(data);
+                                       +" ,Z2DDFP=?"
+                                       +" ,Z2ELAB=?"
+                                       +" WHERE Z2IDUN=?";            
    
    return query;
    }
   
-  private String getUpdateErroreCopy (Date data){
+  private String getUpdateErroreCopy (){
    
    String query=" UPDATE "+libraryMvxPersonalizzata+ "ZZBSTO "
-                                       +" SET Z2NOTE=?"
-                                       +" WHERE Z2CONO=?"            
-                                       +" and Z2ORNO=?"       
-                                       +" and Z2TDOC=?"
-                                       +" and Z2DDIP ="+JDBCDataMapper.objectToSQL(data);
+                                       +" SET Z2NOTD=?"
+                                       +" WHERE Z2IDUN=?";            
    return query;
    }
         
@@ -185,13 +182,14 @@ public class ElabGestAllegati extends ElabClass{
         try {
            Allegati fileAllegato =new Allegati();
            fileAllegato.setCono(ClassMapper.classToString(file.get(0)).trim());
-           fileAllegato.setOrdine(ClassMapper.classToString(file.get(1)).trim());
-           fileAllegato.setTipoDoc(ClassMapper.classToString(file.get(2)).trim());
-           fileAllegato.setPath(ClassMapper.classToString(file.get(3)).trim());
-           fileAllegato.setTitolo(ClassMapper.classToString(file.get(4)).trim());
-           fileAllegato.setDataUltAggior(ClassMapper.classToClass(file.get(5),Date.class));
+           fileAllegato.setIdSequence(ClassMapper.classToClass(file.get(1), Integer.class));
+           fileAllegato.setOrdine(ClassMapper.classToString(file.get(2)).trim());
+           fileAllegato.setTipoDoc(ClassMapper.classToString(file.get(3)).trim());
+           fileAllegato.setPath(ClassMapper.classToString(file.get(4)).trim());
+           fileAllegato.setTitolo(ClassMapper.classToString(file.get(5)).trim());
+           fileAllegato.setDataUltAggior(ClassMapper.classToClass(file.get(6),Date.class));
            fileAllegato.setDataPresaCarico(dataPC);
-           fileAllegato.setPathDest(tipoFilesDest.get(ClassMapper.classToString(file.get(2)).trim())+"\\"+fileAllegato.getTitolo());
+           fileAllegato.setPathDest(tipoFilesDest.get(ClassMapper.classToString(file.get(3)).trim())+"\\"+fileAllegato.getTitolo());
            
            System.out.println("DataUltimoAggiornamento-->"+DateUtils.dateToStr(fileAllegato.getDataUltAggior(), "yyyyMMddHHmmssSSS"));
 
@@ -207,7 +205,7 @@ public class ElabGestAllegati extends ElabClass{
   
   private String getQueryListFileAllegati(String data ){
     
-    String sql="SELECT Z2CONO,Z2ORNO,Z2TDOC,Z2PTHS,Z2TITL,Z2DMAG FROM "+ libraryMvxPersonalizzata +"ZZBSTO WHERE Z2DDIP='"+data+"'";
+    String sql="SELECT Z2CONO,Z2IDUN,Z2ORNO,Z2TDOC,Z2PTHS,Z2TITL,Z2DMAG FROM "+ libraryMvxPersonalizzata +"ZZBSTO WHERE Z2DDIP='"+data+"'";
              
     return sql;         
   }

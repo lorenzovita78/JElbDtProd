@@ -7,6 +7,7 @@
 package colombini.elabs;
 
 
+import colombini.util.InfoMapLineeUtil;
 import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import elabObj.MessagesElab;
@@ -30,7 +31,12 @@ public class ElabManageFiles extends ElabClass{
   public final static String PATHSOURCE="PATHSRC";
   //identifica la cartella destinazione
   public final static String PATHDEST="PATHDST";
-  
+ 
+  //gestione singolo file
+  public final static String FILESOURCE="FILESRC";
+  //identifica la cartella destinazione
+  public final static String FILEDEST="FILEDST";
+  //--------------------------------------------------
   //identifica la tipologia di data da controllare (giorno dell'anno,data specifica ,giorni di differenza
   public final static String TYPEDT="TYPEDT";
   
@@ -46,6 +52,10 @@ public class ElabManageFiles extends ElabClass{
 
   private String pathSourceFiles;
   private String pathDestFiles;
+  
+  private String fileSource;
+  private String fileDest;
+  
   private String typeOper;
   private String typeGg;
   private Date dataRif;
@@ -72,6 +82,18 @@ public class ElabManageFiles extends ElabClass{
     if(parameter.get(PATHDEST)!=null){
       this.pathDestFiles=ClassMapper.classToString(parameter.get(PATHDEST));
     }
+    
+     if(parameter.get(FILESOURCE)!=null){
+      this.fileSource=ClassMapper.classToString(parameter.get(FILESOURCE));
+    }  
+    
+    
+    if(parameter.get(FILEDEST)!=null){
+      this.fileDest=ClassMapper.classToString(parameter.get(FILEDEST));
+    }
+    
+    if(fileSource!=null && !fileSource.isEmpty() && (fileDest==null || fileDest.isEmpty()) )
+        fileDest=fileSource;
     
     if(parameter.get(ALuncherElabs.TYPEOPR)!=null){
       this.typeOper=ClassMapper.classToString(parameter.get(ALuncherElabs.TYPEOPR));
@@ -119,8 +141,14 @@ public class ElabManageFiles extends ElabClass{
   @Override
   public void exec(Connection con) {
     if(ManageFileUtils.COPY.equals(typeOper)){
+      MessagesElab m=null;
+      if(!StringUtils.isEmpty(fileSource)){
+        m=ManageFileUtils.getInstance().copyFile(pathSourceFiles+"/"+fileSource, InfoMapLineeUtil.getStringReplaceWithDate(pathDestFiles+"/"+fileDest,dataRif), dataRif);
+      }else{
+        
+        m=ManageFileUtils.getInstance().copyFiles(pathSourceFiles, pathDestFiles, typeGg, valueGg, posIniDOY, dataRif);
       
-      MessagesElab m=ManageFileUtils.getInstance().copyFiles(pathSourceFiles, pathDestFiles, typeGg, valueGg, posIniDOY, dataRif);
+      }
       this.addMessagesToElab(m);
     }else if(ManageFileUtils.MOVE.equals(typeOper)){
       MessagesElab m=ManageFileUtils.getInstance().moveFiles(pathSourceFiles, pathDestFiles, typeGg, valueGg, posIniDOY, dataRif);

@@ -293,6 +293,17 @@ public class ColombiniConnections {
     
   }
   
+    public static Connection getDbAvanzamentoProdConnection() throws SQLException{
+    String srvName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.SRVAVANPROD));
+    String dbName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.DBAVANPROD));
+    String usrName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.USUAVANPROD));
+    String pwdUsr=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.PWDAVANPROD));        
+   
+    _logger.info(" Dati connessione db avanzamentoProd :"+srvName+" - "+dbName+" - "+usrName+" - "+pwdUsr);
+    return Connections.getSqlServerConnection(srvName, dbName, usrName, pwdUsr);
+    
+  }
+  
   public static Connection getDbIPCNetConnection() throws SQLException{
     String srvName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.SRVIPCNET));
     String dbName=ClassMapper.classToString(ConnectionsProps.getInstance().getProperty(ColomConnectionsCostant.DBIPCNET));

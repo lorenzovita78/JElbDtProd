@@ -145,4 +145,10 @@ public class ColomConnectionsCostant {
   public final static String DBAVANVDL="DBAVANVDL";
   public final static String USRAVANDVL="USRAVANDVL";
   public final static String PWDAVANVDL="PWDAVANVDL";
+  
+  //avanzamentoProd
+  public final static String SRVAVANPROD="SRVAVANVDL";
+  public final static String DBAVANPROD="DBAVANVDL";
+  public final static String USUAVANPROD="USRAVANDVL";
+  public final static String PWDAVANPROD="PWDAVANVDL";
 }

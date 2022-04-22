@@ -19,6 +19,7 @@ public final static String isFebal="isFebal";
 public final static String numArt1="numArt1";
 public final static String barcodeSenzaArt="barcodeSenzaArt";
 public final static String filtroFor="filtroFor";
+public final static String Classe_M="40";
 
 
   @Override
@@ -52,6 +53,15 @@ public final static String filtroFor="filtroFor";
     
     if(isFilterPresent(filtroFor)){
         q.append(" AND foratrice <> ''");
+        
+        //Modifica per prendere i pezzi non forati sulla 36090 di febal (Gaston 13-04-2022)
+        StringBuilder pezziNonFor=new StringBuilder("  UNION  select NonForati.Codice_Collo,0 NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa \n" 
+          + (" from ") + db + ("desmosPortale as NonForati \n") 
+          + (" left join (select distinct Codice_Collo,NumArticolo from ") + db + ("desmosPortale where foratrice <> '' and DesmosLancio=") + getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) +  addAND(inStatement("linea", FilterQueryProdCostant.FTLINEELAV)) + " ) as pezziForati on pezziForati.Codice_Collo=NonForati.Codice_Collo \n"
+          + (" where pezziForati.Codice_Collo is null and NonForati.DesmosLancio=") + getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + addAND(inStatement("NonForati.linea", FilterQueryProdCostant.FTLINEELAV)) + " and Classe_Merceologica='"+Classe_M+"'"
+        );
+                
+        q.append(pezziNonFor);
     }
     return q.toString();
     

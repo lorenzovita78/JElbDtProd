@@ -26,8 +26,10 @@ public class DesmosUtils {
   
   public final static String ELAB_GENDATI_DESMOS_COLOMBINI="Etichette_Generazione.dsm";
   
-  public final static String ELAB_GENDATI_DESMOS_FEBAL="Generazione_Globale.dsm";
-  
+  //public final static String ELAB_GENDATI_DESMOS_FEBAL="Generazione_Globale.dsm";
+  //Modifica fatta per cambio comando utente su desmos Febal Gaston 15/03/2022
+  public final static String ELAB_GENDATI_DESMOS_FEBAL="Generazione_Globale_2.dsm";
+
   public final static String ELAB_STAMPE_DESMOS_FEBAL="Stampe_produzione.dsm";
   
   public final static String ELAB_LIBRETTI_DESMOS_COLOMBINI="Stampa_LibrettiSCH2.dsm";

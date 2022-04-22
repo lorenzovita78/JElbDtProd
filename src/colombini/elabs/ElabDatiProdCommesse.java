@@ -2529,7 +2529,7 @@ public class ElabDatiProdCommesse extends ElabClass{
          List<String> flussi=new ArrayList();
          flussi.add("P2");
          flussi.add("SC");
-         flussi.add("LSM");
+         //flussi.add("LSM"); Tolto a richiesta di Federico Canuti 11/04/2022
          qry.setFilter(QueryPzCommFornitori.FLUSSO, flussi.toString());
          }
       else{
