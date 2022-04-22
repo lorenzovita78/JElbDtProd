@@ -50,6 +50,9 @@ public class FilterFieldCostantXDtProd {
   
   public final static String FT_LANCIO_DESMOS="FT_LANCIO_DESMOS";
   
+  public final static String FT_SISTEMA="FT_SISTEMA";
+
+  
   //filtro BU uguale / diverso
   public final static String FT_BU_UGUALE="FT_BU_UGUALE";
   public final static String FT_BU_DIVERSO="FT_BU_DIVERSO";
