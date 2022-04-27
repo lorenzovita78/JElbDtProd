@@ -6,16 +6,20 @@
 
 package colombini.datiComm.avanzamento.R1P2;
 
-import colombini.costant.CostantsColomb;
+import colombini.conn.ColombiniConnections;
 import colombini.datiComm.avanzamento.AvProdLineaStd;
 import colombini.exception.DatiCommLineeException;
+import colombini.query.datiComm.FilterFieldCostantXDtProd;
+import colombini.query.datiComm.avanzamento.QueryProdCommAvzVDL;
+import db.ResultSetHelper;
+import exception.QueryException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.apache.log4j.Logger;
+import utils.DateUtils;
 
 /**
  *
@@ -31,30 +35,64 @@ public class AvProdImbMontFebal extends AvProdLineaStd{
     +" data per lettura dati"+getDataForLogFile());
     
      
-    List bu=new ArrayList();
-    
-    bu.add(CostantsColomb.CODDITTAFEBAL);
-    //devo far in modo di prendere solo i colli Febal e Febal giorno
-    Map commMapFeb=getDatiFromVDL(conAs400,getLineeLogicheImbFebal(),bu);
-    
-    if(LINEAFEBALIMBALLOFEB.equals(getInfoLinea().getCodLineaLav())){
-      storeDatiProdComm(conAs400, commMapFeb);
-    }else{
-      Map commMapCol=getDatiFromVDL(conAs400,getLineeLogicheImbFebal(),null);
+     Connection conSqlS=null;
+    List pzComm=new ArrayList();
+    try{
+      conSqlS=ColombiniConnections.getDbAvanzamentoProdConnection();
       
-      Set keysM=commMapFeb.keySet();
-      Iterator iter =keysM.iterator();
-      while (iter.hasNext()){
-        Integer comm=(Integer) iter.next();
-        Integer valueF=(Integer) commMapFeb.get(comm);
-        if(commMapCol.containsKey(comm)){
-          Integer valueC=(Integer) commMapCol.get(comm);
-          commMapCol.put(comm, valueC-valueF);
+      List lineeLogiche=new ArrayList();
+      lineeLogiche.add("06516");
+      lineeLogiche.add("06517");
+      lineeLogiche.add("06518");
+      lineeLogiche.add("36017");
+      lineeLogiche.add("36201");
+      lineeLogiche.add("36035");
+      lineeLogiche.add("36200");
+      lineeLogiche.add("36151");
+      lineeLogiche.add("36202");
+      
+      List buFebal= new ArrayList();
+      buFebal.add("B"); 
+      buFebal.add("D");     
+      buFebal.add("N");
+      
+      QueryProdCommAvzVDL qry=new QueryProdCommAvzVDL();
+      String di=DateUtils.DateToStr(DateUtils.getInizioGg(this.getDataRifCalc()), "yyyy-MM-dd HH:mm:ss ");
+      String df=DateUtils.DateToStr(DateUtils.getFineGg(this.getDataRifCalc()), "yyyy-MM-dd HH:mm:ss ");  
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATADA, di);
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATAA, df);
+      qry.setFilter(FilterFieldCostantXDtProd.FT_LINEA, lineeLogiche.toString());
+      if(LINEAFEBALIMBALLOFEB.equals(getInfoLinea().getCodLineaLav())){
+          qry.setFilter(FilterFieldCostantXDtProd.FT_BU_UGUALE,buFebal.toString());
+         }   
+      else{
+          qry.setFilter(FilterFieldCostantXDtProd.FT_BU_DIVERSO,buFebal.toString());
         }
-      }
+      ResultSetHelper.fillListList(conSqlS, qry.toSQLString(), pzComm);
+      storeDatiProdComm(conAs400, pzComm);
       
-      storeDatiProdComm(conAs400, commMapCol);
+    }catch(SQLException s){
+     _logger.error("Errore in fase di interrogazione del DB avanzamentoVDL -->"+s.getMessage());
+     throw new DatiCommLineeException(s);
+     
     }
+     catch (ParseException ex) {
+      _logger.error("Problemi di conversione della data riferimento calcolo-->"+ex.getMessage());
+      throw new DatiCommLineeException(ex);
+    }
+    catch (QueryException ex) {
+       _logger.error("Errore in fase di esecuzione query --> "+ex.getMessage());
+      throw new DatiCommLineeException("Impossibile interrogare il database per reperire i dati relativi ai pz prodotti");
+    }
+        finally{
+      if(conSqlS!=null)
+        try{
+          conSqlS.close();
+        }catch(SQLException s){
+          _logger.error("Errore in fase di chiusura della connessione al db avanzamentoVDL "+s.getMessage());
+        }
+    }   
+
   }
 
   @Override
@@ -64,18 +102,7 @@ public class AvProdImbMontFebal extends AvProdLineaStd{
   }
  
   
-  
-  
 
-  private List<String> getLineeLogicheImbFebal() {
-    List<String> lineeLogiche=new ArrayList();
-    
-    lineeLogiche.add("06516");
-    lineeLogiche.add("06517");
-    lineeLogiche.add("06518");
-    
-    return lineeLogiche;
-  }
   
   
   private static final Logger _logger = Logger.getLogger(AvProdImbMontFebal.class);

@@ -27,7 +27,7 @@ import utils.ClassMapper;
  *
  * @author lvita
  */
-public class DtImballoFebalOLD implements IDatiCaricoLineaComm {
+public class DtImballoFebal_OLD implements IDatiCaricoLineaComm {
 
    //parametro da elminare
   
@@ -91,5 +91,5 @@ public class DtImballoFebalOLD implements IDatiCaricoLineaComm {
   }
   
  
-  private static final Logger _logger = Logger.getLogger(DtImballoFebalOLD.class);   
+  private static final Logger _logger = Logger.getLogger(DtImballoFebal_OLD.class);   
 }

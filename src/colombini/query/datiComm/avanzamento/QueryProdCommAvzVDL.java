@@ -34,7 +34,25 @@ public class QueryProdCommAvzVDL extends CustomQuery {
              " where 1=1 and ").append(
             " Status>=200 ").append(addAND(inStatement("ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
             " and SYSTEMDATE>=convert( datetime ,").append(dI).append(" ,120)").append(
-            " and SYSTEMDATE<=convert( datetime ,").append(dF).append(" ,120)").append(
+            " and SYSTEMDATE<=convert( datetime ,").append(dF).append(" ,120) ");
+    
+    if(isFilterPresent(FilterFieldCostantXDtProd.FT_BU_DIVERSO)){
+      qry.append(addAND(notInStatement("ClientId",FilterFieldCostantXDtProd.FT_BU_DIVERSO)));                              
+    }
+    
+    if(isFilterPresent(FilterFieldCostantXDtProd.FT_BU_UGUALE)){
+      qry.append(addAND(inStatement("ClientId",FilterFieldCostantXDtProd.FT_BU_UGUALE)));                              
+    }
+    
+    if(isFilterPresent(FilterFieldCostantXDtProd.FT_SISTEMA)){
+     qry.append(addAND(inStatement("MFSystem",FilterFieldCostantXDtProd.FT_SISTEMA)));                                      
+    }
+    
+    if(isFilterPresent(FilterFieldCostantXDtProd.FT_PERSONALIZZATO)){
+    // qry.append(FilterFieldCostantXDtProd.FT_PERSONALIZZATO);                                      
+    }
+    
+    qry.append(
             " group by ").append(campiConv);
            
     return qry.toString();

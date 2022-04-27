@@ -41,6 +41,9 @@ public class Allegati implements IBeanPersSIMPLE{
   public final static String Z2PTHD="Z2PTHD";
   public final static String Z2NOTE="Z2NOTE";
   public final static String Z2NOTD="Z2NOTD";
+  public final static String Z2ELAB="Z2ELAB";
+  public final static String Z6DEL="Z6DEL";
+
   
   
   
@@ -58,6 +61,34 @@ public class Allegati implements IBeanPersSIMPLE{
   private String pathDest;
   private String note;
   private String noteInt;
+  private String statoTen;
+  private String estensione;
+  private String daCancellare;
+
+    public String getDaCancellare() {
+        return daCancellare;
+    }
+
+    public void setDaCancellare(String daCancellare) {
+        this.daCancellare = daCancellare;
+    }
+
+    public String getEstensione() {
+        return estensione;
+    }
+
+    public void setEstensione(String estensione) {
+        this.estensione = estensione;
+    }
+
+    public String getStatoTen() {
+        return statoTen;
+    }
+
+    public void setStatoTen(String statoTen) {
+        this.statoTen = statoTen;
+    }
+
 
     public String getNoteInt() {
         return noteInt;
@@ -181,6 +212,8 @@ public class Allegati implements IBeanPersSIMPLE{
     fieldsValue.put(Z2PTHD, this.pathDest);
     fieldsValue.put(Z2NOTE, this.note);
     fieldsValue.put(Z2NOTD, this.noteInt);
+    fieldsValue.put(Z2ELAB, this.statoTen);
+    fieldsValue.put(Z6DEL, this.daCancellare);
     return fieldsValue;
   }
 
@@ -234,6 +267,8 @@ public class Allegati implements IBeanPersSIMPLE{
     l.add(Z2DDFP);
     l.add(Z2PTHD);
     l.add(Z2NOTE);
+    l.add(Z2ELAB);
+    l.add(Z6DEL);
     return l;
   }
 
@@ -262,6 +297,8 @@ public class Allegati implements IBeanPersSIMPLE{
     types.add(Types.VARCHAR); //PATHDEST
     types.add(Types.VARCHAR); //NOTE
     types.add(Types.VARCHAR);//NOTA INTERNA
+    types.add(Types.VARCHAR);//STATO TEN
+    types.add(Types.VARCHAR);//DA CANCELLARE
     return types;
   }
 

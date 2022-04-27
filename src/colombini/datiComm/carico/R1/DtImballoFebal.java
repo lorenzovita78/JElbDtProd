@@ -12,7 +12,7 @@ import colombini.exception.DatiCommLineeException;
 import colombini.model.LineaLavBean;
 import colombini.model.persistence.CaricoCommLineaBean;
 import colombini.query.datiComm.FilterFieldCostantXDtProd;
-import colombini.query.datiComm.carico.QryColliAvanzamentoVDL;
+import colombini.query.datiComm.carico.QryColliCaricoVDL;
 import colombini.util.DatiCommUtils;
 import db.JDBCDataMapper;
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public  class DtImballoFebal implements IDatiCaricoLineaComm {
    try{
     conSqlS=ColombiniConnections.getDbAvanzamentoProdConnection();  
    
-    QryColliAvanzamentoVDL  qry=new QryColliAvanzamentoVDL();
+    QryColliCaricoVDL  qry=new QryColliCaricoVDL();
     //qry.setFilter(FilterFieldCostantXDtProd.FT_CONDLINEA, "  and cltpus= "+JDBCDataMapper.objectToSQL(getCondLinea(ll)) );
     qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, ll.getCommessa());
     qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DatiCommUtils.getInstance().getDataCommessa(ll.getDataCommessa()));

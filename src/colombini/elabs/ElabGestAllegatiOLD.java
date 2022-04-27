@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import utils.ClassMapper;
 import utils.DateUtils;
@@ -32,7 +31,7 @@ import utils.FileUtils;
  *
  * @author ggraziani
  */
-public class ElabGestAllegati extends ElabClass{
+public class ElabGestAllegatiOLD extends ElabClass{
   private Date dataInizio;
   
   @Override
@@ -55,19 +54,16 @@ public class ElabGestAllegati extends ElabClass{
   
   @Override
   public void exec(Connection con) {
+    Map propsElab=getElabProperties();
     PersistenceManager pm =null;
     //mappa contenente per ogni tipo file, la destinazione
     Map<String,String> tipoFilesDest=new HashMap <String,String> ();
-    Map<String,String> tipoFilesEst=new HashMap <String,String> ();
     List tipoFile =new ArrayList();
-    List est =new ArrayList();
-
     Connection conDbAS400=null;
     
     try {
        conDbAS400=ColombiniConnections.getAs400ColomConnection();
-       List<List> files=new ArrayList();
-       List<Allegati> filesAllegati = new ArrayList();
+       
       //Paso 1: Prendo tutti allegati con dataPresaCarico Null --> Update dataPresaCarico a data attuale
       //Data attuale
       Date dataPresaCarico=new Date();
@@ -75,19 +71,16 @@ public class ElabGestAllegati extends ElabClass{
       String updateIni = getUpdateDataOraInizioPresaCarico(dataPresaCarico);
       PreparedStatement ps=conDbAS400.prepareStatement(updateIni);
       ps.execute();
-      //Prendo tutti allegati da copiare 
+      
+      List<List> files=new ArrayList();
+      List<Allegati> filesAllegati = new ArrayList();
+      ResultSetHelper.fillListList(conDbAS400,getQueryListDestTipoFile() , tipoFile);
+      //Mapa tipo file - Destinazione
+      tipoFilesDest=getPathDestMap(tipoFile);
       ResultSetHelper.fillListList(conDbAS400,getQueryListFileAllegati(date) , files);
       
-      //Mapa tipo file - Destinazione
-      ResultSetHelper.fillListList(conDbAS400,getQueryListDestTipoFile() , tipoFile);
-      tipoFilesDest=getFileMap(tipoFile);
-      
-      //Mapa tipo file - estensione file
-      ResultSetHelper.fillListList(conDbAS400,getQueryListEstensioneTipoFile() , est);
-      tipoFilesEst=getFileMap(est);
-    
-      //Convert List<list> to List<Allegati>
-      filesAllegati=elabFiles(files,dataPresaCarico,tipoFilesDest,tipoFilesEst);
+      //Converto List<list> to List<Allegati>
+      filesAllegati=elabFiles(files,dataPresaCarico,tipoFilesDest);
       
        PreparedStatement psUpdFineCarico = null;
        psUpdFineCarico = conDbAS400.prepareStatement(getUpdateFinePresaCarico());
@@ -95,36 +88,23 @@ public class ElabGestAllegati extends ElabClass{
        PreparedStatement psUpdErroreCarico = null;
        psUpdErroreCarico = conDbAS400.prepareStatement(getUpdateErroreCopy());
   
-      //Per ogni allegato copio il file + faccio update sulla zzbsto con datafinecarico + pathdestinazione + statoten
       for(Allegati rec:filesAllegati){
         try {
           File sorgente = new File(rec.getPath());
-          String pathDest=null;
-
-          //Concateno al nome file --> _idallegato, in modo di creare sempre un file diverso per tutti allegati
-          pathDest=StringUtils.substringBefore(rec.getPathDest(),rec.getEstensione()).concat("_").concat(String.valueOf(rec.getIdSequence())).concat(rec.getEstensione());
-          
-          //Se trovo un allegato stato T --> non faccio la copia, e aggiorno il record pero con tengo lo stato T invece di U
-          if(!rec.getDaCancellare().equals("TRUE")){
-          FileUtils.copyFile(rec.getPath(),pathDest);
-          }
+         // String pathDest=rec.getPathDest();
+          FileUtils.copyFile(rec.getPath(),rec.getPathDest());
           Date dateNow = new Date();
           long timeInMilliSeconds = dateNow.getTime();
           java.sql.Date dateFineCar = new java.sql.Date(timeInMilliSeconds);
           rec.setDataFineCarico(dateFineCar);
           
-          //Verifico se esiste il file sorgente
           if(sorgente.exists()){
-              if(!rec.getDaCancellare().equals("TRUE")){
-                 rec.updateAllegati(psUpdFineCarico,conDbAS400,rec.getIdSequence(),dateFineCar,pathDest,"U");
-              }
-              else {
-                 rec.updateAllegati(psUpdFineCarico,conDbAS400,rec.getIdSequence(),dateFineCar,pathDest,"T"); 
-              }
+          rec.updateAllegati(psUpdFineCarico,conDbAS400,rec.getIdSequence(),dateFineCar,rec.getPathDest(),"U");
             }
           else {
           rec.updateErrorAllegati(psUpdErroreCarico, conDbAS400, rec.getIdSequence(), "Errore copy file");
           }
+          //pm.updateDt(rec, rec.getFieldValuesForUpdate()); UPDATE BEAN non funziona per formato dataPresaCaric
           if(ps!=null)
                   ps.close();
              }
@@ -161,10 +141,17 @@ public class ElabGestAllegati extends ElabClass{
     }
     
   }
-       
+  
+  
+// private String getUpdateDataOraInizioPresaCarico (String data){
+// String query ="update " + libraryMvxPersonalizzata + "ZZBSTO set Z2DDIP='"+ data + "' where Z2DDIP is null";
+// return query;
+// 
+// }
+        
  
   private String getUpdateDataOraInizioPresaCarico (Date data){
-  String query ="update " + libraryMvxPersonalizzata + "ZZBSTO set Z2DDIP="+JDBCDataMapper.objectToSQL(data)+ " where Z2DDIP is null or Z2DDIP<'2000-01-01 00:00:00' and Z2CONO=30  and Z2ORNO IN (SELECT Z6ORNO FROM "+ libraryMvxPersonalizzata +"zordin WHERE Z6CONO=30) ";
+  String query ="update " + libraryMvxPersonalizzata + "ZZBSTO set Z2DDIP="+JDBCDataMapper.objectToSQL(data)+ " where Z2DDIP is null or Z2DDIP<'2000-01-01 00:00:00'";
   return query;
 
  }
@@ -189,7 +176,7 @@ public class ElabGestAllegati extends ElabClass{
    }
         
         
-  private List<Allegati> elabFiles(List<List> filesPresent,Date dataPC,Map<String,String> tipoFilesDest,Map<String,String> tipoFilesEst){
+  private List<Allegati> elabFiles(List<List> filesPresent,Date dataPC,Map<String,String> tipoFilesDest){
     List listFilesToCopy=new ArrayList() ;
     
     for(List file:filesPresent){
@@ -204,9 +191,6 @@ public class ElabGestAllegati extends ElabClass{
            fileAllegato.setDataUltAggior(ClassMapper.classToClass(file.get(6),Date.class));
            fileAllegato.setDataPresaCarico(dataPC);
            fileAllegato.setPathDest(tipoFilesDest.get(ClassMapper.classToString(file.get(3)).trim())+"\\"+fileAllegato.getTitolo());
-           fileAllegato.setEstensione(tipoFilesEst.get(ClassMapper.classToString(file.get(3)).trim()));
-           fileAllegato.setStatoTen(ClassMapper.classToString(file.get(7)).trim());
-           fileAllegato.setDaCancellare(ClassMapper.classToString(file.get(8)).trim());
            
            System.out.println("DataUltimoAggiornamento-->"+DateUtils.dateToStr(fileAllegato.getDataUltAggior(), "yyyyMMddHHmmssSSS"));
 
@@ -222,21 +206,21 @@ public class ElabGestAllegati extends ElabClass{
   
   private String getQueryListFileAllegati(String data ){
     
-    String sql="SELECT Z2CONO,Z2IDUN,Z2ORNO,Z2TDOC,Z2PTHS,Z2TITL,Z2DMAG,Z2ELAB,Z6DEL FROM "+ libraryMvxPersonalizzata +"ZZBSTO INNER JOIN "+ libraryMvxPersonalizzata +" ZORDIN ON Z6CONO=Z2CONO AND Z6ORNO=Z2ORNO WHERE Z2DDIP='"+data+"'";
+    String sql="SELECT Z2CONO,Z2IDUN,Z2ORNO,Z2TDOC,Z2PTHS,Z2TITL,Z2DMAG FROM "+ libraryMvxPersonalizzata +"ZZBSTO WHERE Z2DDIP='"+data+"'";
+             
+    return sql;         
+  }
+  
+    private String getQueryListFileAllegati(Date data ){
+    
+    String sql="SELECT Z2CONO,Z2ORNO,Z2TDOC,Z2PTHS,Z2TITL,Z2DMAG FROM "+ libraryMvxPersonalizzata +"ZZBSTO WHERE Z2DDIP="+JDBCDataMapper.objectToSQL(data);
              
     return sql;         
   }
   
   private String getQueryListDestTipoFile(){
     
-    String sql="SELECT TRIM(CTSTKY),TRIM(SUBSTR(CTPARM,1,100)) FROM " +libraryMvx + "CSYTAB WHERE CTCONO =030 AND CTSTCO='CO_STORAGE'";
-             
-    return sql;         
-  }
-  
-  private String getQueryListEstensioneTipoFile(){
-    
-    String sql="SELECT TRIM(CTSTKY),TRIM(SUBSTR(CTPARM,101,120)) FROM " +libraryMvx + "CSYTAB WHERE CTCONO =030 AND CTSTCO='CO_STORAGE'";
+    String sql="SELECT TRIM(CTSTKY),TRIM(CTPARM) FROM " +libraryMvx + "CSYTAB WHERE CTCONO =030 AND CTSTCO='CO_STORAGE'";
              
     return sql;         
   }
@@ -245,19 +229,19 @@ public class ElabGestAllegati extends ElabClass{
    * Torna una mappa in cui la chiave è il tipo file e il cui elemento è la destinazione per quel tipo file
    */
 
-  private Map <String,String> getFileMap(List<List> TipoFile){
-    Map parametro=new HashMap <String,String> ();
-    for(List infoF:TipoFile){
+  private Map <String,String> getPathDestMap(List<List> TipoFileDest){
+    Map destMap=new HashMap <String,String> ();
+    for(List infoF:TipoFileDest){
       String tipoFile=ClassMapper.classToString(infoF.get(0));
-      String parm=ClassMapper.classToString(infoF.get(1));
-      parametro.put(tipoFile,parm);
+      String PathDest=ClassMapper.classToString(infoF.get(1));
+      destMap.put(tipoFile,PathDest);
     }
     
-    return parametro;
+    return destMap;
   }
   
   
   
-  private static final Logger _logger = Logger.getLogger(ElabGestAllegati.class); 
+  private static final Logger _logger = Logger.getLogger(ElabGestAllegatiOLD.class); 
   
 }

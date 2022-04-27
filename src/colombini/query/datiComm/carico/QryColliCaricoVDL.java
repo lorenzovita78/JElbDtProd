@@ -14,7 +14,7 @@ import exception.QueryException;
  * volendo anche per linea
  * @author lvita
  */
-public class QryColliAvanzamentoVDL extends CustomQuery{
+public class QryColliCaricoVDL extends CustomQuery{
 
   
   
