@@ -47,13 +47,15 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
   StringBuilder qry=new StringBuilder( 
     "select distinct  Codice_collo,0 as numart,linea,box,pedana,rtrim(ltrim(NumeroOrdine)) as numOrdine,0 as rigaordine,articolo,descrizioneArticolo ,DescrizioneArticolo2 ").append(
          "\n from  DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL    inner join TesyFactory_FEBAL_PROD.dbo.lyhead  on rtrim(ltrim(NumeroOrdine))=([£5ORNO] collate  database_default ) ").append(
+         "\n inner join [MVX2DESMOS].[dbo].[ZZHEAD2] on rtrim(ltrim(NumeroOrdine))=ZAORNO ").append(
          "\n inner join  (select okcuno from [MVX2DESMOS].[dbo].[OCUSMA_FASCECLI] where FASCECLIENTE in ('AAA','AAA*') group by okcuno) b on cliente=OKCUNO ").append(
          "\n WHERE 1=1").append(
-         " and Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
+         " and LDF_TXT_FILE_PER_VDL.Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
          " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(
          " and ").append(notInStatement("Linea",LINEETOEXCLUDEFEBAL)).append(
          " and [£5FRE1]='SOST' ").append( 
          " and [£5DIVI]<>'RS1' ").append( 
+         " and ZOAFRE1<>'SAZI' ").append( 
          "\n UNION " ).append(
     "select distinct  Codice_collo,0 as numart,linea,box,pedana,rtrim(ltrim(NumeroOrdine)) as numOrdine, 0 as rigaordine,articolo,descrizioneArticolo ,DescrizioneArticolo2 ").append(
          "\n from  DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL ").append(
@@ -64,7 +66,7 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(    
          " and ").append(notInStatement("Linea",LINEETOEXCLUDEFEBAL)).append(
          " and [£5FRE1]='SOST' ").append( 
-         " and [£5DIVI]<>'RS1' ").append( 
+         " and [£5DIVI]<>'RS1' ").append(    
          "\n UNION " ).append(
     "SELECT CLNCOL,CLNART,cast(CLLINP as varchar(8)),CLBOXN,CLPEDA,CLNROR,CLRIGA,CLARTI,CLDESC,CLSTRD ").append(
          "\n from [MVX2DESMOS].[dbo].SCxxxCOL inner join [MVX2DESMOS].[dbo].[ZZHEAD] on CLNROR=ZAORNO ").append(
@@ -83,7 +85,8 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          "\n and COMMESSA= ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
          "\n and ").append(notInStatement("CLLINP",LINEETOEXCLUDECOLOM)).append(
          "\n and ZAFOST<>'' ").append( 
-         "\n and CLNART=0 ");
+         "\n and CLNART=0 ").append(    
+         "\n and ZOAFRE1<>'SAZI' ");
     
   
    return qry.toString();

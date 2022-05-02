@@ -22,30 +22,32 @@ public class QueryProdCommAvzVDL extends CustomQuery {
         StringBuilder qry=new StringBuilder();
 
       
-    String campiConv=" CommissionId , TruckloadDate ";
+    String campiConv=" avz.CommissionId , avz.TruckloadDate ";
 
     String dI=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATADA);   
     String dF=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATAA);   
 
     
-    qry.append(" SELECT ").append(campiConv).append(" ,count(distinct ColloID) \n").append(
-             " FROM [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Detail] \n" ).append(
-             "  inner join (select MAX(SYSTEMDATE) dat from [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Detail] group by ColloID) as DetMax on detMax.dat = SYSTEMDATE ").append(
-             " where 1=1 and ").append(
-            " Status>=200 ").append(addAND(inStatement("ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
-            " and SYSTEMDATE>=convert( datetime ,").append(dI).append(" ,120)").append(
-            " and SYSTEMDATE<=convert( datetime ,").append(dF).append(" ,120) ");
+    qry.append(" SELECT ").append(campiConv).append(" ,count(distinct avz.ColloID) \n").append(
+            " FROM [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Detail] as avz \n" ).append(
+            " inner join (select MAX(SYSTEMDATE) dat from [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Detail] group by ColloID) as DetMax on detMax.dat = SYSTEMDATE ").append(
+            " left join (select colloId from [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Detail] where Status>=200 " ).append(addAND(inStatement("ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
+            " and SYSTEMDATE<convert( datetime ,").append(dI).append(" ,120)) as storico on storico.ColloID=avz.ColloID ").append(
+            " where 1=1 and ").append(
+            " avz.Status>=200 ").append(addAND(inStatement("avz.ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
+            " and avz.SYSTEMDATE>=convert( datetime ,").append(dI).append(" ,120)").append(
+            " and avz.SYSTEMDATE<=convert( datetime ,").append(dF).append(" ,120) and storico.ColloID is null");
     
     if(isFilterPresent(FilterFieldCostantXDtProd.FT_BU_DIVERSO)){
-      qry.append(addAND(notInStatement("ClientId",FilterFieldCostantXDtProd.FT_BU_DIVERSO)));                              
+      qry.append(addAND(notInStatement("avz.ClientId",FilterFieldCostantXDtProd.FT_BU_DIVERSO)));                              
     }
     
     if(isFilterPresent(FilterFieldCostantXDtProd.FT_BU_UGUALE)){
-      qry.append(addAND(inStatement("ClientId",FilterFieldCostantXDtProd.FT_BU_UGUALE)));                              
+      qry.append(addAND(inStatement("avz.ClientId",FilterFieldCostantXDtProd.FT_BU_UGUALE)));                              
     }
     
     if(isFilterPresent(FilterFieldCostantXDtProd.FT_SISTEMA)){
-     qry.append(addAND(inStatement("MFSystem",FilterFieldCostantXDtProd.FT_SISTEMA)));                                      
+     qry.append(addAND(inStatement("avz.MFSystem",FilterFieldCostantXDtProd.FT_SISTEMA)));                                      
     }
     
     if(isFilterPresent(FilterFieldCostantXDtProd.FT_PERSONALIZZATO)){

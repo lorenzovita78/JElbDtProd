@@ -164,7 +164,7 @@ public class ElabGestAllegati extends ElabClass{
        
  
   private String getUpdateDataOraInizioPresaCarico (Date data){
-  String query ="update " + libraryMvxPersonalizzata + "ZZBSTO set Z2DDIP="+JDBCDataMapper.objectToSQL(data)+ " where Z2DDIP is null or Z2DDIP<'2000-01-01 00:00:00' and Z2CONO=30  and Z2ORNO IN (SELECT Z6ORNO FROM "+ libraryMvxPersonalizzata +"zordin WHERE Z6CONO=30) ";
+  String query ="update " + libraryMvxPersonalizzata + "ZZBSTO set Z2DDIP="+JDBCDataMapper.objectToSQL(data)+ " where Z2DDIP is null or Z2DDIP<'2000-01-01 00:00:00' and Z2CONO=30  and Z2ORNO IN (SELECT Z6ORNO FROM "+ libraryMvxPersonalizzata +"zordin WHERE Z6MODI='' and Z6CONO=30) ";
   return query;
 
  }
