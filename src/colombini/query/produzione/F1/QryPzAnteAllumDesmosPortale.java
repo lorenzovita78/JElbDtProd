@@ -32,7 +32,7 @@ public final static String Classe_M="40";
     if(isFilterPresent(isFebal)){
          db="DesmosFebal.dbo.";}
 
-    StringBuilder cond=new StringBuilder(" where 1=1 and DesmosLancio =" +getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + "\n");
+    StringBuilder cond=new StringBuilder(" where 1=1 and CentroDiLavoro='' and DesmosLancio =" +getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + "\n");
     
     //if(isFilterPresent(isFebal) || isFilterPresent(numArt1)){
     if(isFilterPresent(isFebal) || isFilterPresent(numArt1) ){
@@ -58,7 +58,7 @@ public final static String Classe_M="40";
         StringBuilder pezziNonFor=new StringBuilder("  UNION  select NonForati.Codice_Collo,0 NumArticolo, linea, box, pedana, NumOrdine,RigaOrdine,CodArticolo,DescrizioneArticolo,DescrizioneArticoloEstesa \n" 
           + (" from ") + db + ("desmosPortale as NonForati \n") 
           + (" left join (select distinct Codice_Collo,NumArticolo from ") + db + ("desmosPortale where foratrice <> '' and DesmosLancio=") + getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) +  addAND(inStatement("linea", FilterQueryProdCostant.FTLINEELAV)) + " ) as pezziForati on pezziForati.Codice_Collo=NonForati.Codice_Collo \n"
-          + (" where pezziForati.Codice_Collo is null and NonForati.DesmosLancio=") + getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + addAND(inStatement("NonForati.linea", FilterQueryProdCostant.FTLINEELAV)) + " and Classe_Merceologica='"+Classe_M+"'"
+          + (" where CentroDiLavoro='' and pezziForati.Codice_Collo is null and NonForati.DesmosLancio=") + getFilterSQLValue(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS) + addAND(inStatement("NonForati.linea", FilterQueryProdCostant.FTLINEELAV)) + " and Classe_Merceologica='"+Classe_M+"'"
         );
                 
         q.append(pezziNonFor);

@@ -167,8 +167,12 @@ public class MailCtrlRegQualita extends ElabInvioMail{
   
   private String getQueryForExtract(Long dataMvx){
       StringBuffer sql=new StringBuffer("select tmdtco ,tmcomm  ,tmncol , tmstrd ,").append(
-                                        " tmlinp , tmlinm , tmorno  , stab , plan , respcdl  \n ").append(
-                                         " from mcobmoddta.ztapmi left outer join ").append(
+                                        " tmlinp , tmlinm , tmorno  , okcuno,okcunm,okcor2,zafost ,stab , plan , respcdl  \n ").append(
+                                         " from mcobmoddta.ztapmi "
+                                        + " inner join mcobmoddta.zzhead on ZAORNO=TMORNO and zacono=tmcono "
+                                        + " inner join MVXBDTA.oohead on OAORNO=ZAORNO and zacono=oacono "
+                                        + " inner join MVXBDTA.ocusma on okcuno=oacuno and okcono=oacono "
+                                        + "left outer join ").append(
                                         "  ( select distinct a.ppplgr, b.clfact stab,b.clplan plan, a.ppdept cdccdl , a.ppwcre respcdl \n" +
                                         "      from  mvxbdta.mpdwct a  inner join mcobmoddta.zdpwcl b  on a.ppplgr=b.clplgr\n" +
                                         "      where 1=1 "
@@ -183,7 +187,7 @@ public class MailCtrlRegQualita extends ElabInvioMail{
   }
   
   private List<String> getColumnsForXls(){
-      return Arrays.asList("DataComm","Commessa","Collo","Descrizione","LineaLogica","DescrLineaLogica","OdV","Stab","Piano","Responsabile");
+      return Arrays.asList("DataComm","Commessa","Collo","Descrizione","LineaLogica","DescrLineaLogica","OdV","Cliente","DescCliente","ClasseMeritoCliente","NroSost","Stab","Piano","Responsabile");
   }
   
   
