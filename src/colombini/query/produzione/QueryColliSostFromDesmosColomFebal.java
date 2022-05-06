@@ -50,7 +50,7 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
          "\n inner join [MVX2DESMOS].[dbo].[ZZHEAD2] on rtrim(ltrim(NumeroOrdine))=ZAORNO ").append(
          "\n inner join  (select okcuno from [MVX2DESMOS].[dbo].[OCUSMA_FASCECLI] where FASCECLIENTE in ('AAA','AAA*') group by okcuno) b on cliente=OKCUNO ").append(
          "\n WHERE 1=1").append(
-         " and LDF_TXT_FILE_PER_VDL.Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
+         " and DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL.Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
          " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(
          " and ").append(notInStatement("Linea",LINEETOEXCLUDEFEBAL)).append(
          " and [£5FRE1]='SOST' ").append( 
