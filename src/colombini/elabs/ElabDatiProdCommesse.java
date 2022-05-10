@@ -16,6 +16,7 @@ import colombini.model.persistence.BeanInfoAggColloComForTAP;
 import colombini.query.datiComm.FilterFieldCostantXDtProd;
 import colombini.query.produzione.F1.QryPzAnteAllumArtecInFeb;
 import colombini.query.produzione.F1.QryPzAnteAllumDesmosPortale;
+import colombini.query.produzione.F1.QryPzAnteAllumDesmosPortalePerCDL;
 import colombini.query.produzione.F1.QryPzAnteAllumFeb;
 import colombini.query.produzione.F1.QryPzAnteForBiesseP3;
 import colombini.query.produzione.FilterQueryProdCostant;
@@ -889,11 +890,16 @@ public class ElabDatiProdCommesse extends ElabClass{
     private void loadDatiEtichettaturaP3( PersistenceManager apm,List commDisp,Map commEx,Map propsElab){
      List<List> commToLoad=getListCommToSave(commDisp, commEx, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC);
      Connection conDesmosCol=null;
+     Connection conDesmosFeb=null;
+
      
      String pathfile=(String) propsElab.get(NameElabs.PATHETKP3);
+
    
      try{
        conDesmosCol=ColombiniConnections.getDbDesmosColProdConnection();
+       conDesmosFeb=ColombiniConnections.getDbDesmosFebalProdConnection();
+
        for(List infoC:commToLoad){
          Long dtC=(Long) infoC.get(1);
          Long comm=(Long) infoC.get(0);
@@ -901,21 +907,31 @@ public class ElabDatiProdCommesse extends ElabClass{
          String commFebal =ClassMapper.classToClass(DesmosUtils.getInstance().getLancioDesmosFebal(comm, dataC),String.class);
          String commS=DatiProdUtils.getInstance().getStringNComm(comm);
          _logger.info("Caricamento dati Cucine R1P4 per commessa "+comm+" - "+dtC);
+         String CDLLG="MP3PCO";
         
          
          try{  
            if(DesmosUtils.getInstance().isElabsDesmosFebalFinish(apm.getConnection(), comm, dtC)){
              List<BeanInfoColloComForTAP> beansFebal=getListPzEtichettaturaP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commFebal, dataC ,Boolean.TRUE,Boolean.FALSE);
              List<BeanInfoColloComForTAP> beans=getListPzEtichettaturaP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE);
+             List<BeanInfoColloComForTAP> beansLGCol=getListPzEtichettaturaDesmosPortaleP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE,CDLLG);
+             List<BeanInfoColloComForTAP> beansLGFeb=getListPzEtichettaturaDesmosPortaleP3(conDesmosFeb, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE,CDLLG);
 
-
-             //pz standard Febal  con etichetta
+             //pz standard Colombini  con etichetta
              apm.storeDtFromBeans((List)beans);
              saveInfoForEtkPz2(apm, beans, pathfile,Boolean.TRUE);
              
              //pz standard Febal  con etichetta
              apm.storeDtFromBeans((List)beansFebal);
              saveInfoForEtkPz2(apm, beansFebal, pathfile,Boolean.TRUE);
+             
+             //pz LG Colombini
+             apm.storeDtFromBeans((List)beansLGCol);
+             saveInfoForEtkPz3(apm, beansLGCol, pathfile,Boolean.TRUE);
+             
+              //pz LG Febal
+             apm.storeDtFromBeans((List)beansLGFeb);
+             saveInfoForEtkPz3(apm, beansLGFeb, pathfile,Boolean.TRUE);
              
            }
          } catch(SQLException s){
@@ -2759,6 +2775,47 @@ public class ElabDatiProdCommesse extends ElabClass{
     return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
   }
   
+    private List getListPzEtichettaturaDesmosPortaleP3(Connection con,String cdL,String comm,Date dataComm,Boolean withEtk,Boolean nComm4P4, String FT_CDL){
+    
+    List result=new ArrayList();
+    try{
+
+      QryPzAnteAllumDesmosPortalePerCDL qry=new QryPzAnteAllumDesmosPortalePerCDL();
+      
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS, comm);
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_CDL, FT_CDL);
+
+      String select=qry.toSQLString();
+      ResultSetHelper.fillListList(con, select, result);
+     
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+
+    //per convertire comessa Febal in numerazione Colombini
+    if(comm.length()==7 && !nComm4P4){
+      String scomm=comm.toString().substring(4, 7);
+      comm=(scomm);
+    }
+    if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+    
+    return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
+  }
+  
   private List getListPzAnteScorrDatiProd(Connection con,String cdL,String comm,List lineeLogiche,Date dataComm,Boolean withEtk,Boolean nComm4P4){
     
     List result=new ArrayList();
@@ -2876,6 +2933,28 @@ public class ElabDatiProdCommesse extends ElabClass{
 
         if(pathFile!=null){
            beanEtk.setPathFile(getEtkFileNameStd2(pathFile, b.getCommessa(), b.getCollo(), b.getDataComN(),nColWithZero,b.getRigaOrdine()));
+        }else{
+          beanEtk.setPathFile(b.getPathFile());
+        }
+
+        beansInfoEtk.add(beanEtk);
+      }
+    }
+    
+    man.storeDtFromBeans(beansInfoEtk);
+  }
+  
+   private void saveInfoForEtkPz3(PersistenceManager man,List<BeanInfoColloComForTAP> list,String pathFile,Boolean nColWithZero){
+    List beansInfoEtk=new ArrayList();
+    if(list==null || list.size()==0)
+      return;
+    
+    for(BeanInfoColloComForTAP b:list){
+       if(b.isPrintable()){
+        BeanInfoAggColloComForTAP beanEtk=new BeanInfoAggColloComForTAP(b.getCdL(), b.getBarcode(),b.getCommessa(),b.getDataComN());
+
+        if(pathFile!=null){
+           beanEtk.setPathFile(getEtkFileNameStd2(pathFile, b.getCommessa(), b.getCollo(), b.getDataComN(),nColWithZero,b.getnArticolo()));
         }else{
           beanEtk.setPathFile(b.getPathFile());
         }

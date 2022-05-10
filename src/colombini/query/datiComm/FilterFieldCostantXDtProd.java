@@ -45,6 +45,8 @@ public class FilterFieldCostantXDtProd {
   public final static String FT_DATAA="FILTRODATAA";
   
   public final static String FT_LINEE="FILTROLINEELAV";
+  public final static String FT_CDL="FILTROCDL";
+
   
   public final static String FT_ARTICOLI="FILTROARTICOLI";
   

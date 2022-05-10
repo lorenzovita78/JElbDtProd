@@ -36,6 +36,7 @@ public class NameElabs {
   public final static String ELBDATIPRODCOMM="ELBDATIPRODCOMM";
   
   public final static String PATHETKP3="PATHETKP3";
+  public final static String PATHETKLGP3="PATHETKP3";
   public final static String PATHETKANTEALLUM="PATHETKANTEALLUM";
   public final static String PATHETKANTEALLUMFEB="PATHETKANTEALLUMFEB";
   public final static String PATHFILELOCANTEALLUM="PATHFILELOCANTEALLUM";
@@ -52,7 +53,7 @@ public class NameElabs {
   public final static String PATHETKMAW2="PATHETKMAW2";
   public final static String PATHETKANTESCORR="PATHETKANTESCORR";
 
-  
+
 
   //------------------------------------------------------------------
   
