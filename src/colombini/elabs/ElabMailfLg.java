@@ -32,12 +32,12 @@ public class ElabMailfLg extends ElabClass{
 
     
     
-  public final static String STR_OBJ_MAIL="Files LG ODA1";
-  public final static String STR_OBJ_MAIL2="Files LG ODA2";
+  public final static String STR_OBJ_MAIL="Files ODA LG 100";
+  public final static String STR_OBJ_MAIL2="Files ODA LG 200";
   public final static String  STR_TEXT_MAIL=
     " Ciao \n" +
     "\n" +
-    "In allegato, i files LG presente sul percorso f-lg\\\\ODA1 . \n"   
+    "In allegato, i files ODA LG 100 . \n"   
     +   " \n" 
     +"Saluti"
     ;
@@ -45,7 +45,7 @@ public class ElabMailfLg extends ElabClass{
   public final static String  STR_TEXT_MAIL2=
     " Ciao \n" +
     "\n" +
-    "In allegato, i files LG presente sul percorso f-lg\\\\ODA2 . \n" 
+    "In allegato, i files ODA LG 200 . \n" 
     +   " \n" 
     +"Saluti"
     ;
@@ -116,11 +116,11 @@ public class ElabMailfLg extends ElabClass{
           
           
           beanMail.setAddressFrom("dba@colombinigroup.com");
-          beanMail.setAddressesTo(Arrays.asList(mailto));
-          beanMail2.setAddressesCc(Arrays.asList(mailtocc));
+          beanMail.setAddressesTo(Arrays.asList(mailto.split(",")));
+          beanMail.setAddressesCc(Arrays.asList(mailtocc));
           beanMail2.setAddressFrom("dba@colombinigroup.com");
           beanMail2.setAddressesCc(Arrays.asList(mailtocc));
-          beanMail2.setAddressesTo(Arrays.asList(mailto));
+          beanMail2.setAddressesTo(Arrays.asList(mailto.split(",")));
           //beanMail.setAddressesBbc(Arrays.asList("dba"));
           if(!filesOda1.isEmpty()){
             ms.send(beanMail);
