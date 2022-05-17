@@ -11,7 +11,9 @@ import db.ResultSetHelper;
 import exception.QueryException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import utils.ClassMapper;
@@ -99,13 +101,22 @@ public class DesmosUtils {
    * @throws SQLException 
    */
   public Boolean isElabsDesmosFebalFinish(Connection conAs400 , Long commNTmp,Long dataCommN) throws QueryException, SQLException{
+    //Fare una funzione per verificare se ci sono i metri su ogni dita. Quindi dobbiamo fare un metodo che riceve tutti BU e torna true or false.
     Connection conDbDesmosFebal=null;
+    
+//    List BU=new ArrayList();
+//    BU.add("FB1");
+//    BU.add("RS1");
+//    BU.add("A04");
+
     Date dataComm=DateUtils.strToDate(dataCommN.toString(), "yyyyMMdd");
     Map nOrdComm =DatiCommUtils.getInstance().loadNOrdCommessa(conAs400, commNTmp.intValue(), dataCommN);
     Double noFb1=ClassMapper.classToClass(nOrdComm.get("FB1"),Double.class); 
     Double noRs1=ClassMapper.classToClass(nOrdComm.get("RS1"),Double.class); 
+    Double noA04=ClassMapper.classToClass(nOrdComm.get("A04"),Double.class);
     
-    Double no200=(noFb1 != null ? noFb1 : 0) +  (noRs1 != null ? noRs1 : 0);
+    
+    Double no200=(noFb1 != null ? noFb1 : 0) +  (noRs1 != null ? noRs1 : 0) +  (noA04 != null ? noA04 : 0);
     if( no200.doubleValue()>0){
       try{
         conDbDesmosFebal=ColombiniConnections.getDbDesmosFebalProdConnection();
@@ -123,12 +134,18 @@ public class DesmosUtils {
     } else { //se la commessa non ha volume Febal allora la consideriamo terminata
       return Boolean.TRUE;
     } 
-    
     //return Boolean.FALSE;
   }
   
   
+//  public Boolean isElabsDesmosPresent(Connection conAs400 , Long commNTmp,Long dataCommN){
+//  Map nOrdComm =DatiCommUtils.getInstance().loadNOrdCommessa(conAs400, commNTmp.intValue(), dataCommN);
+//
+//  return true;
+//  }
   
+  //dobbiamo fare anche il metodo per colombini perchè queste non va bene (uguale a quello di sopra - per febal, in modo che se un giorno non ci sono delle ordini colombini, non da errore)
+
   public Boolean isElabDesmosColombiniFinished(Connection conDbDesmosCol,Long comm,Date dataComm) throws SQLException{
     
     String lancio=getLancioDesmosColombini(comm, dataComm);

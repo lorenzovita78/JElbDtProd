@@ -301,6 +301,13 @@ public class NameElabs {
   public final static String FILESOSNNCTTXLS="FILESOSNNCTTXLS";
   
   
+  public final static String PATHFILESOURCEODA1="PATHFILESOURCEODA1";
+  public final static String PATHFILESOURCEODA2="PATHFILESOURCEODA2";
+  public final static String PATHFILEDESTODA1="PATHFILEDESTODA1";
+  public final static String PATHFILEDESTODA2="PATHFILEDESTODA2";
+
+  
+  
   public final static String ELBMAILCTRLMSGINCASVDL="ELBMAILCTRLMSGINCASVDL";
   public final static String FILEMSINCASVDL="FILEMSINCASVDL";
   

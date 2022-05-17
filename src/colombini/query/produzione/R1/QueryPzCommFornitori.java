@@ -50,7 +50,7 @@ public class QueryPzCommFornitori extends CustomQuery {
     select+= " from DesmosColombini.dbo.Dati_Tracciatura as A\n" +
             "\n" +
             "left outer join MVX2DESMOS.dbo.ZCOMME as Z\n" +
-            "on A.Commessa = Z.ZCCCOM ";
+            "on A.Commessa = Z.ZCCCOM and A.ACDLD=Z.ZCCDLD ";
    
     
 

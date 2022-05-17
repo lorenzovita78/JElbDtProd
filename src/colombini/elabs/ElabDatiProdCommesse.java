@@ -131,7 +131,7 @@ public class ElabDatiProdCommesse extends ElabClass{
 
         List commsR1P4=getListCommesseR1P4();
         loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
-        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like 'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
+        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like ultim'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
         loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
         loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
         loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");
@@ -235,7 +235,6 @@ public class ElabDatiProdCommesse extends ElabClass{
           recTmp.add(dtElbTmp);
           recTmp.add(tipoC);
           commesseOut.add(recTmp);
-
         }
       }
     }
@@ -2628,6 +2627,58 @@ public class ElabDatiProdCommesse extends ElabClass{
     
     return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
   }
+  
+  //Metodo nuovo  per utilizzare 
+    private List getListPzFromLotto1New(Connection con,String cdL,String comm,Date dataComm,List lineeLogiche,Boolean withEtk,Boolean isForLotto1,String fase30,Boolean nComm4P4){
+    
+    List result=new ArrayList();
+    try{
+      
+      QueryPzCommLotto1 qry=new QueryPzCommLotto1();
+      
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
+      
+      //qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyy-MM-dd"));
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
+      if(isForLotto1)
+        qry.setFilter(QueryPzCommLotto1.FT_FORLINEA_LOTTO1,Boolean.TRUE);
+      
+      if(lineeLogiche!=null && !lineeLogiche.isEmpty())
+        qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());
+      
+      if(!StringUtils.isEmpty(fase30))
+        qry.setFilter(QueryPzCommLotto1.FT_DESCFS30_LIKE, fase30);
+      
+      
+      ResultSetHelper.fillListList(con, qry.toSQLString(), result);
+      
+      
+      
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Ima --> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+
+    //per convertire comessa Febal in numerazione Colombini
+    if(comm.length()==7 && !nComm4P4){
+      String scomm=comm.toString().substring(4, 7);
+      comm=(scomm);
+    }
+    if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+    
+    return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
+  }
+  
   
   
   private List getListPzFromLotto1Etk (List<BeanInfoColloComForTAP> beans){
