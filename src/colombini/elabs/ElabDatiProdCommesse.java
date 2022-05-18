@@ -131,7 +131,7 @@ public class ElabDatiProdCommesse extends ElabClass{
 
         List commsR1P4=getListCommesseR1P4();
         loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
-        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like ultim'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
+        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like 'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
         loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
         loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
         loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");

@@ -27,7 +27,7 @@ public class ElabMailfLg extends ElabClass{
   private String mailtocc;
  
   private String PARAM_MAILTO="MAILTO";
-  private String PARAM_MAILTOCC="MAILTO";
+  private String PARAM_MAILTOCC="MAILTOCC";
 
 
     
@@ -102,7 +102,7 @@ public class ElabMailfLg extends ElabClass{
           beanMail.setObject(STR_OBJ_MAIL);
           beanMail.setText(STR_TEXT_MAIL);
           
-          MailMessageInfoBean beanMail2=new MailMessageInfoBean("MAILLG");
+          MailMessageInfoBean beanMail2=new MailMessageInfoBean("MAILLG2");
           beanMail2.setObject(STR_OBJ_MAIL2);
           beanMail2.setText(STR_TEXT_MAIL2);
           
@@ -131,7 +131,7 @@ public class ElabMailfLg extends ElabClass{
           }
           
           for(File fil1:filesOda1){
-             FileUtils.move(pathSource1+fil1.getName(), pathDest1+fil1.getName());
+             FileUtils.move(pathSource1+"\\"+fil1.getName(), pathDest1+"\\"+fil1.getName());
           }
           
           for(File fil2:filesOda2){

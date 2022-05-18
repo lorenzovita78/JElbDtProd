@@ -158,7 +158,9 @@ public class StartUpTest {
         //prm="CODELAB=ELBCARICOCOM;COMMESSA=118;DATACOMM=28/04/2022;TIPOCOMM=0;LINEELAB=06516A;";
          //prm="CODELAB=ELBCIRCOLAREAGNT;DATAINI=CRDAY;DATAFIN=CRDAY;MAIL=FALSE";
        //  prm="CODELAB=ELABGESTALLEGATI;DATAINI=CRDAY";
-       prm="CODELAB=ELBMAILFLG;MAILTO=ggraziani@colombinigroup.com;ggraziani@colombinigroup.com;MAILTOCC=ggrazinia@colombinigroup.com";
+       prm="CODELAB=ELBMAILFLG;MAILTO=ggraziani@colombinigroup.com,lvita@colombinigroup.com";
+     // prm="CODELAB=ELBFILESARTECINFEBAL;DATAINI=16/05/2022;DATAFIN=16/05/2022;COMMESSA=938;COMMTEST=N;FORCEWRITE=True;FILEPROPSELAB=../props/filesAnteRem.properties;PATHFILECOMM=//pegaso/flussi/FileProd/ARTEC/COMMESSE/$$$FINE.PDF;";
+      
       
          Map parameter =ParameterMap.getParameterMap(prm);         
          if(parameter==null || parameter.isEmpty()){
