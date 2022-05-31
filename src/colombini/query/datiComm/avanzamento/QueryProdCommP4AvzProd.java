@@ -29,8 +29,8 @@ public class QueryProdCommP4AvzProd extends CustomQuery {
     String dF=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATAA);   
 
     
-    qry.append(" SELECT ").append(campiConv).append(" ,count(*) \n").append(
-             " FROM [dbo].[TBL_Avanzamento_Dett] \n" ).append(
+    qry.append(" SELECT ").append(campiConv).append(" ,count(distinct barcode) \n").append(
+             " FROM [AvanzamentoProd].[dbo].[TBL_Avanzamento_Dett] \n" ).append(
              "  inner join [AvanzamentoProd].[dbo].[TBL_DatiProduzione] on barcode=partnumber").append(
              " where 1=1 ").append(
             " and centro=").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LINEA)).append(

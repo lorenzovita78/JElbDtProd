@@ -28,6 +28,7 @@ import utils.ClassMapper;
  */
 public abstract class CaricoComOnTAP implements IDatiCaricoLineaComm {
 
+    //Per il piano 4 devo creare un metodo nuovo, che implemente IDatiCaricoLineaComm e come paremtro invece di 1 commessa, sia una lista di commesse. Dopo devo anche modificare la query
   @Override
   public List<CaricoCommLineaBean> getDatiCommessa(Connection con, LineaLavBean ll) throws DatiCommLineeException {
     List <CaricoCommLineaBean> beans=null;

@@ -29,7 +29,7 @@ public abstract class AvProdLineeOnTAP extends AvProdLineaStd{
   @Override
   public void prepareDtProd(Connection conAs400) throws DatiCommLineeException {
    try {
-      List commesse=new ArrayList();
+      List<List> commesse=new ArrayList();
       QueryProdGgFromTAP qry=new QueryProdGgFromTAP();
       Date dataIni=DateUtils.addSeconds(DateUtils.getInizioGg(this.getDataRifCalc()),1);
       Date dataFin=DateUtils.getFineGg(this.getDataRifCalc());
@@ -42,13 +42,24 @@ public abstract class AvProdLineeOnTAP extends AvProdLineaStd{
       
       ResultSetHelper.fillListList(conAs400, query, commesse);
       
+      //Modifica per il P4 - da finire
+//      List commesseSom=new ArrayList();
+//        for(List comm:commesse){
+//            Long nrocomm=(Long) comm.get(0);
+//            commesseSom.add(comm);
+//        }
+      //Fin modifica
+      
       String s=" no result";
       if(commesse!=null && !commesse.isEmpty())
         s=commesse.toString();
       _logger.info("QUERY AVP :"+query);
       _logger.info("RESULT AVP :" +s);
       
+      //Prima di fare il store. Devo creare un metodo per sommare le commesse colom e febal (creo lista nuova e agruppo per le ultime 3 lettere)
       storeDatiProdComm(conAs400, commesse);
+      
+     
       
     } catch (ParseException ex) {
       _logger.error("Problemi di conversione della data riferimento calcolo-->"+ex.getMessage());

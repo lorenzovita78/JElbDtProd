@@ -6,7 +6,6 @@
 
 package colombini.datiComm.avanzamento.R1P4;
 
-import colombini.datiComm.avanzamento.R1P2.*;
 import colombini.costant.TAPWebCostant;
 import colombini.datiComm.avanzamento.R1P3.AvProdLineeOnTAP;
 

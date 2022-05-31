@@ -18,6 +18,8 @@ import utils.StringUtils;
 public class QueryPzR1P4 extends CustomQuery {
 
   public final static String FT_ULTIMAFASEP4="FT_ULTIMAFASEP4";
+  public final static String FT_FASE30="FT_FASE30";
+
   
   
   //public final static String TAB_PRODP4="[AvanzamentoProd].[dbo].[TBL_DatiProduzione]";
@@ -26,12 +28,14 @@ public class QueryPzR1P4 extends CustomQuery {
   public final static String TAB_PRODP4="[DesmosColombini].[dbo].[DatiProduzione]";
   public final static String TAB_DESMOS_DESTINAZIONI="[DesmosColombini].[dbo].[DatiDestinazioni]";
   
+  
   @Override
   public String toSQLString() throws QueryException {
     StringBuilder sql=new StringBuilder();
     StringBuilder sql2=new StringBuilder("");
     String sqlF="";
     String ultimaFaseCondition ="";
+    String joinLinea=" ) b  on  a.lineadestinazione=b.lineadestinazione";
     
     if(isFilterPresent(FT_ULTIMAFASEP4))
        ultimaFaseCondition =ClassMapper.classToString(getFilterValue(FT_ULTIMAFASEP4));
@@ -50,7 +54,9 @@ public class QueryPzR1P4 extends CustomQuery {
                " ,substring([Descrizione],1,30)  as descAbb \n" +
                " ,[Descrizione]\n" +
                " ,[PartNumber] as barcode "+
-              "\n FROM ").append(TAB_PRODP4).append(
+               //Gaston.Campo aggiunto per la lotto1. Se il pezzo ha fase30, devo caricare come destinazione finale la fase30, in modo che la lotto1 puo creare un carrello con questa destinazione.
+               " ,COALESCE(descfase30,lineadestinazione,descfase30)  as lineadest "+
+               "\n FROM ").append(TAB_PRODP4).append(
                "\n WHERE 1=1 ").append(
                 addAND((ultimaFaseCondition)));
       
@@ -67,11 +73,12 @@ public class QueryPzR1P4 extends CustomQuery {
       
       sqlSub1.append(commCondition);
       
-     
+     if(isFilterPresent(FT_FASE30))
+        joinLinea=" ) b  on  a.lineadest=b.lineadestinazione";
       
       sql.append(" ( ").append(sqlSub1).append( " ) a  inner join ( ").append(
-                               sqlSub2).append("  ) b  on  a.lineadestinazione=b.lineadestinazione ");//collate database_default ");
-      
+                      sqlSub2).append(joinLinea);
+              //sqlSub2).append("  ) b  on  a.lineadestinazione=b.lineadestinazione ");//collate database_default ");
       
      
       sqlF=sql.toString();

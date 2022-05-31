@@ -286,7 +286,7 @@ public class ElabMiddlewareAsVDL extends ElabClass{
           idMsg=rs.getLong(vdlMsgH.getClmMessageId());
           _logger.info("Processing Msg Id-->"+idMsg);
           
-          List elHead=getListInfoForHMsgSql(idMsg, rs);
+        //  List elHead=getListInfoForHMsgSql(idMsg, rs);
           
           //carico le info di dettaglio se mi è stato fornito un bean valido
           if(bean!=null){

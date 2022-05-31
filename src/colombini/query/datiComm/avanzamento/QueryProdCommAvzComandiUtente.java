@@ -32,8 +32,12 @@ public class QueryProdCommAvzComandiUtente extends CustomQuery {
              " FROM [DesmosColombini].[dbo].[COMANDI_UTENTE] \n" ).append(
              "  where NomeBatch like '%DesmosVediCollo%' and len(ltrim(rtrim(Lancio)))=8\n ").append(
              addAND(inStatement("Utente",FilterFieldCostantXDtProd.FT_LINEA))).append(
-            " and DataOraInserimento>=").append(dI).append(
-            " and DataOraInserimento<=").append(dF);
+            " and cast(REPLACE(DataOraInserimento,'.',':')as DATETIME)>=").append(dI).append(
+            " and cast(REPLACE(DataOraInserimento,'.',':')as DATETIME)<=").append(dF).append(
+            " and lancio not in (select lancio FROM [DesmosColombini].[dbo].[COMANDI_UTENTE] \n" ).append(
+            "where NomeBatch like '%DesmosVediCollo%' and len(ltrim(rtrim(Lancio)))=8\n ").append(
+             addAND(inStatement("Utente",FilterFieldCostantXDtProd.FT_LINEA))).append(
+            " and cast(REPLACE(DataOraInserimento,'.',':')as DATETIME)<=").append(dI).append(")");
     
  
     

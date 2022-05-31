@@ -26,7 +26,7 @@ public class DtLotto1 implements IDatiCaricoLineaComm {
     
   }
   
-  
+  //Da modificare, devo prendere i dati da Desmos
   @Override
   public List<CaricoCommLineaBean> getDatiCommessa(Connection con, LineaLavBean ll) throws DatiCommLineeException {
     QryNPziDatiProduzione qry=new QryNPziDatiProduzione();

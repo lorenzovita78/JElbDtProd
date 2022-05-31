@@ -32,6 +32,7 @@ import colombini.query.produzione.R1.QueryPzCommImaTop;
 import colombini.query.produzione.R1.QueryPzCommLotto1;
 import colombini.query.produzione.R1.QueryPzHomagR1P1;
 import colombini.query.produzione.R1.QueryPzR1P4;
+import static colombini.query.produzione.R1.QueryPzR1P4.FT_ULTIMAFASEP4;
 import colombini.query.produzione.R1.QueryPzR1P41LSM;
 import colombini.util.DatiCommUtils;
 import colombini.util.DatiProdUtils;
@@ -40,6 +41,7 @@ import colombini.util.InfoMapLineeUtil;
 import db.CustomQuery;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
+import db.persistence.IBeanPersSIMPLE;
 import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import exception.QueryException;
@@ -130,7 +132,8 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 
         List commsR1P4=getListCommesseR1P4();
-        loadDatiLotto1New(apm, commsR1P4, commEx, propsElab);
+        // loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
+        loadDatiP4New(apm,TAPWebCostant.CDL_LOTTO1R1P4_EDPC,commsR1P4, commEx, propsElab,null);
         loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like 'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
         loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
         loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
@@ -1197,10 +1200,20 @@ public class ElabDatiProdCommesse extends ElabClass{
 //        }else{
 //          dest30="P4 STEMA PASCIA";
 //        } 
-        
+
         String commS=DatiProdUtils.getInstance().getStringNComm(comm);
         List beans=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
         apm.storeDtFromBeans(beans);
+        
+        //Gaston.Modifica Fata per la Lotto1 --> se il CDL è 01084 devo filtrare quelli della maw 2 perche dobbiamo creare le etichette
+        //Gaston LOTTO1 P4 -- Si potrebbe anche percorrere tutto il beans e filtrare per linea logica (per non fare di nuovo la query)
+        if(TAPWebCostant.CDL_LOTTO1R1P4_EDPC.equals(cdl) && beans!=null && beans.size()>0){
+          String pathfile=(String) propsElab.get(NameElabs.PATHETKMAW2);
+          List lineeLogiche1=new ArrayList();
+          lineeLogiche1.add("6029"); 
+          List beanLott1Etk=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, lineeLogiche1, Boolean.TRUE,Boolean.TRUE,condFaseP4);
+          saveInfoForEtkPz(apm, beanLott1Etk, pathfile,Boolean.TRUE);  
+        }
         
         //LSM --> cucine 25/10/21
         if(TAPWebCostant.CDL_LSMCARRP4_EDPC.equals(cdl)){
@@ -2716,6 +2729,9 @@ public class ElabDatiProdCommesse extends ElabClass{
       if(lineeLogiche!=null && !lineeLogiche.isEmpty())
         qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());
       
+      if(cdL.equals(TAPWebCostant.CDL_LOTTO1R1P4_EDPC))
+          qry.setFilter(QueryPzR1P4.FT_FASE30, "true");
+          
       ResultSetHelper.fillListList(con, qry.toSQLString(), result);
      
     }catch(SQLException s){
@@ -2919,7 +2935,7 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
       if(ultimaFaseCond!=null && !ultimaFaseCond.isEmpty())
-        qry.setFilter(QueryPzR1P4.FT_ULTIMAFASEP4, ultimaFaseCond);
+        qry.setFilter(QueryPzR1P41LSM.FT_ULTIMAFASEP4, ultimaFaseCond);
       
       if(lineeLogiche!=null && !lineeLogiche.isEmpty())
         qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());

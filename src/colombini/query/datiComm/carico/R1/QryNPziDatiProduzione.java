@@ -21,7 +21,7 @@ public class QryNPziDatiProduzione extends CustomQuery{
     String numCom=getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM);
     //String azdefault=FilterFieldCostantXDtProd.AZCOLOMBINI.toString();
     String condLinea=ClassMapper.classToString(getFilterValue(FilterFieldCostantXDtProd.FT_LINEE));
-    String dataC=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA);
+    //String dataC=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA);
     //
     if(numCom==null || numCom.isEmpty())
       throw new QueryException("Commessa non definita impossibile interrogare il database");
@@ -30,27 +30,23 @@ public class QryNPziDatiProduzione extends CustomQuery{
 //    if(isFilterPresent(FilterFieldCostantXDtProd.FT_AZIENDA))
 //      azdefault=getFilterSQLValue(FilterFieldCostantXDtProd.FT_AZIENDA);
 //    
-    String tabCommessa=FilterFieldCostantXDtProd.getNomeTabCommessa(numCom);
-    String tabZpdsum=FilterFieldCostantXDtProd.getNomeTabDistintaCommessa(numCom);
-    String tabMpdCdm=FilterFieldCostantXDtProd.getNomeTabMisDisegnoCommessa(numCom);
+
     
     StringBuilder sql=new StringBuilder();
-    sql.append("SELECT cfdivi as ").append(FilterFieldCostantXDtProd.FD_DIVISIONE).append(
+    sql.append("SELECT divi as ").append(FilterFieldCostantXDtProd.FD_DIVISIONE).append(
                      " ,count(*) as ").append(FilterFieldCostantXDtProd.FD_NUMPEZZI).append(
                " from ").append(
-               "  [AvanzamentoProd].[dbo].[TBL_DatiProduzione]").append(
-               " inner join [DBDESMOS].[MVX2DESMOS].[dbo].[SCxxxCOL] on CLNROR=odv COLLATE SQL_Latin1_General_CP1_CI_AS and clncol=collo COLLATE SQL_Latin1_General_CP1_CI_AS").append(
-               " inner join openquery(COLOM,'select cfdivi,SUBSTR (cffacn, 21, 1) as let from mcobmoddta.ZPILCOM') as bu on bu.let=cdditt COLLATE SQL_Latin1_General_CP1_CI_AS").append(                      
+               "  [DesmosColombini].[dbo].[DatiProduzione]").append(
+               "inner join  (select * from openquery(COLOM,'select CFFACI as faci,CFDIVI as divi from mvxbdta.cfacil') ) as divi on divi.faci=BU" ).append( 
                " where 1=1").append(
-               " and CLNART=0 ").append(
                condLinea).append(
-               " and commessa='").append(numCom).append("'");
+               " and commessa='").append(numCom).append(" ' and bu is not null ");
                
             
     
     //group by e order by
-    sql.append("\n group by cfdivi").append(
-               " order by cfdivi");
+    sql.append("\n group by divi").append(
+               " order by divi");
     
     
     

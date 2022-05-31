@@ -36,7 +36,7 @@ public class DtCombicut implements IDatiCaricoLineaComm {
    Connection conSqlS=null;
     
    try{
-     conSqlS=ColombiniConnections.getDbAvanzamentoProdConnection(); 
+     conSqlS=ColombiniConnections.getSrvDesmosProdConnection(); 
    }
      catch(SQLException s){
        throw new DatiCommLineeException(s);}
