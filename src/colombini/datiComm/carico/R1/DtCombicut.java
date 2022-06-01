@@ -36,7 +36,7 @@ public class DtCombicut implements IDatiCaricoLineaComm {
    Connection conSqlS=null;
     
    try{
-     conSqlS=ColombiniConnections.getSrvDesmosProdConnection(); 
+     conSqlS=ColombiniConnections.getDbDesmosColProdConnection(); 
    }
      catch(SQLException s){
        throw new DatiCommLineeException(s);}
@@ -44,7 +44,7 @@ public class DtCombicut implements IDatiCaricoLineaComm {
    QryNPziDatiProduzione qry=new QryNPziDatiProduzione();
     qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, " and descfase10='P4 SEZIONATURA' ");
     qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, ll.getCommessa());
-    qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DatiCommUtils.getInstance().getDataCommessa(ll.getDataCommessa()));
+    qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, ll.getDataCommessa());
     return DatiCommUtils.getInstance().getListDtCommFromQuery(conSqlS, qry, ll,FilterFieldCostantXDtProd.FD_NUMPEZZI);
   }
      

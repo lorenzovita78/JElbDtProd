@@ -5,16 +5,15 @@
 package colombini.datiComm.carico.R1;
 
 
-import colombini.costant.CostantsColomb;
 import colombini.costant.TAPWebCostant;
-import colombini.datiComm.carico.CaricoComOnTAP;
+import colombini.datiComm.carico.CaricoComOnTAPColomFebal;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author lvita
  */
-public class DtForHomagR1P4 extends CaricoComOnTAP {
+public class DtForHomagR1P4 extends CaricoComOnTAPColomFebal {
 
 //  public static final String PATHFANTEREM="//pegaso/flussi/FileProd/ARTEC/ANTEREM/ANTE";
 //

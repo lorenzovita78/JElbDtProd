@@ -17,7 +17,9 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import utils.DateUtils;
 
 /**
@@ -43,10 +45,17 @@ public abstract class AvProdLineeOnTAP extends AvProdLineaStd{
       ResultSetHelper.fillListList(conAs400, query, commesse);
       
       //Modifica per il P4 - da finire
-//      List commesseSom=new ArrayList();
+//      Map<String,Integer> commNew = new HashMap<>();
+//      //List commesseSom=new ArrayList();
 //        for(List comm:commesse){
-//            Long nrocomm=(Long) comm.get(0);
-//            commesseSom.add(comm);
+//            String nrocomm=(String) comm.get(0);
+//            Integer pzprod=(Integer) comm.get(3);
+//            if(commNew.containsKey(nrocomm.substring(nrocomm.length()-3, nrocomm.length()))){
+//                
+//            } else commNew.put(nrocomm, pzprod);
+//            
+//            
+//            
 //        }
       //Fin modifica
       

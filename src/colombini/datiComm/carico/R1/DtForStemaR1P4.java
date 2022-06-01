@@ -5,7 +5,6 @@
 package colombini.datiComm.carico.R1;
 
 
-import colombini.costant.CostantsColomb;
 import colombini.costant.TAPWebCostant;
 import colombini.datiComm.carico.CaricoComOnTAP;
 import org.apache.log4j.Logger;

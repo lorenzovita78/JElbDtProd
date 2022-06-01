@@ -7,7 +7,6 @@
 package colombini.query.datiComm.carico;
 
 import colombini.query.datiComm.FilterFieldCostantXDtProd;
-import colombini.query.produzione.FilterQueryProdCostant;
 import db.CustomQuery;
 import exception.QueryException;
 
@@ -15,7 +14,7 @@ import exception.QueryException;
  *
  * @author lvita
  */
-public class QueryProdComFromTAP extends CustomQuery {
+public class QueryProdComFromTAPColomFebal extends CustomQuery {
 
   
   @Override
@@ -29,7 +28,9 @@ public class QueryProdComFromTAP extends CustomQuery {
     sq.append(" WHERE 1=1");
     
     sq.append(" AND TICONO = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_AZIENDA));
-    sq.append(" AND TICOMM = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM));
+    //Modifica fatta per prendere i dati anche da Febal (GG 31052022)
+    // sq.append(" AND TICOMM = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM));
+    sq.append(addAND(inStatement("TICOMM", FilterFieldCostantXDtProd.FT_NUMCOMM)));
     sq.append(" AND TIPLGR = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LINEA));
     sq.append(" and TIDTCO = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA));
     

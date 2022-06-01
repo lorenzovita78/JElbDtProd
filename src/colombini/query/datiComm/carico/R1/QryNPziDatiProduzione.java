@@ -21,7 +21,7 @@ public class QryNPziDatiProduzione extends CustomQuery{
     String numCom=getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM);
     //String azdefault=FilterFieldCostantXDtProd.AZCOLOMBINI.toString();
     String condLinea=ClassMapper.classToString(getFilterValue(FilterFieldCostantXDtProd.FT_LINEE));
-    //String dataC=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA);
+    String dataC=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA);
     //
     if(numCom==null || numCom.isEmpty())
       throw new QueryException("Commessa non definita impossibile interrogare il database");
@@ -38,9 +38,10 @@ public class QryNPziDatiProduzione extends CustomQuery{
                " from ").append(
                "  [DesmosColombini].[dbo].[DatiProduzione]").append(
                "inner join  (select * from openquery(COLOM,'select CFFACI as faci,CFDIVI as divi from mvxbdta.cfacil') ) as divi on divi.faci=BU" ).append( 
-               " where 1=1").append(
+               " where 1=1 ").append(
                condLinea).append(
-               " and commessa='").append(numCom).append(" ' and bu is not null ");
+               " and SUBSTRING(commessa, len(commessa)-2, 3) like '%").append(numCom).append("' and bu is not null "
+                + " and datacommessa='").append(dataC).append("' ");
                
             
     
