@@ -54,8 +54,14 @@ public class QueryPzR1P4 extends CustomQuery {
                " ,substring([Descrizione],1,30)  as descAbb \n" +
                " ,[Descrizione]\n" +
                " ,[PartNumber] as barcode "+
-               //Gaston.Campo aggiunto per la lotto1. Se il pezzo ha fase30, devo caricare come destinazione finale la fase30, in modo che la lotto1 puo creare un carrello con questa destinazione.
-               " ,COALESCE(descfase30,lineadestinazione,descfase30)  as lineadest "+
+               //Gaston.Campo aggiunto per la lotto1. Devo prendere le fase intermedie (se non ci sono P4 e non hanno ** che sono casi speciali)
+                " , case\n" +
+                "             when [descfase50] is not null and substring(ltrim([descfase50]),1,2) not in ('P4','**') then [descfase50]\n" +
+                "             when [descfase40] is not null and substring(ltrim([descfase40]),1,2) not in ('P4','**') then [descfase40]\n" +
+                "             when [descfase30] is not null and substring(ltrim([descfase30]),1,2) not in ('P4','**') then [descfase30]\n" +
+                "             when [descfase20] is not null and substring(ltrim([descfase20]),1,2) not in ('P4','**') then [descfase20]\n" +
+                "else lineadestinazione\n" +
+                "             end lineadest  "+
                "\n FROM ").append(TAB_PRODP4).append(
                "\n WHERE 1=1 ").append(
                 addAND((ultimaFaseCondition)));

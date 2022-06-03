@@ -132,7 +132,7 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 
         List commsR1P4=getListCommesseR1P4();
-        // loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
+//        // loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
         loadDatiP4New(apm,TAPWebCostant.CDL_LOTTO1R1P4_EDPC,commsR1P4, commEx, propsElab,null);
         loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like 'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
         loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
