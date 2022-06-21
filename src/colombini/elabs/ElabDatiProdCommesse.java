@@ -77,11 +77,11 @@ public class ElabDatiProdCommesse extends ElabClass{
   public final static String COMMETK="$COMM$";
   public final static String COLLOETK="$COLLO$";
   public final static String NARTETK="$NART$";
+
   
     
 
   private Date dataRif;
- 
   
   
   public ElabDatiProdCommesse(){
@@ -102,7 +102,8 @@ public class ElabDatiProdCommesse extends ElabClass{
     try { 
       PersistenceManager apm=new PersistenceManager(con);
       _logger.info("Giorno rif: "+dataRif);
-      List<List> commGg=DatiProdUtils.getInstance().getListGgCommesse(con, dataRif, null,Boolean.TRUE);
+      List<List> commGg=new ArrayList();
+      commGg=DatiProdUtils.getInstance().getListGgCommesse(con, dataRif, null,Boolean.TRUE);
       _logger.info(" Commesse disponibili n. "+commGg.size()+" --> "+commGg.toString());
       Map  commEx=getMapCommessePresenti(con);
      
@@ -132,7 +133,7 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 
         List commsR1P4=getListCommesseR1P4();
-//        // loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
+        //loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
         loadDatiP4New(apm,TAPWebCostant.CDL_LOTTO1R1P4_EDPC,commsR1P4, commEx, propsElab,null);
         loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like 'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
         loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
@@ -158,8 +159,6 @@ public class ElabDatiProdCommesse extends ElabClass{
       return Boolean.FALSE;
     
     dataRif=(Date) parm.get(ALuncherElabs.DATAINIELB);
-    
-  
     
     return Boolean.TRUE;
   }
@@ -525,17 +524,19 @@ public class ElabDatiProdCommesse extends ElabClass{
    private Boolean isDtForatriceRemValid(BeanInfoColloComForTAP b){
      Boolean valid=Boolean.TRUE;
      
-     if("36092".equals(b.getLineaLogica()))
+     //Modifica fatta a richiesta di Lucia Formica 21/06/2022
+     if(("36092".equals(b.getLineaLogica())) ||  ("36110".equals(b.getLineaLogica())) ||  ("36111".equals(b.getLineaLogica())) ||  ("36113".equals(b.getLineaLogica())))
        valid=Boolean.FALSE;
 
      //richiesta di Nicola Genghini tk 31826
-     if("36110".equals(b.getLineaLogica())){
-       String descArt=b.getDescArticolo().toUpperCase();
-       if(descArt.contains("TAMPON") || descArt.contains("COPRIF") || descArt.contains("MENSOL")){
-         _logger.info("Articolo scartato  -->"+b.getCommessa()+" - "+b.getCollo()+" -->"+descArt);
-         valid=Boolean.FALSE;   
-       }  
-     }
+     //Tolto a richiesta di Lucia Formica 21/06/2022 --> dobbiamo scartare tutta la linea
+//     if("36110".equals(b.getLineaLogica())){
+//       String descArt=b.getDescArticolo().toUpperCase();
+//       if(descArt.contains("TAMPON") || descArt.contains("COPRIF") || descArt.contains("MENSOL")){
+//         _logger.info("Articolo scartato  -->"+b.getCommessa()+" - "+b.getCollo()+" -->"+descArt);
+//         valid=Boolean.FALSE;   
+//       }  
+//     }
      
      return valid;         
    }
@@ -1202,6 +1203,9 @@ public class ElabDatiProdCommesse extends ElabClass{
 //        } 
 
         String commS=DatiProdUtils.getInstance().getStringNComm(comm);
+        if(commS.startsWith("9") && comm>1000){
+          commS="P"+commS.substring(1);
+        }
         List beans=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
         apm.storeDtFromBeans(beans);
         
@@ -1615,7 +1619,7 @@ public class ElabDatiProdCommesse extends ElabClass{
             List ll3=Arrays.asList("06257","06258");  
             q.setFilter(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS, lancioD);
             q.setFilter(FilterFieldCostantXDtProd.FT_LINEE,ll3.toString() );
-            q.setFilter(QueryPzHomagR1P1.FT_DIM1_LE, 1276 );
+            q.setFilter(QueryPzHomagR1P1.FT_DIM1_LE, 1497 );
             lH =new ArrayList();
             ResultSetHelper.fillListList(conSQLSDesmos, q.toSQLString(), lH);
             if(lH!=null){
@@ -1884,7 +1888,7 @@ public class ElabDatiProdCommesse extends ElabClass{
           
           q.setFilter(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS, lancioD);
           q.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche1.toString());
-          q.setFilter(QueryPzHomagR1P1.FT_DIM1_GT, 1276 );    
+          q.setFilter(QueryPzHomagR1P1.FT_DIM1_GT, 1497 );    
           List l =new ArrayList();
           ResultSetHelper.fillListList(conSQLSDesmos, q.toSQLString(), l);
           if(l!=null){
@@ -2715,7 +2719,12 @@ public class ElabDatiProdCommesse extends ElabClass{
     
     List result=new ArrayList();
     try{
+    
+    if(comm.startsWith("9") && nComm4P4){
+      comm=comm.replace("9", "P");
+    }
 
+    
         QueryPzR1P4 qry=new QueryPzR1P4();
       
       
@@ -2744,13 +2753,13 @@ public class ElabDatiProdCommesse extends ElabClass{
     
 
     //per convertire comessa Febal in numerazione Colombini
+     if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
     if(comm.length()==7 && !nComm4P4){
       String scomm=comm.toString().substring(4, 7);
       comm=(scomm);
-    }
-    if(comm.startsWith("P") && nComm4P4){
-      comm=comm.replace("P", "9");
-    }
+    }  
 //    if(comm>400 && comm<797){
 //      comm-=400;
 //    }

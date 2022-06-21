@@ -79,6 +79,7 @@ public class DatiProdUtils {
     
     if(onlyComm!=null && onlyComm)
       qry.setFilter(QryCommToProduce.FONLYCOMM, "Y");
+   
     
     if(comElab!=null && comElab)
       qry.setFilter(QryCommToProduce.FONLYCCLOSED, "Y");

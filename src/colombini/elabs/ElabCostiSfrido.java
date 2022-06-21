@@ -130,17 +130,17 @@ public class ElabCostiSfrido extends ElabClass{
         _logger.error(" Errore in fase di calcolo dei dati per Ottimizzatore Rovereta 1 Piano 1 -->"+ex.getMessage());
         addError("Errore in fase di calcolo dei dati per Ottimizzatore Rovereta 1 Piano 1 -->"+ex.toString());
       }
-      
-      try{
-        _logger.info(" Dati Ottimizzatore Rovereta 1 Piano 4 ");
-        String condSfrido=" SUM(ZSSUPD-ZSSUPU -ZSSFIS-ZSSPRF)";
-        List lista=CalcCostiSfridoArticoliMvx.getInstance().getDatiCostiSfridoPeriodo(manP.getConnection(), annoRif, meseRif, CostantsColomb.ROVERETA1, CostantsColomb.PIANO4, ISfridoInfo.SEZR1P4,condSfrido,"",false);
-        gestDatiCosti(manP, CostantsColomb.ROVERETA1 , CostantsColomb.PIANO4, ISfridoInfo.SEZR1P4,annoRif, meseRif, lista);
-
-      }catch(SQLException ex){
-        _logger.error(" Errore in fase di calcolo dei dati per Ottimizzatore Rovereta 1 Piano 1 -->"+ex.getMessage());
-        addError("Errore in fase di calcolo dei dati per Ottimizzatore Rovereta 1 Piano 1 -->"+ex.toString());
-      }
+      //Disativatto calcolo su WN 21/06/2022
+//      try{
+//        _logger.info(" Dati Ottimizzatore Rovereta 1 Piano 4 ");
+//        String condSfrido=" SUM(ZSSUPD-ZSSUPU -ZSSFIS-ZSSPRF)";
+//        List lista=CalcCostiSfridoArticoliMvx.getInstance().getDatiCostiSfridoPeriodo(manP.getConnection(), annoRif, meseRif, CostantsColomb.ROVERETA1, CostantsColomb.PIANO4, ISfridoInfo.SEZR1P4,condSfrido,"",false);
+//        gestDatiCosti(manP, CostantsColomb.ROVERETA1 , CostantsColomb.PIANO4, ISfridoInfo.SEZR1P4,annoRif, meseRif, lista);
+//
+//      }catch(SQLException ex){
+//        _logger.error(" Errore in fase di calcolo dei dati per Ottimizzatore Rovereta 1 Piano 1 -->"+ex.getMessage());
+//        addError("Errore in fase di calcolo dei dati per Ottimizzatore Rovereta 1 Piano 1 -->"+ex.toString());
+//      }
 //      
       try{
         _logger.info(" Dati Ottimizzatore Rovereta 1 Piano 4 Combicut ");  

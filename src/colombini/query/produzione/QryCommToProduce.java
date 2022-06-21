@@ -48,6 +48,7 @@ public class QryCommToProduce extends CustomQuery{
     if(isFilterPresent(FONLYCOMM))
       str.append(" and zcmccd = 0");
     
+    
     if(isFilterPresent(FONLYCCLOSED))
       str.append(" and zccmst>=60 ");
     

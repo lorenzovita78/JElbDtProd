@@ -36,7 +36,7 @@ public class QueryPzCommCucineR1P4 extends CustomQuery {
                " , a.lineadestinazione  ").append(    
                " , a.Box , a.Pedana ").append(
                " ,a.odv  \n").append(
-               " ,b.clnart as  rigaOrdine \n").append(
+               " ,coalesce(b.clnart,0) rigaOrdine \n").append(
                " ,a.[CodSemilavorato] \n" +
                " ,substring(a.[Descrizione],1,30)  as descAbb \n" +
                " ,a.[Descrizione]\n" +

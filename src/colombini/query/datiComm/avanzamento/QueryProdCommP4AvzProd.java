@@ -34,8 +34,8 @@ public class QueryProdCommP4AvzProd extends CustomQuery {
              "  inner join [AvanzamentoProd].[dbo].[TBL_DatiProduzione] on barcode=partnumber").append(
              " where 1=1 ").append(
             " and centro=").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LINEA)).append(
-            " and dataInserimento>=convert( datetime ,").append(dI).append(" ,120)").append(
-            " and dataInserimento<=convert( datetime ,").append(dF).append(" ,120)").append(
+            " and dataOra>=convert( datetime ,").append(dI).append(" ,120)").append(
+            " and dataOra<=convert( datetime ,").append(dF).append(" ,120)").append(
             " group by ").append(campiConv);
            
     return qry.toString();

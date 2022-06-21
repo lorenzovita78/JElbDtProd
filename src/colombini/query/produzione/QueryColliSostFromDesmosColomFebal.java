@@ -47,7 +47,7 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
   StringBuilder qry=new StringBuilder( 
     "select distinct  Codice_collo,0 as numart,linea,box,pedana,rtrim(ltrim(NumeroOrdine)) as numOrdine,0 as rigaordine,articolo,descrizioneArticolo ,DescrizioneArticolo2 ").append(
          "\n from  DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL    inner join TesyFactory_FEBAL_PROD.dbo.lyhead  on rtrim(ltrim(NumeroOrdine))=([£5ORNO] collate  database_default ) ").append(
-         "\n inner join [MVX2DESMOS].[dbo].[ZZHEAD2] on rtrim(ltrim(NumeroOrdine))=ZAORNO ").append(
+         "\n inner join TesyFactory_FEBAL_PROD.dbo.vOdvInfo on rtrim(ltrim(NumeroOrdine))=ZAORNO  ").append(
          "\n inner join  (select okcuno from [MVX2DESMOS].[dbo].[OCUSMA_FASCECLI] where FASCECLIENTE in ('AAA','AAA*') group by okcuno) b on cliente=OKCUNO ").append(
          "\n WHERE 1=1").append(
          " and DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL.Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
@@ -60,7 +60,7 @@ public class QueryColliSostFromDesmosColomFebal extends CustomQuery {
     "select distinct  Codice_collo,0 as numart,linea,box,pedana,rtrim(ltrim(NumeroOrdine)) as numOrdine, 0 as rigaordine,articolo,descrizioneArticolo ,DescrizioneArticolo2 ").append(
          "\n from  DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL ").append(
          "\n inner join TesyFactory_FEBAL_PROD.dbo.lyhead  on rtrim(ltrim(NumeroOrdine))=([£5ORNO] collate  database_default ) ").append(
-         "\n inner join  (select ZAORNO,zafost from [MVX2DESMOS].[dbo].[ZZHEAD2] where commessa=" ).append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append( " and ZAFOST<>'' and ZAFOST>'1' ) b on NumeroOrdine =ZAORNO ").append(
+         "\n inner join  (select odv.ZAORNO,odv.zafost from TesyFactory_FEBAL_PROD.dbo.vOdvInfo as odv inner join [MVX2DESMOS].[dbo].[ZZHEAD] odvCom on odv.ZAORNO=odv.ZAORNO   where commessa=" ).append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append( " and odv.ZAFOST<>'' and odv.ZAFOST>'1' ) b on NumeroOrdine =ZAORNO ").append(
          "\n WHERE 1=1").append( 
          "\n and Commessa = ").append(getFilterSQLValue(FilterQueryProdCostant.FTNUMCOMM)).append(
          " and dataSpedizione = ").append(getFilterSQLValue(FilterQueryProdCostant.FTDATACOMMN)).append(    

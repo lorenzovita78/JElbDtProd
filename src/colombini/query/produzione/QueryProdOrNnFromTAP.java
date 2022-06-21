@@ -27,10 +27,22 @@ public class QueryProdOrNnFromTAP extends CustomQuery{
                     "  from mcobmoddta.ZTAPCP inner join mcobmoddta.ZTAPCU on tputin=tuutrf\n" +
                     " where tuplgr= "+ftCdl;
         
-        String sub2=" select a.ppplgr codll,a.PPPLNM descll, b.ppplgr cdl ,b.PPPLNM desccdl,c.clfact stab,c.clplan plan, b.ppdept cdccdl , b.ppwcre respcdl \n" +
-                    "  from mvxbdta.mpdwct  a inner join mvxbdta.mpdwct b on a.ppcono=b.ppcono and a.ppfaci=b.ppfaci and a.ppiiwc=b.ppplgr \n" +
-                    " inner join mcobmoddta.zdpwcl c  on b.ppplgr=c.clplgr\n" +
-                    " where a.ppcono="+ftAzienda;
+//Modifica fatta per prendere sempre la linea anche se non ha padre Gaston 21/06/2022     
+//        String sub2=" select a.ppplgr codll,a.PPPLNM descll, b.ppplgr cdl ,b.PPPLNM desccdl,c.clfact stab,c.clplan plan, b.ppdept cdccdl , b.ppwcre respcdl \n" +
+//                    "  from mvxbdta.mpdwct  a inner join mvxbdta.mpdwct b on a.ppcono=b.ppcono and a.ppfaci=b.ppfaci and a.ppiiwc=b.ppplgr \n" +
+//                    " inner join mcobmoddta.zdpwcl c  on b.ppplgr=c.clplgr\n" +
+//                    " where a.ppcono="+ftAzienda;
+        
+        String sub2="select a.ppplgr codll,a.PPPLNM descll, b.ppplgr cdl ,b.PPPLNM desccdl,c.clfact stab,c.clplan plan, b.ppdept cdccdl , b.ppwcre respcdl\n" +
+                    "   from mvxbdta.mpdwct  a left join mvxbdta.mpdwct b on a.ppcono=b.ppcono and a.ppfaci=b.ppfaci and a.ppiiwc=b.ppplgr\n" +
+                    "   inner join mcobmoddta.zdpwcl c  on b.ppplgr=c.clplgr\n" +
+                    "   where a.ppcono=" + ftAzienda + " \n" +
+                    "   union\n" +
+                    "   select a.ppplgr codll,a.PPPLNM descll, a.ppplgr cdl ,a.PPPLNM desccdl,c.clfact stab,c.clplan plan, a.ppdept cdccdl , a.ppwcre respcdl\n" +
+                    "   from (select MAX(ppcono) ppcono,MAX(ppplgr) ppplgr,MAX(PPPLNM) PPPLNM,MAX(ppdept) ppdept,MAX(ppwcre) ppwcre from mvxbdta.mpdwct group by ppplgr)  a\n" +
+                    "   inner join mcobmoddta.zdpwcl c  on a.ppplgr=c.clplgr\n" +
+                    "   left join (select ppplgr from mvxbdta.mpdwct where PPIIWC<>'') b on a.ppplgr=b.ppplgr\n" +
+                    "   where b.ppplgr is null and a.ppcono="+ftAzienda;
         
         q.append("SELECT distinct ticono, tiplgr, tibarp, tidtco, ticomm, tincol, tinart, tilinp, ifnull(descll,''), tiorno, ticonn, ticart, tidart, tistrd,\n").append(
                   " ifnull(cdl,tilinp), current timestamp  ").append(

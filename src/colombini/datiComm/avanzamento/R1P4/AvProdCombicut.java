@@ -48,12 +48,12 @@ public class AvProdCombicut extends AvProdLineeOnTAP  {
       String df=DateUtils.DateToStr(DateUtils.getFineGg(this.getDataRifCalc()), "yyyy-MM-dd HH:mm:ss ");  
       qry.setFilter(FilterFieldCostantXDtProd.FT_DATADA, di);
       qry.setFilter(FilterFieldCostantXDtProd.FT_DATAA, df);
-      qry.setFilter(FilterFieldCostantXDtProd.FT_LINEA,"01088");
+      qry.setFilter(FilterFieldCostantXDtProd.FT_LINEA,CENTRO);
       ResultSetHelper.fillListList(conSqlS, qry.toSQLString(), pzComm);
       storeDatiProdComm(conAs400, pzComm);
       
     }catch(SQLException s){
-     _logger.error("Errore in fase di interrogazione del db Sirio Lotto 1 -->"+s.getMessage());
+     _logger.error("Errore in fase di interrogazione del db avanzamentoProd -->"+s.getMessage());
      throw new DatiCommLineeException(s);
      
     }
@@ -70,7 +70,7 @@ public class AvProdCombicut extends AvProdLineeOnTAP  {
         try{
           conSqlS.close();
         }catch(SQLException s){
-          _logger.error("Errore in fase di chiusura della connessione al db Sirio Lotto1 "+s.getMessage());
+          _logger.error("Errore in fase di chiusura della connessione al db avanzamentoProd "+s.getMessage());
         }
     }    
   }

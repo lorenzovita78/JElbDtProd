@@ -34,7 +34,7 @@ public class QueryProdCommAvzVDL extends CustomQuery {
             " left join (select colloId from [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Detail] where Status>=200 " ).append(addAND(inStatement("ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
             " and SYSTEMDATE<convert( datetime ,").append(dI).append(" ,120)) as storico on storico.ColloID=avz.ColloID ").append(
             " where 1=1 and ").append(
-            " avz.Status>=200 ").append(addAND(inStatement("avz.ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
+            " avz.area>0 ").append(addAND(inStatement("avz.ProductionLine",FilterFieldCostantXDtProd.FT_LINEA))).append(
             " and avz.SYSTEMDATE>=convert( datetime ,").append(dI).append(" ,120)").append(
             " and avz.SYSTEMDATE<=convert( datetime ,").append(dF).append(" ,120) and storico.ColloID is null");
     
