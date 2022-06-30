@@ -65,7 +65,6 @@ public abstract class AvProdLineeOnTAP extends AvProdLineaStd{
       _logger.info("QUERY AVP :"+query);
       _logger.info("RESULT AVP :" +s);
       
-      //Prima di fare il store. Devo creare un metodo per sommare le commesse colom e febal (creo lista nuova e agruppo per le ultime 3 lettere)
       storeDatiProdComm(conAs400, commesse);
       
      

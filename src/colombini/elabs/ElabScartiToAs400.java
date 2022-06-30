@@ -191,7 +191,7 @@ private Map getPNumberFebal(Connection conDesmos,List<List> infos){
     String selectParts=getQueryStringListPartNumber(infos);
 
     String qryDesmos=" SELECT distinct PartNumber,ProvCommessa, odp as OdP  "
-                    + " FROM [DesmosColombini].[dbo].[LDL05_BASE_SIRIO_IMA]   a"
+                    + " FROM [DesmosColombini].[dbo].[DatiProduzione]   a"
                     +" inner join ("+selectParts+" ) b on  a.partnumber=b.pn "
                     + " where 1=1 ";
 

@@ -917,8 +917,9 @@ public class ElabDatiProdCommesse extends ElabClass{
            if(DesmosUtils.getInstance().isElabsDesmosFebalFinish(apm.getConnection(), comm, dtC)){
              List<BeanInfoColloComForTAP> beansFebal=getListPzEtichettaturaP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commFebal, dataC ,Boolean.TRUE,Boolean.FALSE);
              List<BeanInfoColloComForTAP> beans=getListPzEtichettaturaP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE);
-             List<BeanInfoColloComForTAP> beansLGCol=getListPzEtichettaturaDesmosPortaleP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE,CDLLG);
-             List<BeanInfoColloComForTAP> beansLGFeb=getListPzEtichettaturaDesmosPortaleP3(conDesmosFeb, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE,CDLLG);
+             //Flusso LG disabilitato - 24/06/2022
+             //List<BeanInfoColloComForTAP> beansLGCol=getListPzEtichettaturaDesmosPortaleP3(conDesmosCol, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE,CDLLG);
+             //List<BeanInfoColloComForTAP> beansLGFeb=getListPzEtichettaturaDesmosPortaleP3(conDesmosFeb, TAPWebCostant.CDL_ETICHETTATURAP3_EDPC, commS, dataC ,Boolean.TRUE,Boolean.FALSE,CDLLG);
 
              //pz standard Colombini  con etichetta
              apm.storeDtFromBeans((List)beans);
@@ -929,12 +930,12 @@ public class ElabDatiProdCommesse extends ElabClass{
              saveInfoForEtkPz2(apm, beansFebal, pathfile,Boolean.TRUE);
              
              //pz LG Colombini
-             apm.storeDtFromBeans((List)beansLGCol);
-             saveInfoForEtkPz3(apm, beansLGCol, pathfile,Boolean.TRUE);
+            // apm.storeDtFromBeans((List)beansLGCol);
+            // saveInfoForEtkPz3(apm, beansLGCol, pathfile,Boolean.TRUE);
              
               //pz LG Febal
-             apm.storeDtFromBeans((List)beansLGFeb);
-             saveInfoForEtkPz3(apm, beansLGFeb, pathfile,Boolean.TRUE);
+            // apm.storeDtFromBeans((List)beansLGFeb);
+            // saveInfoForEtkPz3(apm, beansLGFeb, pathfile,Boolean.TRUE);
              
            }
          } catch(SQLException s){
@@ -2720,7 +2721,7 @@ public class ElabDatiProdCommesse extends ElabClass{
     List result=new ArrayList();
     try{
     
-    if(comm.startsWith("9") && nComm4P4){
+    if(comm.startsWith("9") && nComm4P4 && comm.length()==7){
       comm=comm.replace("9", "P");
     }
 
