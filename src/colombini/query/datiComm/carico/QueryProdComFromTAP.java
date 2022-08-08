@@ -30,9 +30,12 @@ public class QueryProdComFromTAP extends CustomQuery {
     
     sq.append(" AND TICONO = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_AZIENDA));
     sq.append(" AND TICOMM = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM));
-    sq.append(" AND TIPLGR = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LINEA));
     sq.append(" and TIDTCO = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA));
     
+    if(isFilterPresent(FilterFieldCostantXDtProd.FT_LINEE))
+      sq.append(addAND(inStatement("TIPLGR", FilterFieldCostantXDtProd.FT_LINEE)));
+    else
+     sq.append(" AND TIPLGR = ").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_LINEA));
     
     return " SELECT divi,count(*) FROM ( "+sq.toString()+" ) a GROUP BY divi"; //To change body of generated methods, choose Tools | Templates.
   }

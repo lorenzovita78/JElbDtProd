@@ -6,7 +6,6 @@
 package colombini.query.produzione.R1;
 
 import colombini.query.datiComm.FilterFieldCostantXDtProd;
-import static colombini.query.produzione.R1.QueryPzR1P41_OLD.TAB_PRODP4;
 import db.CustomQuery;
 import exception.QueryException;
 import utils.ClassMapper;
@@ -16,7 +15,7 @@ import utils.StringUtils;
  *
  * @author lvita
  */
-public class QueryPzR1P4 extends CustomQuery {
+public class QueryPzR1P41_OLD extends CustomQuery {
 
   public final static String FT_ULTIMAFASEP4="FT_ULTIMAFASEP4";
   public final static String FT_FASE30="FT_FASE30";
@@ -45,7 +44,7 @@ public class QueryPzR1P4 extends CustomQuery {
                "\n FROM \n");
               
               
-    StringBuffer sqlSub1=new StringBuffer("SELECT [Collo]\n" ).append(
+      StringBuffer sqlSub1=new StringBuffer("SELECT [Collo]\n" ).append(
                " , ROW_NUMBER() OVER(partition by Collo  order by PartNumber)  as ncollo   \n" ).append(
                " , lineadestinazione  ").append(    
                " , Box , Pedana ").append(

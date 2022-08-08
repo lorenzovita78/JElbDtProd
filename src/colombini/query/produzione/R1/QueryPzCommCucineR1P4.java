@@ -24,7 +24,7 @@ public class QueryPzCommCucineR1P4 extends CustomQuery {
   public String toSQLString() throws QueryException {
     StringBuilder sql=new StringBuilder();
     String sqlF="";
-    String Condition =" a.destinazionedettaglio like 'P4_P3%' ";
+    String Condition =" ((a.destinazionedettaglio like 'P4_P3%') or a.destinazionedettaglio in ('P3_REM','P3_BS')) ";
     
     
     sql.append(" select Collo , ncollo , LineaDestAbbreviata , Box, Pedana , odv , rigaOrdine ,  codSemilavorato , descAbb ,  Descrizione  , barcode ").append(

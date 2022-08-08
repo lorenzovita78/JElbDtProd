@@ -71,7 +71,7 @@ import utils.StringUtils;
  * Il dato viene archiviato in ZTAPCI
  * @author lvita
  */
-public class ElabDatiProdCommesse extends ElabClass{
+public class ElabDeleteDatiProdCommesse extends ElabClass{
   
   public final static String DATAETK="$DATA$";
   public final static String COMMETK="$COMM$";
@@ -84,7 +84,7 @@ public class ElabDatiProdCommesse extends ElabClass{
   private Date dataRif;
   
   
-  public ElabDatiProdCommesse(){
+  public ElabDeleteDatiProdCommesse(){
     super(); 
   }
   
@@ -3176,7 +3176,7 @@ public class ElabDatiProdCommesse extends ElabClass{
   
   
 
-   private static final Logger _logger = Logger.getLogger(ElabDatiProdCommesse.class);
+   private static final Logger _logger = Logger.getLogger(ElabDeleteDatiProdCommesse.class);
 
 
   

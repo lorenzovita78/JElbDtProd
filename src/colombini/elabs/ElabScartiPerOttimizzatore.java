@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mail.MailUtil;
@@ -31,6 +32,7 @@ import org.apache.log4j.Logger;
 import utils.ArrayUtils;
 import utils.ClassMapper;
 import utils.DateUtils;
+import utils.MapUtils;
 import utils.StringUtils;
 
 /**
@@ -231,11 +233,21 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
         return ;
       
       String qry=getQueryDesmosSezP4(qryCodici);
-      List infoCsv=new ArrayList();
+      List<List> infoCsv=new ArrayList();
+      List<String> infoErr=new ArrayList();
       ResultSetHelper.fillListList(conDesmos, qry, infoCsv);
-     
+      
+      Map mBarcodes=getMapBarcode(infoCsv);
+      
+      for(List l:infoS){
+         String barcode=ClassMapper.classToString(l.get(7));
+        
+         if(!mBarcodes.containsKey(barcode))
+           infoErr.add(barcode);
+      }
+      
       try {
-        prepareAndSendFileCsv(infoCsv, fileNameCsv, mailTo, mailCC, "Scarti da Ottimizzare per R1P4", "In allegato il csv contenente gli scarti da riottimizzare");
+        prepareAndSendFileCsv(infoCsv, fileNameCsv, mailTo, mailCC, "Scarti da Ottimizzare per R1P4",getTextMessageEmail(infoErr) );
       } catch (FileNotFoundException ex) {
         _logger.error("Problemi nella generazione del file csv "+fileNameCsv+" -->"+ex.getMessage());
         addError("Errore in fasedi generazione del csv per OtmP4 -->"+ex.toString()); 
@@ -246,10 +258,24 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
         conDesmos.close();
         } catch(SQLException s){
           _logger.error("Errore in fase di chiusura della connessione -->"+s.getMessage());
-        }
+        } 
       }       
     }
   }
+  
+  private String getTextMessageEmail(List<String> infoErr){
+    StringBuilder s =new StringBuilder("In allegato il csv contenente gli scarti da riottimizzare");
+    if(infoErr!=null  && infoErr.size()>0){
+      s.append("\n\n\n  ATTENZIONE BARCODE NON PRESENTI NEL CSV MA SCARTATI ---> \n\n\n\n");
+      for(String b:infoErr){
+        s.append(b);
+        s.append("\n");
+      }
+    }
+    
+    return s.toString();
+  }
+  
   
   private void prepareAndSendFileCsv(List<List> infoS, String nomeFile,String mailTo,String mailCc,String object,String textMessage) throws FileNotFoundException{
     if(infoS==null || infoS.isEmpty())
@@ -301,6 +327,24 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
     
     return select.toString();
   }
+  
+  
+  private Map getMapBarcode(List<List> info ){
+    if(info==null || info.isEmpty())
+      return null;
+    
+    Map mapBarcode=new HashMap();
+    
+    for(List el:info){
+        String barcode=ClassMapper.classToString(el.get(9));
+        mapBarcode.put(barcode,"Y");
+    }
+    
+    return mapBarcode;
+  }
+  
+  
+  
   
   private static final Logger _logger = Logger.getLogger(ElabDatiProdImpImaR1.class); 
 
