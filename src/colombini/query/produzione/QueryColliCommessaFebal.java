@@ -19,7 +19,7 @@ public class QueryColliCommessaFebal extends CustomQuery{
   public String toSQLString() throws QueryException {
     StringBuilder qry=new StringBuilder(
             " select distinct  Codice_collo,0 as numart,linea,ltrim(rtrim(box)),ltrim(rtrim(pedana)),rtrim(ltrim(NumeroOrdine)),\n ").append( 
-                             " 0 as rigaordine,articolo,descrizioneArticolo ,DescrizioneArticolo2 \n").append(
+                             " 0 as rigaordine,articolo,descrizioneArticolo ,descrizioneArticolo \n").append(
                              //",NumeroCollo,Quantita  ").append(
              " from  DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL").append(
              " where 1=1 ");
