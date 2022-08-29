@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+
+
 package colombini.elabs;
 
 import db.persistence.PersistenceManager;
@@ -37,6 +39,9 @@ import utils.DateUtils;
  * Classe che si preoccupa di cancellare i dati di produzione per commessa di diverse linee
  * @author ggraziani
  */
+
+
+/*
 public class ElabDeleteDatiProdCommesse extends ElabClass{
   
   public final static String DATAETK="$DATA$";
@@ -311,3 +316,4 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   
 }
 
+*/
