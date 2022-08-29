@@ -41,7 +41,7 @@ import utils.DateUtils;
  */
 
 
-/*
+
 public class ElabDeleteDatiProdCommesse extends ElabClass{
   
   public final static String DATAETK="$DATA$";
@@ -68,7 +68,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
     //copia dati su storico
     copiaDatiSuStorico(con, propsElab);
     //pulizia tabelle
-    puliziaTabelle(con,propsElab);
+  //  puliziaTabelle(con,propsElab);
     //---
     try { 
       PersistenceManager apm=new PersistenceManager(con);
@@ -79,7 +79,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
       Map  commEx=getMapCommessePresenti(con);
     
 
-        List commsR1P4=getListCommesseR1P4();
+   //     List commsR1P4=getListCommesseR1P4();
 
 
     } catch (SQLException ex) {
@@ -237,75 +237,75 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   
   
   
-   private void puliziaTabellePerDataComm(Connection con ,Map propsElab,int comm,Date dataComm){
- 
-    try {
-      data=DateUtils.getFineGg(data);
-      Long dataN=DateUtils.getDataForMovex(data);
-      Long dataNNano=DateUtils.getDataForMovex(dataNano);
-//      String del4= " delete from  MCOBMODDTA.ZTAPCC  where 1=1 and tcdtap<="+JDBCDataMapper.objectToSQL(data);
-      
-      String del1= " delete from  MCOBMODDTA.ZTAPCP  where 1=1 and tpdtin<="+JDBCDataMapper.objectToSQL(data);
-      
-      String del2= " delete from  MCOBMODDTA.ZTAPPI  where 1=1 and txdtrf<="+JDBCDataMapper.objectToSQL(dataN);
-     
-      String del3= " delete from  MCOBMODDTA.ZTAPCI  where 1=1 and tidtco<="+JDBCDataMapper.objectToSQL(dataN);
-      
-      //cancellazione per nanocommesse
-      
-      String del2a= " delete from  MCOBMODDTA.ZTAPPI  where 1=1 and txcomm>=361 and txcomm<=391 and txdtrf<="+JDBCDataMapper.objectToSQL(dataNNano);
-     
-      String del3a= " delete from  MCOBMODDTA.ZTAPCI  where 1=1 and ticomm>=361 and ticomm<=391 and tidtco<="+JDBCDataMapper.objectToSQL(dataNNano);
-      
-      // 
-      
-      String del4= " delete from  MCOBMODDTA.ZTAPTI  where 1=1 and TTDTCO<="+JDBCDataMapper.objectToSQL(dataN);
-      
-      String del5= " delete from  MCOBMODDTA.ZTAPTP  where 1=1 and TYDTIN<="+JDBCDataMapper.objectToSQL(data);
-      
-      _logger.info("Pulizia dati letture --> "+ del1); 
-      PreparedStatement ps=con.prepareStatement(del1);
-      ps.execute();
-      _logger.info("Pulizia effettuata"); 
-      
-      _logger.info("Pulizia dati di commessa --> "+ del2); 
-      ps=con.prepareStatement(del2);
-      ps.execute();
-      _logger.info("Pulizia effettuata"); 
-      
-      _logger.info("Pulizia dati commessa info aggiuntive --> "+ del3); 
-      ps=con.prepareStatement(del3);
-      ps.execute();
-      _logger.info("Pulizia effettuata"); 
-      
-      _logger.info("Pulizia dati nano commessa --> "+ del2a); 
-      ps=con.prepareStatement(del2a);
-      ps.execute();
-      _logger.info("Pulizia effettuata"); 
-      
-      _logger.info("Pulizia dati nano commessa info aggiuntive --> "+ del3a); 
-      ps=con.prepareStatement(del3a);
-      ps.execute();
-      _logger.info("Pulizia effettuata"); 
-      
-       
-      _logger.info("Pulizia dati commessa info appoggio --> "+ del4); 
-      ps=con.prepareStatement(del4);
-      ps.execute();
-      _logger.info("Pulizia effettuata"); 
-      
-      _logger.info("Pulizia dati lettura colli incompleti --> "+ del5); 
-      ps=con.prepareStatement(del5);
-      ps.execute();
-      _logger.info("Pulizia effettuata");
-      
-    } catch (ParseException ex) {
-      _logger.error(" Errore in fase di conversione dati per pulizia tabelle --> "+ex.getMessage());
-    } catch (SQLException ex) {
-      addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+ex.getMessage());
-    }
-   
-  }
+//   private void puliziaTabellePerDataComm(Connection con ,Map propsElab,int comm,Date dataComm){
+// 
+//    try {
+//      data=DateUtils.getFineGg(data);
+//      Long dataN=DateUtils.getDataForMovex(data);
+//      Long dataNNano=DateUtils.getDataForMovex(dataNano);
+////      String del4= " delete from  MCOBMODDTA.ZTAPCC  where 1=1 and tcdtap<="+JDBCDataMapper.objectToSQL(data);
+//      
+//      String del1= " delete from  MCOBMODDTA.ZTAPCP  where 1=1 and tpdtin<="+JDBCDataMapper.objectToSQL(data);
+//      
+//      String del2= " delete from  MCOBMODDTA.ZTAPPI  where 1=1 and txdtrf<="+JDBCDataMapper.objectToSQL(dataN);
+//     
+//      String del3= " delete from  MCOBMODDTA.ZTAPCI  where 1=1 and tidtco<="+JDBCDataMapper.objectToSQL(dataN);
+//      
+//      //cancellazione per nanocommesse
+//      
+//      String del2a= " delete from  MCOBMODDTA.ZTAPPI  where 1=1 and txcomm>=361 and txcomm<=391 and txdtrf<="+JDBCDataMapper.objectToSQL(dataNNano);
+//     
+//      String del3a= " delete from  MCOBMODDTA.ZTAPCI  where 1=1 and ticomm>=361 and ticomm<=391 and tidtco<="+JDBCDataMapper.objectToSQL(dataNNano);
+//      
+//      // 
+//      
+//      String del4= " delete from  MCOBMODDTA.ZTAPTI  where 1=1 and TTDTCO<="+JDBCDataMapper.objectToSQL(dataN);
+//      
+//      String del5= " delete from  MCOBMODDTA.ZTAPTP  where 1=1 and TYDTIN<="+JDBCDataMapper.objectToSQL(data);
+//      
+//      _logger.info("Pulizia dati letture --> "+ del1); 
+//      PreparedStatement ps=con.prepareStatement(del1);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata"); 
+//      
+//      _logger.info("Pulizia dati di commessa --> "+ del2); 
+//      ps=con.prepareStatement(del2);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata"); 
+//      
+//      _logger.info("Pulizia dati commessa info aggiuntive --> "+ del3); 
+//      ps=con.prepareStatement(del3);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata"); 
+//      
+//      _logger.info("Pulizia dati nano commessa --> "+ del2a); 
+//      ps=con.prepareStatement(del2a);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata"); 
+//      
+//      _logger.info("Pulizia dati nano commessa info aggiuntive --> "+ del3a); 
+//      ps=con.prepareStatement(del3a);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata"); 
+//      
+//       
+//      _logger.info("Pulizia dati commessa info appoggio --> "+ del4); 
+//      ps=con.prepareStatement(del4);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata"); 
+//      
+//      _logger.info("Pulizia dati lettura colli incompleti --> "+ del5); 
+//      ps=con.prepareStatement(del5);
+//      ps.execute();
+//      _logger.info("Pulizia effettuata");
+//      
+//    } catch (ParseException ex) {
+//      _logger.error(" Errore in fase di conversione dati per pulizia tabelle --> "+ex.getMessage());
+//    } catch (SQLException ex) {
+//      addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+ex.getMessage());
+//    }
+//   
+//  }
   
   
   
@@ -316,4 +316,3 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   
 }
 
-*/
