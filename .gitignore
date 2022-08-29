@@ -2,4 +2,4 @@
 dir_to_ignore/build
 /dist/
 *.rit
-/build
+*.class
