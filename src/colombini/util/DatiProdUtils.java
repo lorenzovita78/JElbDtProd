@@ -14,6 +14,7 @@ import colombini.query.datiComm.FilterFieldCostantXDtProd;
 import colombini.query.datiComm.QryCommesseElab;
 import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QryCSYTAB;
+import colombini.query.produzione.QryCommToCancellare;
 import colombini.query.produzione.QryCommToProduce;
 import colombini.query.produzione.QrySpedizioniGg;
 import colombini.query.produzione.QueryCentriDiLavoro;
@@ -83,6 +84,28 @@ public class DatiProdUtils {
     
     if(comElab!=null && comElab)
       qry.setFilter(QryCommToProduce.FONLYCCLOSED, "Y");
+    
+    ResultSetHelper.fillListList(con, qry.toSQLString(), lista);
+    
+    return lista;
+  }
+  
+  
+    public List<List> getListCommesseToCancel(Connection con,Date data,Integer NroComm,Integer TipoComm) throws QueryException, SQLException{
+    List lista = new ArrayList();  
+    
+    QryCommToCancellare qry=new QryCommToCancellare();
+    
+    if(data != null){
+        Long dataComm=DateUtils.getDataForMovex(data);
+        qry.setFilter(FilterQueryProdCostant.FTDATACOMMN,dataComm);
+    }
+    
+    if(NroComm!=null && NroComm!=0)
+      qry.setFilter(FilterQueryProdCostant.FTNUMCOMM,NroComm);
+    
+    if(TipoComm!=null && TipoComm!=0)
+      qry.setFilter(QryCommToCancellare.TIPOCOMM, TipoComm);
     
     ResultSetHelper.fillListList(con, qry.toSQLString(), lista);
     

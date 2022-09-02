@@ -4,55 +4,54 @@
  * and open the template in the editor.
  */
 
-
-
 package colombini.elabs;
 
+import colombini.query.produzione.FilterQueryProdCostant;
+import colombini.query.produzione.QryDeleteZtapci;
 import db.persistence.PersistenceManager;
-import colombini.conn.ColombiniConnections;
-import static colombini.elabs.ElabCaricoCommLinee.COMMESSA;
-import static colombini.elabs.ElabCaricoCommLinee.DATACOMM;
-import static colombini.elabs.ElabCaricoCommLinee.TIPOCOMM;
 import colombini.util.DatiProdUtils;
-import colombini.util.DesmosUtils;
-import db.JDBCDataMapper;
-import db.ResultSetHelper;
+import db.CustomQuery;
 import elabObj.ElabClass;
-import elabObj.ALuncherElabs;
 import exception.QueryException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import static org.bouncycastle.math.ec.custom.sec.SecP160R1Curve.q;
 import utils.ClassMapper;
-import utils.DateUtils;
 
 /**
- * Classe che si preoccupa di cancellare i dati di produzione per commessa di diverse linee
+ * Classe che si preoccupa di cancellare i dati di produzione per data Commessa 
  * @author ggraziani
  */
-
-
-
 public class ElabDeleteDatiProdCommesse extends ElabClass{
   
   public final static String DATAETK="$DATA$";
   public final static String COMMETK="$COMM$";
   public final static String COLLOETK="$COLLO$";
   public final static String NARTETK="$NART$";
+  
+  
+  public final static String COMMESSA="COMMESSA";
+  public final static String DATACOMM="DATACOMM";
+  public final static String TIPOCOMM="TIPOCOMM";
+  public final static String DATAREF="DATAINI";
 
-  private Date dataRif;
-  private Integer tipoComm=Integer.valueOf(0);
+  
+
+  
   private Integer nComm=null;
-  private Date dataElab=null;
+  private Integer tipoComm=null;
+  private Date dataComm=null; 
+  private Date dataRef=null; 
   
   
   public ElabDeleteDatiProdCommesse(){
@@ -65,23 +64,28 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
     
     Map propsElab=getElabProperties();
     
-    //copia dati su storico
-    copiaDatiSuStorico(con, propsElab);
     //pulizia tabelle
-  //  puliziaTabelle(con,propsElab);
+   // puliziaTabelle(con,propsElab);
     //---
     try { 
       PersistenceManager apm=new PersistenceManager(con);
-      _logger.info("Giorno rif: "+dataRif);
-      List<List> commGg=new ArrayList();
-      commGg=DatiProdUtils.getInstance().getListGgCommesse(con, dataRif, null,Boolean.TRUE);
-      _logger.info(" Commesse disponibili n. "+commGg.size()+" --> "+commGg.toString());
-      Map  commEx=getMapCommessePresenti(con);
-    
-
-   //     List commsR1P4=getListCommesseR1P4();
-
-
+      
+      //Se la data commessa non è un parametro, cerco la data dell'ultima commessa elaborata (tipo 0)
+      if(dataComm == null && nComm == null ){
+          dataComm=GetDataUltComm(con);    
+        }
+      
+      if(nComm == null){
+          nComm=0;
+      }
+      
+      List<List> commDaCancel=new ArrayList();
+      commDaCancel=DatiProdUtils.getInstance().getListCommesseToCancel(con, dataComm, nComm ,tipoComm);
+      _logger.info(" Commesse da cancellare n. "+commDaCancel.size()+" --> "+commDaCancel.toString());
+      
+      puliziaDatiProd(con,commDaCancel,nComm);
+      
+      
     } catch (SQLException ex) {
       addError("Impossibile caricare la lista di commesse da elaborare :"+ex.getMessage());
     } catch(QueryException qe){
@@ -95,217 +99,88 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   
   @Override
   public Boolean configParams() {
-    Map parm=getInfoElab().getParameter();
-    
-    if(parm.get(ALuncherElabs.DATAINIELB)==null)
+    Map param =getInfoElab().getParameter();
+    if(param==null || param.isEmpty())
       return Boolean.FALSE;
     
-    dataRif=(Date) parm.get(ALuncherElabs.DATAINIELB);
-    nComm=ClassMapper.classToClass(parm.get(COMMESSA),Integer.class);
-    dataElab=ClassMapper.classToClass(parm.get(DATACOMM),Date.class);
-    tipoComm=ClassMapper.classToClass(parm.get(TIPOCOMM),Integer.class);
+      
+    nComm=ClassMapper.classToClass(param.get(COMMESSA),Integer.class);
+    dataComm=ClassMapper.classToClass(param.get(DATACOMM),Date.class);
+    tipoComm=ClassMapper.classToClass(param.get(TIPOCOMM),Integer.class);
+    dataRef=ClassMapper.classToClass(param.get(DATAREF),Date.class);
     
     return Boolean.TRUE;
   }
+   
 
-  
-  private Map getMapCommessePresenti(Connection con) throws SQLException{
-    Long dtL=DateUtils.getDataForMovex(dataRif);
-    List<List> commesse=new ArrayList();
-    Map mappa=new HashMap<String,List> ();
+   private Date GetDataUltComm(Connection con){
+      Date dataUltComm=null;
+      String dataUltCommString=null; 
+      String query="select zccdld data  FROM MCOBMODDTA.ZJBLOG ,MCOBMODDTA.ZCOMME  where zcrgdt<VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') and zcmccd=0 order by zcrgdt desc FETCH FIRST 1 ROWS ONLY";
+      
+       try {
+      PreparedStatement ps=con.prepareStatement(query);
+      ResultSet rs = ps.executeQuery();
+      DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
-    String select=" select distinct trim(tiplgr) tiplgr,tidtco,ticomm from mcobmoddta.ztapci where 1=1 "+
-                  " and tidtco>="+JDBCDataMapper.objectToSQL(dtL)+
-                  " order by tiplgr,tidtco desc";  
-
-    ResultSetHelper.fillListList(con, select, commesse);
-
-    for(List comm:commesse){
-      String plgr=ClassMapper.classToString(comm.get(0));
-      Long dtC=ClassMapper.classToClass(comm.get(1),Long.class);
-      Long ncomm=ClassMapper.classToClass(comm.get(2),Long.class);
-      Map commMapCdl=new HashMap();
-
-      if(mappa.containsKey(plgr)){
-        commMapCdl=(Map) mappa.get(plgr);
-      }
-      commMapCdl.put(ncomm,dtC);
-      mappa.put(plgr,commMapCdl);
-
-    }
-
-    return mappa;
-  }
-  
-  public List<List> getListCommToSave(List<List> commesse,Map commEx,String cdL){
-    Map commesseIn=(Map) commEx.get(cdL);
-    List commesseOut=new ArrayList();
-    for(List commDist:commesse){
-      Long commTmp=ClassMapper.classToClass(commDist.get(1),Long.class);
-      Long dtTmp=ClassMapper.classToClass(commDist.get(0),Long.class); //data spedizione
-      Long dtElbTmp=ClassMapper.classToClass(commDist.get(2),Long.class); //data elaborazione 
-      Integer tipoC=ClassMapper.classToClass(commDist.get(3),Integer.class); //tipo Elab 
-      if((commesseIn==null || commesseIn.isEmpty()) || !commesseIn.containsKey(commTmp)){
-        List recTmp=new ArrayList();
-        recTmp.add(commTmp);
-        recTmp.add(dtTmp);
-        recTmp.add(dtElbTmp);
-        recTmp.add(tipoC);
-        commesseOut.add(recTmp);
-      }
-    }
-    
-    
-    return commesseOut;
-  }
-  
-  public List<List> getListCommToSaveCkDate(List<List> commesse,Map commEx,String cdL){
-    Map commesseIn=(Map) commEx.get(cdL);
-    List commesseOut=new ArrayList();
-    if( commesseIn==null || commesseIn.isEmpty() ){
-      commesseOut.addAll(commesse);
-    }else{
-    
-      for(List commDist:commesse){
-        Long dtCommTmp=ClassMapper.classToClass(commDist.get(0),Long.class); //data spedizione
-        Long commTmp=ClassMapper.classToClass(commDist.get(1),Long.class);
-        Long dtElbTmp=ClassMapper.classToClass(commDist.get(2),Long.class); //data elaborazione 
-        Integer tipoC=ClassMapper.classToClass(commDist.get(3),Integer.class); //tipo Elab
-
-        Long dataCommCIn=(Long) commesseIn.get(commTmp);
-
-        if( dataCommCIn==null || (commesseIn.containsKey(commTmp) && !dataCommCIn.equals(dtCommTmp)  )     
-          ){
-          List recTmp=new ArrayList();
-          recTmp.add(dtCommTmp);
-          recTmp.add(commTmp);
-          recTmp.add(dtElbTmp);
-          recTmp.add(tipoC);
-          commesseOut.add(recTmp);
-        }
-      }
-    }
-    
-    return commesseOut;
-  }
-
-  
-
-   private Boolean isElabDesmosFinished(Connection con, Long comm,Date dataC,Integer tipo) throws SQLException{
-     Integer anno=DateUtils.getYear(dataC);
-     if(tipo.equals(Integer.valueOf(9)))
-       return DesmosUtils.getInstance().isElabPrecomDesmosColomFinished(con, comm, dataC);  
-     else 
-       return DesmosUtils.getInstance().isElabDesmosColombiniFinished(con, comm, dataC);
+        if (rs.next())
+            dataUltCommString = rs.getString(1);    
+            dataUltComm = formatter.parse(dataUltCommString);
+        } 
+        catch (ParseException ex) {
+             _logger.error(" Errore in fase di conversione dati per pulizia tabelle --> "+ex.getMessage());
+         }
+        catch (SQLException ex) {
+               addError(" Errore in fase trovare l'ultima data commessa -->> "+ex.getMessage());
+         }
+       
+   return  dataUltComm;
    }
    
- 
   
-  
-  
-  private void copiaDatiSuStorico(Connection con ,Map propsElab){
-
-    Calendar c=new GregorianCalendar();
-    c.setTime(new Date());
-    if(c.get(Calendar.DAY_OF_WEEK)!=Calendar.SATURDAY)
-      return;
-   
+  /**
+  Cancello i dati delle tabelle ztapci e ztappi per data commessa (oppure per nro commessa se il parametro nrocomm è compilato)
+   */
+  private void puliziaDatiProd(Connection con ,List<List> CommDaCancel,int NroComm){
+    
+    //Verifica se ci sono commesse da cancellare
+    if (CommDaCancel.isEmpty()){
+        return;
+    }
+    
+     List<String> DatacommDaCancel=new ArrayList();
+    
+     for (List<String> comm:CommDaCancel){
+      DatacommDaCancel.add(ClassMapper.classToClass(comm.get(0),String.class));
+     }
+     
+    
+     
     try {
-      StringBuilder qry=new StringBuilder(
-              "INSERT INTO mcobmoddta.ztapcis0 \n ").append(
-              " select A.*  from mcobmoddta.ztapci A \n").append(
-                            " LEFT OUTER JOIN mcobmoddta.ztapciS0 B \n").append(
-                            " ON A.TICONO=B.TICONO AND A.TIPLGR=B.TIPLGR AND A.TIBARP=B.TIBARP ").append(
-                            " AND A.TICOMM=B.TICOMM AND A.TIDTCO=B.TIDTCO \n").append(
-              " WHERE A.TIPLGR='CQUALITA' \n").append(
-              " AND B.TIBARP IS NULL ");
-                      
-      String stmQry=qry.toString();
-      _logger.info("Copia dati ZTAPCI per CQUALITA --> "+ stmQry); 
-      PreparedStatement ps=con.prepareStatement(stmQry);
+      List<Integer> NroComme=new ArrayList();
+      String Query=null;
+     QryDeleteZtapci q=new QryDeleteZtapci();   
+     q.setFilter(FilterQueryProdCostant.FTDATACOMMN, DatacommDaCancel.toString());
+     if(NroComm!=0){
+        q.setFilter(FilterQueryProdCostant.FTNUMCOMM, NroComm);
+     }
+    
+     
+     Query=q.toSQLString();
+      
+      _logger.info("Pulizia dati --> "+ Query); 
+      PreparedStatement ps=con.prepareStatement(Query);
       ps.execute();
-      _logger.info("Copia dati effettuata");         
-    
-    
+      _logger.info("Pulizia effettuata");
+      
     } catch (SQLException ex) {
-      addError(" Errore in fase di copia dei dati di storico -->> "+ex.getMessage());
-    }  
-      
-      
+      addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+ex.getMessage());
+    }
+    catch (QueryException e) {
+      addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+e.getMessage());
+    }
    
   }
-  
-  
-  
-//   private void puliziaTabellePerDataComm(Connection con ,Map propsElab,int comm,Date dataComm){
-// 
-//    try {
-//      data=DateUtils.getFineGg(data);
-//      Long dataN=DateUtils.getDataForMovex(data);
-//      Long dataNNano=DateUtils.getDataForMovex(dataNano);
-////      String del4= " delete from  MCOBMODDTA.ZTAPCC  where 1=1 and tcdtap<="+JDBCDataMapper.objectToSQL(data);
-//      
-//      String del1= " delete from  MCOBMODDTA.ZTAPCP  where 1=1 and tpdtin<="+JDBCDataMapper.objectToSQL(data);
-//      
-//      String del2= " delete from  MCOBMODDTA.ZTAPPI  where 1=1 and txdtrf<="+JDBCDataMapper.objectToSQL(dataN);
-//     
-//      String del3= " delete from  MCOBMODDTA.ZTAPCI  where 1=1 and tidtco<="+JDBCDataMapper.objectToSQL(dataN);
-//      
-//      //cancellazione per nanocommesse
-//      
-//      String del2a= " delete from  MCOBMODDTA.ZTAPPI  where 1=1 and txcomm>=361 and txcomm<=391 and txdtrf<="+JDBCDataMapper.objectToSQL(dataNNano);
-//     
-//      String del3a= " delete from  MCOBMODDTA.ZTAPCI  where 1=1 and ticomm>=361 and ticomm<=391 and tidtco<="+JDBCDataMapper.objectToSQL(dataNNano);
-//      
-//      // 
-//      
-//      String del4= " delete from  MCOBMODDTA.ZTAPTI  where 1=1 and TTDTCO<="+JDBCDataMapper.objectToSQL(dataN);
-//      
-//      String del5= " delete from  MCOBMODDTA.ZTAPTP  where 1=1 and TYDTIN<="+JDBCDataMapper.objectToSQL(data);
-//      
-//      _logger.info("Pulizia dati letture --> "+ del1); 
-//      PreparedStatement ps=con.prepareStatement(del1);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata"); 
-//      
-//      _logger.info("Pulizia dati di commessa --> "+ del2); 
-//      ps=con.prepareStatement(del2);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata"); 
-//      
-//      _logger.info("Pulizia dati commessa info aggiuntive --> "+ del3); 
-//      ps=con.prepareStatement(del3);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata"); 
-//      
-//      _logger.info("Pulizia dati nano commessa --> "+ del2a); 
-//      ps=con.prepareStatement(del2a);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata"); 
-//      
-//      _logger.info("Pulizia dati nano commessa info aggiuntive --> "+ del3a); 
-//      ps=con.prepareStatement(del3a);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata"); 
-//      
-//       
-//      _logger.info("Pulizia dati commessa info appoggio --> "+ del4); 
-//      ps=con.prepareStatement(del4);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata"); 
-//      
-//      _logger.info("Pulizia dati lettura colli incompleti --> "+ del5); 
-//      ps=con.prepareStatement(del5);
-//      ps.execute();
-//      _logger.info("Pulizia effettuata");
-//      
-//    } catch (ParseException ex) {
-//      _logger.error(" Errore in fase di conversione dati per pulizia tabelle --> "+ex.getMessage());
-//    } catch (SQLException ex) {
-//      addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+ex.getMessage());
-//    }
-//   
-//  }
   
   
   
