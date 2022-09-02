@@ -8,9 +8,10 @@ package colombini.elabs;
 
 import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QryDeleteZtapci;
+import colombini.util.DatiCommUtils;
 import db.persistence.PersistenceManager;
 import colombini.util.DatiProdUtils;
-import db.CustomQuery;
+import colombini.util.DesmosUtils;
 import elabObj.ElabClass;
 import exception.QueryException;
 import java.sql.Connection;
@@ -25,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import static org.bouncycastle.math.ec.custom.sec.SecP160R1Curve.q;
 import utils.ClassMapper;
 
 /**
@@ -48,7 +48,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   
 
   
-  private Integer nComm=null;
+  private Long nComm=null;
   private Integer tipoComm=null;
   private Date dataComm=null; 
   private Date dataRef=null; 
@@ -76,14 +76,14 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
         }
       
       if(nComm == null){
-          nComm=0;
+          nComm=Long.valueOf(0);
       }
       
       List<List> commDaCancel=new ArrayList();
       commDaCancel=DatiProdUtils.getInstance().getListCommesseToCancel(con, dataComm, nComm ,tipoComm);
       _logger.info(" Commesse da cancellare n. "+commDaCancel.size()+" --> "+commDaCancel.toString());
       
-      puliziaDatiProd(con,commDaCancel,nComm);
+      puliziaDatiProd(con,commDaCancel,nComm,dataComm);
       
       
     } catch (SQLException ex) {
@@ -104,10 +104,13 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
       return Boolean.FALSE;
     
       
-    nComm=ClassMapper.classToClass(param.get(COMMESSA),Integer.class);
+    nComm=ClassMapper.classToClass(param.get(COMMESSA),Long.class);
     dataComm=ClassMapper.classToClass(param.get(DATACOMM),Date.class);
     tipoComm=ClassMapper.classToClass(param.get(TIPOCOMM),Integer.class);
     dataRef=ClassMapper.classToClass(param.get(DATAREF),Date.class);
+    
+    if(param.get(COMMESSA)!=null && param.get(DATACOMM)==null )
+        return Boolean.FALSE;
     
     return Boolean.TRUE;
   }
@@ -141,28 +144,32 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   /**
   Cancello i dati delle tabelle ztapci e ztappi per data commessa (oppure per nro commessa se il parametro nrocomm è compilato)
    */
-  private void puliziaDatiProd(Connection con ,List<List> CommDaCancel,int NroComm){
+  private void puliziaDatiProd(Connection con ,List<List> CommDaCancel,Long NroComm, Date DataCommRef){
     
     //Verifica se ci sono commesse da cancellare
     if (CommDaCancel.isEmpty()){
         return;
     }
-    
-     List<String> DatacommDaCancel=new ArrayList();
+    //Lista data commesse a cancellare - Non può essere null
+    List<String> DatacommDaCancel=new ArrayList();
     
      for (List<String> comm:CommDaCancel){
       DatacommDaCancel.add(ClassMapper.classToClass(comm.get(0),String.class));
      }
      
-    
+     //Verifica se ci sono data commesse da cancellare
+    if (DatacommDaCancel.isEmpty()){
+        return;
+    }
      
     try {
-      List<Integer> NroComme=new ArrayList();
-      String Query=null;
+     String Query=null;   
      QryDeleteZtapci q=new QryDeleteZtapci();   
      q.setFilter(FilterQueryProdCostant.FTDATACOMMN, DatacommDaCancel.toString());
      if(NroComm!=0){
-        q.setFilter(FilterQueryProdCostant.FTNUMCOMM, NroComm);
+        String CommFeb=DesmosUtils.getInstance().getLancioDesmosFebal(NroComm,DataCommRef);
+        q.setFilter(FilterQueryProdCostant.FTNUMCOMM, Long.toString(NroComm));
+        q.setFilter(QryDeleteZtapci.FTCOMMFEB, CommFeb);
      }
     
      

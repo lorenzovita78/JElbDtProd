@@ -91,7 +91,7 @@ public class DatiProdUtils {
   }
   
   
-    public List<List> getListCommesseToCancel(Connection con,Date data,Integer NroComm,Integer TipoComm) throws QueryException, SQLException{
+    public List<List> getListCommesseToCancel(Connection con,Date data,Long NroComm,Integer TipoComm) throws QueryException, SQLException{
     List lista = new ArrayList();  
     
     QryCommToCancellare qry=new QryCommToCancellare();
