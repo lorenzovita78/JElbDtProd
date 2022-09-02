@@ -8,7 +8,7 @@ package colombini.elabs;
 
 import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QryDeleteZtapci;
-import colombini.util.DatiCommUtils;
+import colombini.query.produzione.QryDeleteZtappi;
 import db.persistence.PersistenceManager;
 import colombini.util.DatiProdUtils;
 import colombini.util.DesmosUtils;
@@ -148,6 +148,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
     
     //Verifica se ci sono commesse da cancellare
     if (CommDaCancel.isEmpty()){
+        _logger.info(" Nessuna commessa da cancellare trovata ");
         return;
     }
     //Lista data commesse a cancellare - Non può essere null
@@ -163,22 +164,41 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
     }
      
     try {
-     String Query=null;   
+     String QueryZtapci=null;
+     String QueryZtappi=null;   
+     String CommFeb=null;
+     
+     //Query delete Ztapci
      QryDeleteZtapci q=new QryDeleteZtapci();   
      q.setFilter(FilterQueryProdCostant.FTDATACOMMN, DatacommDaCancel.toString());
      if(NroComm!=0){
-        String CommFeb=DesmosUtils.getInstance().getLancioDesmosFebal(NroComm,DataCommRef);
+        CommFeb=DesmosUtils.getInstance().getLancioDesmosFebal(NroComm,DataCommRef);
         q.setFilter(FilterQueryProdCostant.FTNUMCOMM, Long.toString(NroComm));
         q.setFilter(QryDeleteZtapci.FTCOMMFEB, CommFeb);
      }
+     
+     //Query delete Ztappi
+     QryDeleteZtappi q2=new QryDeleteZtappi();   
+     q2.setFilter(FilterQueryProdCostant.FTDATACOMMN, DatacommDaCancel.toString());
+     if(NroComm!=0){
+        q2.setFilter(FilterQueryProdCostant.FTNUMCOMM, Long.toString(NroComm));
+        q2.setFilter(QryDeleteZtappi.FTCOMMFEB, CommFeb);
+     }
     
      
-     Query=q.toSQLString();
+     QueryZtapci=q.toSQLString();
+     QueryZtappi=q2.toSQLString();
+
       
-      _logger.info("Pulizia dati --> "+ Query); 
-      PreparedStatement ps=con.prepareStatement(Query);
+      _logger.info("Pulizia dati ztapci --> "+ QueryZtapci); 
+      PreparedStatement ps=con.prepareStatement(QueryZtapci);
       ps.execute();
-      _logger.info("Pulizia effettuata");
+      _logger.info("Pulizia ztapci effettuata");
+      
+      _logger.info("Pulizia dati ztappi --> "+ QueryZtappi); 
+      PreparedStatement ps2=con.prepareStatement(QueryZtappi);
+      ps2.execute();
+      _logger.info("Pulizia ztapci effettuata");
       
     } catch (SQLException ex) {
       addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+ex.getMessage());
