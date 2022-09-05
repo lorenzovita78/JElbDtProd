@@ -148,7 +148,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
     
     //Verifica se ci sono commesse da cancellare
     if (CommDaCancel.isEmpty()){
-        _logger.info(" Nessuna commessa da cancellare trovata ");
+        _logger.info("Non ci sono dati da cancellare ");
         return;
     }
     //Lista data commesse a cancellare - Non può essere null
@@ -160,6 +160,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
      
      //Verifica se ci sono data commesse da cancellare
     if (DatacommDaCancel.isEmpty()){
+        _logger.info("Non ci sono dati da cancellare ");
         return;
     }
      
