@@ -16,7 +16,7 @@ import utils.StringUtils;
  *
  * @author lvita
  */
-public class QueryPzR1P4 extends CustomQuery {
+public class QueryPzR1P41_OLD0509 extends CustomQuery {
 
   public final static String FT_ULTIMAFASEP4="FT_ULTIMAFASEP4";
   public final static String FT_FASE30="FT_FASE30";

@@ -21,8 +21,6 @@ public class QryCommToCancellare extends CustomQuery{
   public final static String TABELABCOMM="ZCOMME";
   
   public final static String TIPOCOMM="TIPOCOMM";
-  
-  
   public final static String FTNUMCOMM="FTNUMCOMM";
 
     

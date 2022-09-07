@@ -4,6 +4,7 @@
  */
 package colombini.query.produzione;
 
+import colombini.query.datiComm.FilterFieldCostantXDtProd;
 import db.CustomQuery;
 import exception.QueryException;
 
@@ -21,14 +22,16 @@ public class QryDeleteZtapci extends CustomQuery{
 
     StringBuilder str=new StringBuilder();
     str.append(" Delete ").append(LIBRERIAMVX).append(".ztapci where 1=1 "); 
-    str.append(addAND(inStatement("TIDTCO", FilterQueryProdCostant.FTDATACOMMN)));
+    str.append(addAND(eqStatement("TIDTCO", FilterQueryProdCostant.FTDATACOMMN)));
     
-  
     if(isFilterPresent(FilterQueryProdCostant.FTNUMCOMM)  ){
-       str.append(addAND(eqStatement("( TICOMM",FTCOMMFEB)))
-               .append(addOR(eqStatement("TICOMM",FilterQueryProdCostant.FTNUMCOMM))).append(")");     
+       str.append(addAND(eqStatement("TICOMM",FilterQueryProdCostant.FTNUMCOMM)));  
     }
-  
+     
+    if(isFilterPresent(FilterFieldCostantXDtProd.FT_LINEETOELAB)  ){
+       str.append(addAND(inStatement("TIPLGR",FilterFieldCostantXDtProd.FT_LINEETOELAB)));             
+    }
+    
     return str.toString();
   } 
   

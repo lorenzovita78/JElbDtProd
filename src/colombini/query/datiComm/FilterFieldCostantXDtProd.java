@@ -17,7 +17,8 @@ public class FilterFieldCostantXDtProd {
   public final static String FT_NUMCOMM="FILTRONUMCOMMESSA";
   
   public final static String FT_COMMESSEIN="FILTROCOMMESSEIN";
-  
+  public final static String FT_TIPOCOMMESSA="FILTROTIPOCOMMESSA";
+
   public final static String FT_LISTCOMM="FILTROLISTACOMMESSE";
   public final static String FT_AZIENDA="FILTROAZIENDA";
   public final static String FT_DATA="FILTRODATA";

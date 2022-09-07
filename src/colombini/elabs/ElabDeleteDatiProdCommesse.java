@@ -6,12 +6,14 @@
 
 package colombini.elabs;
 
+import colombini.query.datiComm.FilterFieldCostantXDtProd;
 import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QryDeleteZtapci;
 import colombini.query.produzione.QryDeleteZtappi;
 import db.persistence.PersistenceManager;
 import colombini.util.DatiProdUtils;
 import colombini.util.DesmosUtils;
+import elabObj.ALuncherElabs;
 import elabObj.ElabClass;
 import exception.QueryException;
 import java.sql.Connection;
@@ -26,7 +28,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import utils.ArrayUtils;
 import utils.ClassMapper;
+import utils.StringUtils;
 
 /**
  * Classe che si preoccupa di cancellare i dati di produzione per data Commessa 
@@ -52,6 +56,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   private Integer tipoComm=null;
   private Date dataComm=null; 
   private Date dataRef=null; 
+  private List lineeToElab=null;
   
   
   public ElabDeleteDatiProdCommesse(){
@@ -72,20 +77,24 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
       
       //Se la data commessa non è un parametro, cerco la data dell'ultima commessa elaborata (tipo 0)
       if(dataComm == null && nComm == null ){
-          dataComm=GetDataUltComm(con);    
+          dataComm=GetDataUltComm(con);  
         }
       
       if(nComm == null){
           nComm=Long.valueOf(0);
       }
       
-      List<List> commDaCancel=new ArrayList();
-      commDaCancel=DatiProdUtils.getInstance().getListCommesseToCancel(con, dataComm, nComm ,tipoComm);
-      _logger.info(" Commesse da cancellare n. "+commDaCancel.size()+" --> "+commDaCancel.toString());
-      
-      puliziaDatiProd(con,commDaCancel,nComm,dataComm);
-      
-      
+      if(dataComm!=null){
+          
+        List<List> commDaCancel=new ArrayList();
+        commDaCancel=DatiProdUtils.getInstance().getListCommesseToCancel(con, dataComm, nComm ,tipoComm);
+        _logger.info(" Commesse da cancellare n. "+commDaCancel.size()+" --> "+commDaCancel.toString());
+
+        puliziaDatiProd(con,commDaCancel,nComm,dataComm,lineeToElab,tipoComm);
+      }
+      else {
+            _logger.info(" DataCommessa non trovata ");
+        }
     } catch (SQLException ex) {
       addError("Impossibile caricare la lista di commesse da elaborare :"+ex.getMessage());
     } catch(QueryException qe){
@@ -109,6 +118,15 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
     tipoComm=ClassMapper.classToClass(param.get(TIPOCOMM),Integer.class);
     dataRef=ClassMapper.classToClass(param.get(DATAREF),Date.class);
     
+    String linee="";
+    if(param.get(ALuncherElabs.LINEELAB)!=null){
+      linee=ClassMapper.classToString(param.get(ALuncherElabs.LINEELAB));   
+    }  
+    
+    if(!StringUtils.isEmpty(linee)){
+      lineeToElab=ArrayUtils.getListFromArray(linee.split(","));
+    }
+    
     if(param.get(COMMESSA)!=null && param.get(DATACOMM)==null )
         return Boolean.FALSE;
     
@@ -119,7 +137,8 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
    private Date GetDataUltComm(Connection con){
       Date dataUltComm=null;
       String dataUltCommString=null; 
-      String query="select zccdld data  FROM MCOBMODDTA.ZJBLOG ,MCOBMODDTA.ZCOMME  where zcrgdt<VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') and zcmccd=0 order by zcrgdt desc FETCH FIRST 1 ROWS ONLY";
+      String query="select zccdld data  FROM MCOBMODDTA.ZJBLOG ,MCOBMODDTA.ZCOMME  where zcrgdt<VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') "
+              + " and zcrgdt>VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') -3 and zcmccd=0 order by zcrgdt desc FETCH FIRST 1 ROWS ONLY";
       
        try {
       PreparedStatement ps=con.prepareStatement(query);
@@ -127,8 +146,12 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
       DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
         if (rs.next())
+        {
             dataUltCommString = rs.getString(1);    
             dataUltComm = formatter.parse(dataUltCommString);
+        }
+        else return null;
+                
         } 
         catch (ParseException ex) {
              _logger.error(" Errore in fase di conversione dati per pulizia tabelle --> "+ex.getMessage());
@@ -144,48 +167,51 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
   /**
   Cancello i dati delle tabelle ztapci e ztappi per data commessa (oppure per nro commessa se il parametro nrocomm è compilato)
    */
-  private void puliziaDatiProd(Connection con ,List<List> CommDaCancel,Long NroComm, Date DataCommRef){
+  private void puliziaDatiProd(Connection con ,List<List> CommDaCancel,Long NroComm, Date DataCommRef, List lineeToElab, Integer TipoComm){
     
     //Verifica se ci sono commesse da cancellare
     if (CommDaCancel.isEmpty()){
-        _logger.info("Non ci sono dati da cancellare ");
+        _logger.info("Non ci sono commesse da cancellare ");
         return;
     }
     //Lista data commesse a cancellare - Non può essere null
-    List<String> DatacommDaCancel=new ArrayList();
-    
-     for (List<String> comm:CommDaCancel){
-      DatacommDaCancel.add(ClassMapper.classToClass(comm.get(0),String.class));
+    //List<String> DatacommDaCancel=new ArrayList();
+   
+    String DataCommDaCancel=null;
+  
+     for (List<String> comm:CommDaCancel.subList(0, 1)){
+      DataCommDaCancel=ClassMapper.classToClass(comm.get(0),String.class);
      }
      
      //Verifica se ci sono data commesse da cancellare
-    if (DatacommDaCancel.isEmpty()){
-        _logger.info("Non ci sono dati da cancellare ");
+    if (DataCommDaCancel==null){
+        _logger.info("Non ci sono commesse da cancellare ");
         return;
     }
      
     try {
      String QueryZtapci=null;
      String QueryZtappi=null;   
-     String CommFeb=null;
      
      //Query delete Ztapci
      QryDeleteZtapci q=new QryDeleteZtapci();   
-     q.setFilter(FilterQueryProdCostant.FTDATACOMMN, DatacommDaCancel.toString());
+     q.setFilter(FilterQueryProdCostant.FTDATACOMMN, DataCommDaCancel);
      if(NroComm!=0){
-        CommFeb=DesmosUtils.getInstance().getLancioDesmosFebal(NroComm,DataCommRef);
         q.setFilter(FilterQueryProdCostant.FTNUMCOMM, Long.toString(NroComm));
-        q.setFilter(QryDeleteZtapci.FTCOMMFEB, CommFeb);
+     }
+     if(lineeToElab!=null && lineeToElab.size()>0){
+        q.setFilter(FilterFieldCostantXDtProd.FT_LINEETOELAB, lineeToElab.toString());
      }
      
      //Query delete Ztappi
      QryDeleteZtappi q2=new QryDeleteZtappi();   
-     q2.setFilter(FilterQueryProdCostant.FTDATACOMMN, DatacommDaCancel.toString());
+     q2.setFilter(FilterQueryProdCostant.FTDATACOMMN, DataCommDaCancel);
      if(NroComm!=0){
         q2.setFilter(FilterQueryProdCostant.FTNUMCOMM, Long.toString(NroComm));
-        q2.setFilter(QryDeleteZtappi.FTCOMMFEB, CommFeb);
      }
-    
+     if(lineeToElab!=null && lineeToElab.size()>0){
+        q2.setFilter(FilterFieldCostantXDtProd.FT_LINEETOELAB, lineeToElab.toString());
+     }
      
      QueryZtapci=q.toSQLString();
      QueryZtappi=q2.toSQLString();
@@ -199,7 +225,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
       _logger.info("Pulizia dati ztappi --> "+ QueryZtappi); 
       PreparedStatement ps2=con.prepareStatement(QueryZtappi);
       ps2.execute();
-      _logger.info("Pulizia ztapci effettuata");
+      _logger.info("Pulizia ztappi effettuata");
       
     } catch (SQLException ex) {
       addError(" Errore in fase di pulizia tabelle per esecuzione dello statement -->> "+ex.getMessage());
