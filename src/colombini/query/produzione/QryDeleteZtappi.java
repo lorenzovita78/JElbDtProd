@@ -14,7 +14,7 @@ import exception.QueryException;
  */
 public class QryDeleteZtappi extends CustomQuery{
   
-  public final static String LIBRERIAMVX="mcobmoddem";
+  public final static String LIBRERIAMVX="mcobmoddta";
   public final static String FTCOMMFEB="FTCOMMFEB";
   
   @Override

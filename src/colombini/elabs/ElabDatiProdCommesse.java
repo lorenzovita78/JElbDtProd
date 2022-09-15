@@ -32,8 +32,8 @@ import colombini.query.produzione.R1.QueryPzCommImaTop;
 import colombini.query.produzione.R1.QueryPzCommLotto1;
 import colombini.query.produzione.R1.QueryPzHomagR1P1;
 import colombini.query.produzione.R1.QueryPzR1P4;
-import static colombini.query.produzione.R1.QueryPzR1P4.FT_ULTIMAFASEP4;
 import colombini.query.produzione.R1.QueryPzR1P41LSM;
+import colombini.query.produzione.R1.QueryPzR1P41_SpuntaInt;
 import colombini.util.DatiCommUtils;
 import colombini.util.DatiProdUtils;
 import colombini.util.DesmosUtils;
@@ -41,7 +41,6 @@ import colombini.util.InfoMapLineeUtil;
 import db.CustomQuery;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
-import db.persistence.IBeanPersSIMPLE;
 import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import exception.QueryException;
@@ -107,38 +106,41 @@ public class ElabDatiProdCommesse extends ElabClass{
       _logger.info(" Commesse disponibili n. "+commGg.size()+" --> "+commGg.toString());
       Map  commEx=getMapCommessePresenti(con);
      
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
-        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);    
-      
-        loadDatiForatriceRem(apm, commGg, commEx,propsElab);
-        loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
-        loadDatiImaTop(apm, commGg, commEx,propsElab);
-        
-        loadDatiAnteAllum(apm, commGg, commEx,propsElab);
-        loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
-        loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
-        loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
-        loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);  
-        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
-        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
-        loadDatiCapRipianiP2(apm,TAPWebCostant.CDL_CAPPELLI_EDPC,commGg, commEx, propsElab," lineadestinazione='P2 CAPP RIPIANI' ");
-        
-        loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
-        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
-        
-        loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
-        loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
-        loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
+//        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
+//        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
+//        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);    
+//      
+//        loadDatiForatriceRem(apm, commGg, commEx,propsElab);
+//        loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
+//        loadDatiImaTop(apm, commGg, commEx,propsElab);
+//        
+//        loadDatiAnteAllum(apm, commGg, commEx,propsElab);
+//        loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
+//        loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
+//        loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
+//        loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
+//        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);  
+//        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
+//        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
+//        loadDatiCapRipianiP2(apm,TAPWebCostant.CDL_CAPPELLI_EDPC,commGg, commEx, propsElab," lineadestinazione='P2 CAPP RIPIANI' ");
+//        
+//        loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
+//        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
+//        
+//        loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
+//        loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
+//        loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 
         List commsR1P4=getListCommesseR1P4();
-//        //loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
+       //loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
         loadDatiP4New(apm,TAPWebCostant.CDL_LOTTO1R1P4_EDPC,commsR1P4, commEx, propsElab,null);
-        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab,"(ultima_faseP4 like 'P4 SKIPPER%' or ultima_faseP4 = 'P4 FOR. HOMAG' )");      
-        loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4 = 'P4 SPIN.OMAL' ");
-        loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab,"ultima_faseP4='P4 STEMA PASCIA' ");
-        loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," (ultima_faseP4 like '%LSM%' or ultima_faseP4='?') ");
+        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab," 'P4 SKIPPER%' ");      
+        loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab," 'P4 FOR. HOMAG%' ");  
+        loadDatiP4New(apm,TAPWebCostant.CDL_SPINOMALR1P4_EDPC,commsR1P4, commEx, propsElab," 'P4 SPIN.OMAL' ");
+        loadDatiP4New(apm,TAPWebCostant.CDL_STEMAPASCIAR1P4_EDPC,commsR1P4, commEx, propsElab," 'P4 STEMA PASCIA' ");
+        loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," '%LSM%' ");
+        loadDatiP4New(apm,TAPWebCostant.CDL_LSMCARRP4_EDPC,commsR1P4, commEx, propsElab," '?' ");
+
 
     } catch (SQLException ex) {
       addError("Impossibile caricare la lista di commesse da elaborare :"+ex.getMessage());
@@ -1208,7 +1210,83 @@ public class ElabDatiProdCommesse extends ElabClass{
         if(commS.startsWith("9") && comm>1000){
           commS="P"+commS.substring(1);
         }
-        List beans=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
+        
+        //13/09/22 Modifica Spunta intermedia - Gaston
+        List beans;
+        if(TAPWebCostant.CDL_LOTTO1R1P4_EDPC.equals(cdl)){
+            beans=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
+        }
+        else beans=getListPzR1P4New_SpuntaInt(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);      
+        
+        apm.storeDtFromBeans(beans);
+        
+        //Gaston.Modifica Fata per la Lotto1 --> se il CDL è 01084 devo filtrare quelli della maw 2 perche dobbiamo creare le etichette
+        //Gaston LOTTO1 P4 -- Si potrebbe anche percorrere tutto il beans e filtrare per linea logica (per non fare di nuovo la query)
+        if(TAPWebCostant.CDL_LOTTO1R1P4_EDPC.equals(cdl) && beans!=null && beans.size()>0){
+          String pathfile=(String) propsElab.get(NameElabs.PATHETKMAW2);
+          List lineeLogiche1=new ArrayList();
+          lineeLogiche1.add("6029"); 
+          List beanLott1Etk=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, lineeLogiche1, Boolean.TRUE,Boolean.TRUE,condFaseP4);
+          saveInfoForEtkPz(apm, beanLott1Etk, pathfile,Boolean.TRUE);  
+        }
+        
+        //LSM --> cucine 25/10/21 / controllo !condFaseP4.contains("?") per caricare i dati solo 1 volta per LSM (ora il metodo viene chiamato 2 volte) 
+        if(TAPWebCostant.CDL_LSMCARRP4_EDPC.equals(cdl) && !condFaseP4.contains("?") ){
+            List beans2=getListPzR1P4LSM(conDbAs400, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
+            apm.storeDtFromBeans(beans2);
+        }
+                        
+      }
+
+     } catch(SQLException s){
+       _logger.error("Errore in fase di collegamento  al db DesmosFebal"+s.getMessage());
+       addError("Errore in fase di collegamento  al db DesmosFebal"+s.toString());
+     } finally{
+       if(conDbDesmos!=null)
+         try {
+           conDbDesmos.close();
+         } catch (SQLException ex) {
+          _logger.error("Errore in fase di chiusura della connessione --> "+ex.getMessage());
+         }
+     }   
+      
+   }
+   
+      private void loadDatiP4New_OLD(PersistenceManager apm,String cdl ,List commDisp,Map commEx,Map propsElab,String condFaseP4){
+     List<List> commToLoad=getListCommToSaveCkDate(commDisp, commEx, cdl);
+     Connection conDbDesmos=null;
+     Connection conDbAs400=null;
+     try{
+        
+      conDbDesmos=ColombiniConnections.getDbDesmosColProdConnection();
+      conDbAs400=ColombiniConnections.getAs400ColomConnection();
+      for(List infoC:commToLoad){
+        Long dtC=ClassMapper.classToClass(infoC.get(0),Long.class);
+        Long comm=ClassMapper.classToClass(infoC.get(1),Long.class);
+        Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
+//        String dest30="";
+//        
+//        if(TAPWebCostant.CDL_SKIPPERR1P4_EDPC.equals(cdl)){
+//          dest30="P4 SKIPPER";
+//        } else if(TAPWebCostant.CDL_SPINOMALR1P4_EDPC.equals(cdl)){
+//          dest30="P4 SPIN.OMAL";
+//        }else{
+//          dest30="P4 STEMA PASCIA";
+//        } 
+
+        String commS=DatiProdUtils.getInstance().getStringNComm(comm);
+        if(commS.startsWith("9") && comm>1000){
+          commS="P"+commS.substring(1);
+        }
+        
+        List beans;
+        
+        if(TAPWebCostant.CDL_LOTTO1R1P4_EDPC.equals(cdl)){
+            beans=getListPzR1P4New(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
+        }
+        else beans=getListPzR1P4New_SpuntaInt(conDbDesmos, cdl, commS, dataC, null, Boolean.FALSE,Boolean.TRUE,condFaseP4);
+
+        
         apm.storeDtFromBeans(beans);
         
         //Gaston.Modifica Fata per la Lotto1 --> se il CDL è 01084 devo filtrare quelli della maw 2 perche dobbiamo creare le etichette
@@ -2772,6 +2850,57 @@ public class ElabDatiProdCommesse extends ElabClass{
     return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
   }
   
+    private List getListPzR1P4New_SpuntaInt(Connection con,String cdL,String comm,Date dataComm,List lineeLogiche,Boolean withEtk,Boolean nComm4P4,String ultimaFaseCond){
+    
+    List result=new ArrayList();
+    try{
+    
+    if(comm.startsWith("9") && nComm4P4 && comm.length()==7){
+      comm=comm.replace("9", "P");
+    }
+
+    
+        QueryPzR1P41_SpuntaInt qry=new QueryPzR1P41_SpuntaInt();
+      
+      
+      qry.setFilter(FilterFieldCostantXDtProd.FT_NUMCOMM, comm);
+       
+    
+      qry.setFilter(FilterFieldCostantXDtProd.FT_DATA, DateUtils.DateToStr(dataComm, "yyyyMMdd"));
+      if(ultimaFaseCond!=null && !ultimaFaseCond.isEmpty())
+        qry.setFilter(QueryPzR1P41_SpuntaInt.FT_ULTIMAFASEP4, ultimaFaseCond);
+      
+      if(lineeLogiche!=null && !lineeLogiche.isEmpty())
+        qry.setFilter(FilterFieldCostantXDtProd.FT_LINEE, lineeLogiche.toString());
+      
+      if(cdL.equals(TAPWebCostant.CDL_LOTTO1R1P4_EDPC))
+          qry.setFilter(QueryPzR1P41_SpuntaInt.FT_FASE30, "true");
+          
+      ResultSetHelper.fillListList(con, qry.toSQLString(), result);
+     
+    }catch(SQLException s){
+      addError(" Errore in fase di connessione al database Desmos --> "+s.getMessage());
+    } catch (ParseException ex) {
+      addError(" Errore in fase di conversione della data commessa --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError(" Errore in fase di esecuzione della query  --> "+ex.getMessage());
+    }
+    
+
+    //per convertire comessa Febal in numerazione Colombini
+     if(comm.startsWith("P") && nComm4P4){
+      comm=comm.replace("P", "9");
+    }
+    if(comm.length()==7 && !nComm4P4){
+      String scomm=comm.toString().substring(4, 7);
+      comm=(scomm);
+    }  
+//    if(comm>400 && comm<797){
+//      comm-=400;
+//    }
+    
+    return getInfoColloBeansFromList(result, cdL, Long.valueOf(comm), dataComm,withEtk);
+  }
   
   private List getListPzCapelliP2(Connection con,String cdL,String comm,Date dataComm,List lineeLogiche,Boolean withEtk,Boolean nComm4P4,String ultimaFaseCond){
     

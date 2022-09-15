@@ -6,17 +6,15 @@
 package colombini.query.produzione.R1;
 
 import colombini.query.datiComm.FilterFieldCostantXDtProd;
-import static colombini.query.produzione.R1.QueryPzR1P41_OLD.TAB_PRODP4;
 import db.CustomQuery;
 import exception.QueryException;
 import utils.ClassMapper;
-import utils.StringUtils;
 
 /**
  *
  * @author lvita
  */
-public class QueryPzR1P4 extends CustomQuery {
+public class QueryPzR1P41_SpuntaInt extends CustomQuery {
 
   public final static String FT_ULTIMAFASEP4="FT_ULTIMAFASEP4";
   public final static String FT_FASE30="FT_FASE30";
@@ -33,14 +31,16 @@ public class QueryPzR1P4 extends CustomQuery {
   @Override
   public String toSQLString() throws QueryException {
     StringBuilder sql=new StringBuilder();
-    StringBuilder sql2=new StringBuilder("");
     String sqlF="";
+    String Operatore="= ";
     String ultimaFaseCondition ="";
     String joinLinea=" ) b  on  a.lineadestinazione=b.lineadestinazione";
     
     if(isFilterPresent(FT_ULTIMAFASEP4))
        ultimaFaseCondition =ClassMapper.classToString(getFilterValue(FT_ULTIMAFASEP4));
     
+    if(ultimaFaseCondition.contains("%"))Operatore="LIKE ";
+
     sql.append(" select Collo , ncollo , b.LineaDestAbbreviata , Box, Pedana , odv , rigaOrdine ,  codSemilavorato , descAbb ,  Descrizione  , barcode ").append(
                "\n FROM \n");
               
@@ -55,15 +55,16 @@ public class QueryPzR1P4 extends CustomQuery {
                " ,substring([Descrizione],1,30)  as descAbb \n" +
                " ,[Descrizione]\n" +
                " ,[PartNumber] as barcode "+
-                " , case\n" +
-                " when [descfase30] is not null and substring(ltrim([descfase30]),1,2) not in ('**') then [descfase30]\n" +
-                " when [descfase40] is not null and substring(ltrim([descfase40]),1,2) not in ('**') then [descfase40]\n" +
-                " when [descfase50] is not null and substring(ltrim([descfase50]),1,2) not in ('**') then [descfase50]\n" +
-                " else lineadestinazione\n" +
-                " end lineadest  "+                       
+               " ,case \n"+
+                    "when [descfase30] "+Operatore+ultimaFaseCondition+" and [descfase40] is not null and substring(ltrim([descfase40]),1,2) not in ('**') then [descfase40] \n"+
+                    "when [descfase30] "+Operatore+ultimaFaseCondition+" and [descfase50] is not null and substring(ltrim([descfase50]),1,2) not in ('**') then [descfase50] \n"+
+                    "when [descfase30] "+Operatore+ultimaFaseCondition+" then lineadestinazione \n"+
+                    "when [descfase40] "+Operatore+ultimaFaseCondition+" and [descfase50] is not null and substring(ltrim([descfase50]),1,2) not in ('**') then [descfase50] \n"+
+                    "when [descfase40] "+Operatore+ultimaFaseCondition+" then lineadestinazione \n"+
+                    "else lineadestinazione \n"+
+                "end lineadest \n"+                 
                "\n FROM ").append(TAB_PRODP4).append(
-               "\n WHERE 1=1 ").append(
-                addAND((ultimaFaseCondition)));
+               "\n WHERE 1=1 ");
       
        String sqlSub2 ="\n select distinct[LineaDestinazione] ,[LineaDestAbbreviata] from "+TAB_DESMOS_DESTINAZIONI+"  WHERE 1=1 ";
       
@@ -71,14 +72,18 @@ public class QueryPzR1P4 extends CustomQuery {
       StringBuilder commCondition=new StringBuilder(
                      "\n and Commessa =").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM)).append(
                      " and DataCommessa=").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA));
-     
+              
+      commCondition.append("and ([descfase30]").append(Operatore).append(ultimaFaseCondition).append("or [descfase40]").append(Operatore).append(ultimaFaseCondition).append("or [descfase50]").append(Operatore).append(ultimaFaseCondition).append("or [ultima_faseP4]").append(Operatore).append(ultimaFaseCondition).append(")");
+
+      //CDL_SKIPPERR1P4_EDPC CDL_LSMCARRP4_EDPC
+      
       if(isFilterPresent(FilterFieldCostantXDtProd.FT_LINEE)){
         commCondition.append(addAND(inStatement(" linealogica ", FilterFieldCostantXDtProd.FT_LINEE))); 
       }
       
       sqlSub1.append(commCondition);
       
-     if(isFilterPresent(FT_FASE30))
+     if(isFilterPresent(FT_ULTIMAFASEP4))
         joinLinea=" ) b  on  a.lineadest=b.lineadestinazione";
       
       sql.append(" ( ").append(sqlSub1).append( " ) a  inner join ( ").append(
@@ -92,12 +97,3 @@ public class QueryPzR1P4 extends CustomQuery {
   }
   
 }
-
-
-
-//      sql2.append(" SELECT numCollo,  ROW_NUMBER() OVER(partition by numCollo  order by CodPan ) \n  ").append(
-//                       " , linea,Box,Pedana,'0000000' as numOrdine ,0 as rigaOrdine ").append(
-//                       " , SUBSTRING(desPan,1,CHARINDEX (' ' ,DesPan)-1) as codArticolo ").append(
-//                       " , SUBSTRING(despan,CHARINDEX (' ' ,DesPan),30) as descArticolo ,DesPan ").append(
-//                       ", CodPan" ).append(
-//                     " FROM [DesmosColombini].[dbo].[LisPan] " );      
