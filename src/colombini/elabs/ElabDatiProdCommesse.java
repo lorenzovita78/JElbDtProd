@@ -106,30 +106,30 @@ public class ElabDatiProdCommesse extends ElabClass{
       _logger.info(" Commesse disponibili n. "+commGg.size()+" --> "+commGg.toString());
       Map  commEx=getMapCommessePresenti(con);
      
-//        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
-//        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
-//        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);    
-//      
-//        loadDatiForatriceRem(apm, commGg, commEx,propsElab);
-//        loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
-//        loadDatiImaTop(apm, commGg, commEx,propsElab);
-//        
-//        loadDatiAnteAllum(apm, commGg, commEx,propsElab);
-//        loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
-//        loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
-//        loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
-//        loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-//        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);  
-//        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
-//        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
-//        loadDatiCapRipianiP2(apm,TAPWebCostant.CDL_CAPPELLI_EDPC,commGg, commEx, propsElab," lineadestinazione='P2 CAPP RIPIANI' ");
-//        
-//        loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
-//        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
-//        
-//        loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
-//        loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
-//        loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESCORR_EDPC, commGg, commEx,propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTESSPEC_EDPC, commGg, commEx,propsElab);
+        loadDatiAnteScorrevoli(apm, TAPWebCostant.CDL_ANTEQUADR_EDPC, commGg, commEx,propsElab);    
+      
+        loadDatiForatriceRem(apm, commGg, commEx,propsElab);
+        loadDatiRiccioImaAnteR1P1(apm, commGg, commEx,propsElab);
+        loadDatiImaTop(apm, commGg, commEx,propsElab);
+        
+        loadDatiAnteAllum(apm, commGg, commEx,propsElab);
+        loadDatiImbLavMisura(apm, commGg, commEx,propsElab);
+        loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
+        loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
+        loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
+        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);  
+        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
+        loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
+        loadDatiCapRipianiP2(apm,TAPWebCostant.CDL_CAPPELLI_EDPC,commGg, commEx, propsElab," lineadestinazione='P2 CAPP RIPIANI' ");
+        
+        loadDatiForatriceBiesseP3(apm, commGg, commEx, propsElab);
+        loadDatiEtichettaturaP3(apm, commGg, commEx,propsElab);
+        
+        loadDatiCtrlQualita(apm, commGg, commEx, propsElab);
+        loadDatiMontaggiArtec(apm, commGg, commEx,propsElab);
+        loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 
         List commsR1P4=getListCommesseR1P4();
        //loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
@@ -592,7 +592,11 @@ public class ElabDatiProdCommesse extends ElabClass{
         _logger.error("Errore in fase di interrogazione del db DesmosFebal -->"+q.getMessage());
         addError("Errore in fase di interrogazione del db DesmosFebal -->"+q.toString());
         
-      }finally{
+      }
+      catch (Exception e) {
+      System.out.println("Something went wrong --> "+e.toString());
+        }
+      finally{
         if(conDesmosFeb!=null){
           try{
             conDesmosFeb.close();

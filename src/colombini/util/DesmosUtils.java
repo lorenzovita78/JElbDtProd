@@ -73,7 +73,7 @@ public class DesmosUtils {
     
       String lancio=anno.toString()+commessaS;
     
-      if(commessa>365){
+      if(commessa>360){
         String wkS="";
         Integer wk =DateUtils.getWorkWeek(dataComm);
             wkS=wk.toString();

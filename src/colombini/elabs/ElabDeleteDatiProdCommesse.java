@@ -138,7 +138,7 @@ public class ElabDeleteDatiProdCommesse extends ElabClass{
       Date dataUltComm=null;
       String dataUltCommString=null; 
       String query="select zccdld data  FROM MCOBMODDTA.ZJBLOG ,MCOBMODDTA.ZCOMME  where zcrgdt<VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') "
-              + " and zcrgdt>VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') -3 and zcmccd=0 order by zcrgdt desc FETCH FIRST 1 ROWS ONLY";
+              + " and zcrgdt>VARCHAR_FORMAT(CURRENT TIMESTAMP, 'YYYYMMDD') -4 and zcmccd=0 order by zcrgdt desc FETCH FIRST 1 ROWS ONLY";
       
        try {
       PreparedStatement ps=con.prepareStatement(query);
