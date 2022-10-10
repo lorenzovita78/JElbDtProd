@@ -513,7 +513,7 @@ public class ElabDatiProdCommesse extends ElabClass{
         conSqlS=ColombiniConnections.getDbDesmosFebalProdConnection();
         //    private List<BeanInfoColloComForTAP> getListBeansFromDesmosFileRem(Connection con,String cdL,Long comm,Date dtComm,List<String> lineeLogDaFilt,Boolean isPrintable){
         
-        
+       if(DesmosUtils.getInstance().isElabsDesmosFebalFinish(apm.getConnection(), comm, dtC)){ 
         List<BeanInfoColloComForTAP> beans=getListBeansFromDesmosFileRem(conSqlS,InfoMapLineeUtil.getCodiceLinea(NomiLineeColomb.FORANTEREM),comm,dataC,lineeDaFiltrare,false);
         
         for(BeanInfoColloComForTAP b:beans ){
@@ -523,8 +523,14 @@ public class ElabDatiProdCommesse extends ElabClass{
           }
         
         apm.storeDtFromBeans((List)beans);
-      } catch(SQLException s){
-        addError("Errore in fase di connessione al db DesmosFebal -->"+s.getMessage());
+       }
+       
+       
+      }catch(QueryException q) {
+        addError("Errore in fase di interrogazione del db DesmosFebal -->"+q.toString());
+      }
+      catch (Exception e) {
+      System.out.println("Something went wrong --> "+e.toString());
       } finally {
         if(conSqlS!=null)
           try {
