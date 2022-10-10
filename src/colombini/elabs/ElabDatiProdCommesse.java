@@ -23,6 +23,7 @@ import colombini.query.produzione.FilterQueryProdCostant;
 import colombini.query.produzione.QueryColliCommessaFebal;
 import colombini.query.produzione.QueryColliSostFromDesmosColomFebal;
 import colombini.query.produzione.QueryListColliPzCommessa;
+import colombini.query.produzione.QueryListDesmosFileRem;
 import colombini.query.produzione.R1.QueryPzCappelliP2;
 import colombini.query.produzione.R1.QueryPzCommAntesScorrDatiProd;
 import colombini.query.produzione.R1.QueryPzCommCucineR1P4;
@@ -62,6 +63,7 @@ import org.apache.log4j.Logger;
 import utils.ArrayUtils;
 import utils.ClassMapper;
 import utils.DateUtils;
+import static utils.DateUtils.dateToStr;
 import utils.FileUtils;
 import utils.StringUtils;
 
@@ -353,6 +355,31 @@ public class ElabDatiProdCommesse extends ElabClass{
     return beans;
   }
   
+    private List<BeanInfoColloComForTAP> getListBeansFromDesmosFileRem(Connection con,String cdL,Long comm,Date dtComm,List<String> lineeLogDaFilt,Boolean isPrintable){
+    List beans=new ArrayList();
+    List<List> listPz=new ArrayList();
+    String select="";
+
+    QueryListDesmosFileRem qry=new QueryListDesmosFileRem();
+    qry.setFilter(QueryListDesmosFileRem.FLTRCOMM, comm);
+    qry.setFilter(FilterQueryProdCostant.FTLINEELAV, lineeLogDaFilt.toString());
+    qry.setFilter(FilterQueryProdCostant.FTDATACOMMN, dateToStr(dtComm,"yyyyMMdd"));
+
+    
+    try {
+      select=qry.toSQLString();
+      ResultSetHelper.fillListList(con, select, listPz);
+      beans=getInfoColloBeansFromList(listPz, cdL, comm, dtComm,isPrintable);
+      
+    } catch (SQLException ex) {
+      addError("Problemi in fase di esecuzione della query"+select.toString()+" --> "+ex.getMessage());
+    } catch (QueryException ex) {
+      addError("Problemi in fase di generazione della query  --> "+ex.getMessage());
+    }
+      
+    return beans;
+  }
+  
   
   
   
@@ -473,38 +500,29 @@ public class ElabDatiProdCommesse extends ElabClass{
       
       Long comm=(Long) infoC.get(0);
       Long dtC=(Long) infoC.get(1);
-    
+      Date dataC=DateUtils.strToDate(dtC.toString(), "yyyyMMdd");
+      List lineeDaFiltrare=new ArrayList();
+        lineeDaFiltrare.add("36092");
+        lineeDaFiltrare.add("36110");
+        lineeDaFiltrare.add("36111"); 
+        lineeDaFiltrare.add("36113"); //
+     
       _logger.info("Caricamento dati Ante Rem per commessa "+comm+" - "+dtC);
-      String filName= InfoMapLineeUtil.getTabuProdNameLinea(NomiLineeColomb.FORANTEREM, comm.intValue());
-      String filDest=FileUtils.getNomeFileBKC(filName);
       
       try {
-        _logger.info("Copia file bck....");
-        FileUtils.copyFile(filName, filDest);
         conSqlS=ColombiniConnections.getDbDesmosFebalProdConnection();
+        //    private List<BeanInfoColloComForTAP> getListBeansFromDesmosFileRem(Connection con,String cdL,Long comm,Date dtComm,List<String> lineeLogDaFilt,Boolean isPrintable){
         
-        FileTabulatoAnteRem ft=new FileTabulatoAnteRem(filName);
-        List<BeanInfoColloComForTAP> beans=ft.processFile(dtC);
+        
+        List<BeanInfoColloComForTAP> beans=getListBeansFromDesmosFileRem(conSqlS,InfoMapLineeUtil.getCodiceLinea(NomiLineeColomb.FORANTEREM),comm,dataC,lineeDaFiltrare,false);
+        
         for(BeanInfoColloComForTAP b:beans ){
-          if(b.getLineaLogica().contains("36020") || b.getLineaLogica().contains("36050")){
-            b.loadInfoBox(apm.getConnection());
             if(b.getBox()==null || b.getBox()<=0){
               b.loadInfoBoxFebal(conSqlS);
-            }
-          }  
-          //if(!"36092".equals(b.getLineaLogica()) ){
-          if(isDtForatriceRemValid(b)){
-            try{
-              apm.storeDtFromBean(b);
-            } catch(SQLException s){
-              _logger.error("Errore in fase di salvataggio del pezzo "+b.getBarcode()+" -->"+s.getMessage());
-              addError("Errore in fase di salvataggio del pezzo/collo "+b.getBarcode()+"-->"+s.toString());
-            }
-          }  
-        }
-        //apm.storeDtFromBeans((List)beans);
-      } catch (IOException ex) {
-        addError("File "+filName+" non trovato o inaccessibile -->"+ex.getMessage());
+            }          
+          }
+        
+        apm.storeDtFromBeans((List)beans);
       } catch(SQLException s){
         addError("Errore in fase di connessione al db DesmosFebal -->"+s.getMessage());
       } finally {
@@ -517,31 +535,6 @@ public class ElabDatiProdCommesse extends ElabClass{
       }
     }  
   }  
-  
-   /**
-    * Esclude alcuni bean dai pezzi da produrre 
-    * @param b
-    * @return 
-    */
-   private Boolean isDtForatriceRemValid(BeanInfoColloComForTAP b){
-     Boolean valid=Boolean.TRUE;
-     
-     //Modifica fatta a richiesta di Lucia Formica 21/06/2022
-     if(("36092".equals(b.getLineaLogica())) ||  ("36110".equals(b.getLineaLogica())) ||  ("36111".equals(b.getLineaLogica())) ||  ("36113".equals(b.getLineaLogica())))
-       valid=Boolean.FALSE;
-
-     //richiesta di Nicola Genghini tk 31826
-     //Tolto a richiesta di Lucia Formica 21/06/2022 --> dobbiamo scartare tutta la linea
-//     if("36110".equals(b.getLineaLogica())){
-//       String descArt=b.getDescArticolo().toUpperCase();
-//       if(descArt.contains("TAMPON") || descArt.contains("COPRIF") || descArt.contains("MENSOL")){
-//         _logger.info("Articolo scartato  -->"+b.getCommessa()+" - "+b.getCollo()+" -->"+descArt);
-//         valid=Boolean.FALSE;   
-//       }  
-//     }
-     
-     return valid;         
-   }
    
    private void loadDatiForatriceBiesseP3(PersistenceManager apm, List<List> commDisp, Map commEx, Map propsElab) {
       Connection conDesmosFeb=null;
