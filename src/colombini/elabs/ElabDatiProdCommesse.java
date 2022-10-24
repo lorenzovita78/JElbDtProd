@@ -259,7 +259,7 @@ public class ElabDatiProdCommesse extends ElabClass{
       String dataS=DateUtils.dateToStr(dataRif, "yyyyMMdd");
       conDbDesmos =ColombiniConnections.getDbDesmosColProdConnection();
       String qry=" select distinct DataCommessa,REPLACE(Commessa,'P','9'),datacommessa,99 from dbo.[DatiProduzione]"+ //LDL05_BASE_SIRIO_IMA "+
-                 "\n where 1=1 and DataCommessa>="+JDBCDataMapper.objectToSQL(dataS)+
+                 "\n where 1=1 and commessa not like '%SCH%' and DataCommessa>="+JDBCDataMapper.objectToSQL(dataS)+
               " order by 1";
       
       ResultSetHelper.fillListList(conDbDesmos, qry, list);
@@ -516,9 +516,16 @@ public class ElabDatiProdCommesse extends ElabClass{
        if(DesmosUtils.getInstance().isElabsDesmosFebalFinish(apm.getConnection(), comm, dtC)){ 
         List<BeanInfoColloComForTAP> beans=getListBeansFromDesmosFileRem(conSqlS,InfoMapLineeUtil.getCodiceLinea(NomiLineeColomb.FORANTEREM),comm,dataC,lineeDaFiltrare,false);
         
+        
+        
+        
+        
         for(BeanInfoColloComForTAP b:beans ){
+          if(b.getLineaLogica().contains("36020") || b.getLineaLogica().contains("36050")){
+            b.loadInfoBox(apm.getConnection());
             if(b.getBox()==null || b.getBox()<=0){
               b.loadInfoBoxFebal(conSqlS);
+             }
             }          
           }
         

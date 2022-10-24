@@ -13,29 +13,31 @@ import exception.QueryException;
  *
  * @author lvita
  */
-public class QryNPzForatriceMawPries extends QryNumPezziCommessaStd{
+public class QryNPzForatricePriessOne extends QryNumPezziCommessaStd{
   
- 
   @Override
-  public String toSQLString() throws QueryException {
+  public String toSQLString() throws QueryException { 
+  String dataC=getFilterSQLValue(FilterFieldCostantXDtProd.FT_DATA);
+
+    StringBuffer sql=new StringBuffer(" select CFDIVI").append(
+              ", count(*) as ").append(FilterFieldCostantXDtProd.FD_NUMPEZZI).append(
+              " from ( ").append("select * from OPENQUERY(GMSPRIESS,'select * from GMSPriess.dbo.Scannermode where com=''").append(  
+              getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append( "''')) as gmspriess  inner join \n" +
+              "(select * from OPENQUERY(COLOM,'SELECT distinct clcomm,clncol,CFDIVI  FROM mcobmoddta.scxxxcol "
+                      + "inner join ( SELECT SUBSTR(cffacn, 21, 1) as diviL,CFDIVI FROM mcobmoddta.ZPILCOM) as divi on diviL=CDDITT "
+                      + "where clcomm=''").append( 
+              getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append( 
+              "'' and CLAMGS=").append(dataC).append("') ) as sc \n"  +
+              "on collo=clncol\n" +
+              "group by CFDIVI ");
+              
     
-    setFilter(FilterFieldCostantXDtProd.FT_CONDLINEA," AND( (CLLINP>='06053' AND CLLINP<='06056') OR  (CLLINP>='06250' AND  CLLINP<='06252') )");
-    
-    String qry1=super.toSQLString();
-    qry1=qry1.substring(0, qry1.indexOf("order"));
-    
-    setFilter(FilterFieldCostantXDtProd.FT_CONDLINEA,"AND ((CLLINP>='06030' AND  CLLINP<='06031') OR  (CLLINP in('06033','06034','06039') ) )  AND clarti like 'SP%' ");
- 
-    String qry2=super.toSQLString();
-    qry2=qry2.substring(0, qry2.indexOf("order"));
-    
-    StringBuffer sql=new StringBuffer(" select ").append(FilterFieldCostantXDtProd.FD_DIVISIONE).append(
-                ", sum(NUMPEZZI) as ").append(FilterFieldCostantXDtProd.FD_NUMPEZZI).append(
-              " from ( ").append(qry1).append("\n   union  \n ").append(qry2).append(
-                    " ) a ").append(
-              " where 1=1 ").append(
-              " group by ").append(FilterFieldCostantXDtProd.FD_DIVISIONE);
-    
+ /*select CDDITT,count(*) as cant from OPENQUERY(GMSPRIESS,'select * from GMSPriess.dbo.Scannermode where com=''291''')
+inner join 
+(select * from OPENQUERY(COLOM,'SELECT distinct clcomm,clncol,CDDITT  FROM mcobmoddta.scxxxcol where clcomm=''291''') ) as sc 
+on collo=clncol
+group by CDDITT*/
+  
     
     
     return sql.toString();

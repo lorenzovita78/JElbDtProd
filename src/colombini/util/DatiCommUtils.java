@@ -147,7 +147,7 @@ public class DatiCommUtils {
       
       while(rs.next()){
         addInfoCaricoComBu(dati,ll.getCodLineaLav(),ll.getDataCommessa(),ll.getCommessa(),ll.getUnitaMisura(),
-                rs.getString(FilterFieldCostantXDtProd.FD_DIVISIONE), rs.getDouble(tipoInfo));
+                rs.getString(1), rs.getDouble(tipoInfo));
 
       }
       
