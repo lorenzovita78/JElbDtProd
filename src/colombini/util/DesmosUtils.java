@@ -6,6 +6,8 @@
 package colombini.util;
 
 import colombini.conn.ColombiniConnections;
+import colombini.costant.CostantsColomb;
+import colombini.query.datiComm.FilterFieldCostantXDtProd;
 import db.JDBCDataMapper;
 import db.ResultSetHelper;
 import exception.QueryException;
@@ -314,6 +316,8 @@ public class DesmosUtils {
    
    return finish;
   }
+ 
+  
   
 // FROM ElabDatiProdCOmmesse
 //  private Boolean isElabDesmosFebalFinish(Connection conDesmosFeb,Long comm,Date dataComm) throws SQLException{

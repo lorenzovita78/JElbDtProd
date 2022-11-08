@@ -249,7 +249,7 @@ public class DatiCommUtils {
                                              ", COUNT(DISTINCT OAORNO) as ").append(FilterFieldCostantXDtProd.FD_NUMORD).append(
                 " FROM MCOBMODDTA.ZCOMME,MVXBDTA.DCONSI,MVXBDTA.DOHEAD,MVXBDTA.OOHEAD ").append(
                 " where 1=1 ").append(
-                " AND ZCCONO=DACONO  ").append(
+                " AND ZCCONO=DACONO ").append(
                 " AND ZCCDLD=DACDLD " ).append(
                 " AND DACONO=EACONO " ).append(
                 " AND DACONN=EACONN " ).append(
@@ -578,6 +578,46 @@ public class DatiCommUtils {
    String qry="select top 10 * from tab_ET where commissionNo=" + JDBCDataMapper.objectToSQL(lancio);
    Object [] obj=ResultSetHelper.SingleRowSelect(conDb, qry);
    if(obj!=null && obj.length>0){
+      finish=Boolean.TRUE;
+   }
+   
+   return finish;
+  }
+  
+  public static Boolean isCommessaFebal(Connection conn,Long comm,String dataComm) throws SQLException{
+  //Metodo per verificare se una commessa ha ordini febal - fare il join con co_mxdivi
+  Boolean finish=Boolean.FALSE;
+  String sql= " SELECT * FROM mcobmoddta.ZCOMOR  INNER JOIN MVXBDTA.OOHEAD                 \n" +
+                                        "ON ZOCONO=OACONO AND ZOORNO=OAORNO                             \n" +
+                                        "WHERE 1=1 \n" +
+                                        "AND ZOCCOM="+JDBCDataMapper.objectToSQL(comm)+"  \n" +
+                                        "AND ZOCDLD="+JDBCDataMapper.objectToSQL(dataComm)+"\n" +
+                                        "AND ZOCONO="+JDBCDataMapper.objectToSQL(CostantsColomb.AZCOLOM)+ 
+                                        "AND OADIVI IN (SELECT  CTSTKY FROM MVXBDTA.CSYTAB WHERE CTCONO=030     \n" +
+                                        "AND CTSTCO='CO_MXDIVI')";
+  
+  Object [] obj=ResultSetHelper.SingleRowSelect(conn, sql);
+  if(obj!=null && obj.length>0){
+      finish=Boolean.TRUE;
+   }
+   
+   return finish;
+  }
+  
+  public static Boolean isCommessaColombini(Connection conn,Long comm,String dataComm) throws SQLException{
+  //Metodo per verificare se una commessa ha ordini febal - fare il join con co_mxdivi
+  Boolean finish=Boolean.FALSE;
+  String sql= " SELECT * FROM mcobmoddta.ZCOMOR  INNER JOIN MVXBDTA.OOHEAD                 \n" +
+                                        " ON ZOCONO=OACONO AND ZOORNO=OAORNO                             \n" +
+                                        " WHERE 1=1 \n" +
+                                        " AND ZOCCOM="+JDBCDataMapper.objectToSQL(comm)+"  \n" +
+                                        " AND ZOCDLD="+JDBCDataMapper.objectToSQL(dataComm)+"\n" +
+                                        " AND ZOCONO="+JDBCDataMapper.objectToSQL(CostantsColomb.AZCOLOM)+ 
+                                        " AND OADIVI NOT IN (SELECT  CTSTKY FROM MVXBDTA.CSYTAB WHERE CTCONO=030     \n" +
+                                        " AND CTSTCO='CO_MXDIVI')";
+  
+  Object [] obj=ResultSetHelper.SingleRowSelect(conn, sql);
+  if(obj!=null && obj.length>0){
       finish=Boolean.TRUE;
    }
    

@@ -38,7 +38,7 @@ public class DtR1P1ForatricePriessOne implements IDatiCaricoLineaComm {
    Connection conSql=null;
        
    try{
-     conSql=ColombiniConnections.getDbLotto1Connection();
+     conSql=ColombiniConnections.getDbDesmosColProdConnection();
 
   }
    catch (SQLException ex) {

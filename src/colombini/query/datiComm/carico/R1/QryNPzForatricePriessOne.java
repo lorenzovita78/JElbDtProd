@@ -21,17 +21,9 @@ public class QryNPzForatricePriessOne extends QryNumPezziCommessaStd{
 
     StringBuffer sql=new StringBuffer(" select CFDIVI").append(
               ", count(*) as ").append(FilterFieldCostantXDtProd.FD_NUMPEZZI).append(
-              " from ( ").append("select * from OPENQUERY(GMSPRIESS,'select * from GMSPriess.dbo.Scannermode where com=''").append(  
-              getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append( "''')) as gmspriess  inner join \n" +
-              "(select * from OPENQUERY(COLOM,'SELECT distinct clcomm,clncol,CFDIVI  FROM mcobmoddta.scxxxcol "
-                      + "inner join ( SELECT SUBSTR(cffacn, 21, 1) as diviL,CFDIVI FROM mcobmoddta.ZPILCOM) as divi on diviL=CDDITT "
-                      + "where clcomm=''").append( 
-              getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append( 
-              "'' and CLAMGS=").append(dataC).append("') ) as sc \n"  +
-              "on collo=clncol\n" +
-              "group by CFDIVI ");
-              
-    
+              " from LDLMVX105_TXT_PRIESS_LISTA1" + " inner join (select * from OPENQUERY(COLOM,'SELECT SUBSTR(cffacn, 21, 1) as diviL,CFDIVI FROM mcobmoddta.ZPILCOM')) as d on d.DIVIL=BU ").append(
+              " where DesmosCommessa='").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append("' group by CFDIVI");    
+
  /*select CDDITT,count(*) as cant from OPENQUERY(GMSPRIESS,'select * from GMSPriess.dbo.Scannermode where com=''291''')
 inner join 
 (select * from OPENQUERY(COLOM,'SELECT distinct clcomm,clncol,CDDITT  FROM mcobmoddta.scxxxcol where clcomm=''291''') ) as sc 

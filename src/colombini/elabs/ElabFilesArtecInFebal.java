@@ -254,6 +254,17 @@ public class ElabFilesArtecInFebal extends ElabClass {
           }
         } 
         
+        //Modifica G: Se non esiste il file, ma la commessa non ha ordini su quella company, creo il file vuoto:
+        if(!f1.exists() && !DatiCommUtils.isCommessaColombini(conAs400,numComm,nCommS) && !isTest){
+          try {
+            f1.createNewFile();
+          }catch(IOException e){
+            _logger.error("Errore in fase di generazione del file "+f1+"-->"+e.getMessage());
+            addError("Errore in fase di generazione del file "+f1);
+          }
+        } 
+        
+        
         if(f1.exists()){
           String fileS2=listFileNames2.get(i);
           String nFileTmp2=dirS2+"/"+fileS2.replace("$$$",nCommS);

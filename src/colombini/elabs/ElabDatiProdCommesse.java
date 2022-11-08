@@ -516,10 +516,7 @@ public class ElabDatiProdCommesse extends ElabClass{
        if(DesmosUtils.getInstance().isElabsDesmosFebalFinish(apm.getConnection(), comm, dtC)){ 
         List<BeanInfoColloComForTAP> beans=getListBeansFromDesmosFileRem(conSqlS,InfoMapLineeUtil.getCodiceLinea(NomiLineeColomb.FORANTEREM),comm,dataC,lineeDaFiltrare,false);
         
-        
-        
-        
-        
+
         for(BeanInfoColloComForTAP b:beans ){
           if(b.getLineaLogica().contains("36020") || b.getLineaLogica().contains("36050")){
             b.loadInfoBox(apm.getConnection());
