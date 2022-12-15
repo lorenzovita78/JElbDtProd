@@ -22,7 +22,9 @@ public class QueryColliCommessaFebal extends CustomQuery{
                              " 0 as rigaordine,articolo,descrizioneArticolo ,descrizioneArticolo \n").append(
                              //",NumeroCollo,Quantita  ").append(
              " from  DesmosFebal.dbo.LDF_TXT_FILE_PER_VDL").append(
-             " where 1=1 ");
+             " where 1=1 and articolo not like '%EL%' ");
+ 
+    //Aggiunto filtro --> and articolo not like '%EL%' --> Richiesto dalla Jessica P. A questa linea non li serve vedere l'eletrodomestici
     
     qry.append(addAND(eqStatement("commessa", FilterQueryProdCostant.FTNUMCOMM)));
     qry.append(addAND(eqStatement("dataSpedizione", FilterQueryProdCostant.FTDATACOMMN)));
