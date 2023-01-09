@@ -121,7 +121,7 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiImballoAnteSpecialiImaAnteR1P1(apm, commGg, commEx,propsElab);
         loadDatiImballoEresemR1P1(apm, commGg, commEx, propsElab);
         loadDatiForaturaAnteSpecialiR1P1(apm, commGg, commEx, propsElab);
-        loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);  
+        //loadDatiAnteGolaR1P2(apm, commGg, commEx, propsElab);   Antegola spostata dentro della antespeciale
         loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_CASADEI_EDPC);
         loadDatiFornitoriP2(apm, commGg, commEx,propsElab,TAPWebCostant.CDL_MOROLLI_EDPC);
         loadDatiCapRipianiP2(apm,TAPWebCostant.CDL_CAPPELLI_EDPC,commGg, commEx, propsElab," lineadestinazione='P2 CAPP RIPIANI' ");
@@ -134,7 +134,7 @@ public class ElabDatiProdCommesse extends ElabClass{
         loadDatiMontaggiFebal(apm, commGg, commEx, propsElab);
 
         List commsR1P4=getListCommesseR1P4();
-       //loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
+        //loadDatiLotto1New(apm, commsR1P4, commEx, propsElab); Metodo vecchio lott1
         loadDatiP4New(apm,TAPWebCostant.CDL_LOTTO1R1P4_EDPC,commsR1P4, commEx, propsElab,null);
         loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab," 'P4 SKIPPER%' ");      
         loadDatiP4New(apm,TAPWebCostant.CDL_SKIPPERR1P4_EDPC,commsR1P4, commEx, propsElab," 'P4 FOR. HOMAG%' ");  
@@ -1701,12 +1701,13 @@ public class ElabDatiProdCommesse extends ElabClass{
                 }  
               }
             }   
-            //MOD 01062021 --> aggiunta pezzi Ante Gola con dim1>=1276
+            //MOD 01062021 --> aggiunta pezzi Ante Gola con dim1>=1497
             q=new  QueryPzHomagR1P1();
             List ll3=Arrays.asList("06257","06258");  
             q.setFilter(FilterFieldCostantXDtProd.FT_LANCIO_DESMOS, lancioD);
             q.setFilter(FilterFieldCostantXDtProd.FT_LINEE,ll3.toString() );
-            q.setFilter(QueryPzHomagR1P1.FT_DIM1_LE, 1497 );
+            //MOD 09012023 --> Spostamento AnteGola P2--> P1 antespeciale
+            //q.setFilter(QueryPzHomagR1P1.FT_DIM1_LE, 1497 );
             lH =new ArrayList();
             ResultSetHelper.fillListList(conSQLSDesmos, q.toSQLString(), lH);
             if(lH!=null){
