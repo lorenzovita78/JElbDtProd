@@ -22,7 +22,7 @@ public class QryNPzForatricePriessOne extends QryNumPezziCommessaStd{
     StringBuffer sql=new StringBuffer(" select CFDIVI").append(
               ", count(*) as ").append(FilterFieldCostantXDtProd.FD_NUMPEZZI).append(
               " from LDLMVX105_TXT_PRIESS_LISTA1" + " inner join (select * from OPENQUERY(COLOM,'SELECT SUBSTR(cffacn, 21, 1) as diviL,CFDIVI FROM mcobmoddta.ZPILCOM')) as d on d.DIVIL=BU ").append(
-              " where DesmosCommessa='").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append("' group by CFDIVI");    
+              " where DesmosCommessa=RIGHT('000' + '").append(getFilterSQLValue(FilterFieldCostantXDtProd.FT_NUMCOMM )).append("',3) group by CFDIVI");    
 
  /*select CDDITT,count(*) as cant from OPENQUERY(GMSPRIESS,'select * from GMSPriess.dbo.Scannermode where com=''291''')
 inner join 
