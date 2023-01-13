@@ -38,7 +38,7 @@ public class AvProdPriessOne extends AvProdLineaStd{
      List<List> pzComm=new ArrayList();
    
     try{
-      conSqlS=ColombiniConnections.getDbLotto1Connection();
+      conSqlS=ColombiniConnections.getDbAvanzamentoProdConnection();
       
       QueryProdCommAvzPriessOne qry=new QueryProdCommAvzPriessOne();
       String di=DateUtils.DateToStr(DateUtils.getInizioGg(this.getDataRifCalc()), "yyyy-MM-dd HH:mm:ss ");
