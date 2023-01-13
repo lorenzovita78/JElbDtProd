@@ -29,8 +29,8 @@ public class QueryProdCommAvzPriessOne extends CustomQuery {
 
     
     qry.append(" SELECT ").append(campiConv).append(
-             " from GMSPriess.GMSPriess.dbo.Prodotto as pro\n" +
-             "left join (select IdProdotto,commessa,collo,Side from GMSPriess.GMSPriess.dbo.Prodotto where DataUscita is not null and \n" ).append(
+             " from GMSPriess.dbo.Prodotto as pro\n" +
+             "left join (select IdProdotto,commessa,collo,Side from GMSPriess.dbo.Prodotto where DataUscita is not null and \n" ).append(
             " dataUscita<= CONVERT(DATETIME,").append(dI).append(", 102)").append(
             " ) as sto on sto.IdProdotto=pro.IdProdotto and sto.commessa=pro.commessa and sto.collo=pro.collo and sto.Side=pro.Side ").append(
             " where pro.DataUscita is not null and pro.dataUscita>= CONVERT(DATETIME," ).append(dI).append(", 102)").append(
