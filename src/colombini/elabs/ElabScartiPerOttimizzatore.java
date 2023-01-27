@@ -290,7 +290,7 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
 
      MailUtil.getInstance().sendMessage("", "infoJ@colombinigroup.com",  object,textMessage,toM ,toCC, null, atc);
     //Mail Utils...file attach
-      
+    
     
   }
   
@@ -298,6 +298,20 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
   
   private String getQueryDesmosSezP4(String sqlCodici){
     StringBuilder b=new StringBuilder(
+            
+            //Per il campo VersoVena: Gestione 0 e 9: Per il combicut va bene il valore 9, ma per la wn va bene il valore 9, per questo motivo su alcune tabelle c'e il 0 e su altre tabelle c'e il 9.
+            
+            "select distinct commessa,datacommessa,collo ,linealogica as Linea").append(
+            ",case when ([Box]<= 7 OR Box=15 OR (Box>16 and Box<=21))  then 'O' else 'P' end ").append(
+            ",Pedana ,CodArticolo ,descrizione ,colore ,partnumber").append(
+            ",codsemilavorato as CodiceComponente ,convert(int,[DIM1_GREZZO]) ,convert(int,[DIM2_GREZZO]) , convert(int,[SPESSORE_IMPIANTO])").append(
+            ",CASE WHEN VersoVena=9 Then 0 else VersoVena end as VersoVena ,partnumber+'_1.jgp' as NomeEtichetta").append(
+            ",colore + CONVERT(varchar,convert(int,[SPESSORE_IMPIANTO])) as Materiale, 1 as Qta").append(
+            " FROM [DesmosColombini].[dbo].[DatiProduzione] a").append( 
+            " inner join ( select distinct a as  pnumber from ( ").append(sqlCodici).append(
+            " ) c )b  on a.partnumber=b.pnumber  where 1=1"    );       
+            
+            /* Metodo vecchio -- Problema che la LDL viene pulita ogni tanto
        " SELECT distinct [Commessa],[DataCommessa],[Collo] ,[Linea] ").append(
           " ,case when ([Box]<= 7 OR Box=15 OR (Box>16 and Box<=21))  then 'O' else 'P' end  ").append(
           " , [Pedana], [CodArticolo],[Descrizione] ,[Colore] ,[PartNumber]").append(
@@ -305,7 +319,8 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
           " , [VersoVena] ,[NomeEtichetta] ,[Materiale] ,[Qta] ").append(
      " \n FROM [DesmosColombini].[dbo].[LDL09_FILE_TXT_BS_SEZ_PIANO4] a").append(
              " inner join ( select distinct a as  pnumber from ( ").append(sqlCodici).append(
-             " ) c )b  on a.partnumber=b.pnumber  where 1=1");        
+             " ) c )b  on a.partnumber=b.pnumber  where 1=1"   );*/
+
     
     return b.toString();
   }
