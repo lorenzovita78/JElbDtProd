@@ -305,13 +305,13 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
             ",case when ([Box]<= 7 OR Box=15 OR (Box>16 and Box<=21))  then 'O' else 'P' end ").append(
             ",Pedana ,CodArticolo ,descrizione ,colore ,partnumber").append(
             ",codsemilavorato as CodiceComponente ,convert(int,[DIM1_GREZZO]) ,convert(int,[DIM2_GREZZO]) , convert(int,[SPESSORE_IMPIANTO])").append(
-            ",CASE WHEN VersoVena=9 Then 0 else VersoVena end as VersoVena ,partnumber+'_1.jgp' as NomeEtichetta").append(
+            ",CASE WHEN VersoVena=9 Then 0 else VersoVena end as VersoVena ,partnumber+'_1.jpg' as NomeEtichetta").append(
             ",colore + CONVERT(varchar,convert(int,[SPESSORE_IMPIANTO])) as Materiale, 1 as Qta").append(
             " FROM [DesmosColombini].[dbo].[DatiProduzione] a").append( 
             " inner join ( select distinct a as  pnumber from ( ").append(sqlCodici).append(
             " ) c )b  on a.partnumber=b.pnumber  where 1=1"    );       
             
-            /* Metodo vecchio -- Problema che la LDL viene pulita ogni tanto
+            /* Metodo vecchio -- c'è il problema che la LDL viene pulita ogni tanto
        " SELECT distinct [Commessa],[DataCommessa],[Collo] ,[Linea] ").append(
           " ,case when ([Box]<= 7 OR Box=15 OR (Box>16 and Box<=21))  then 'O' else 'P' end  ").append(
           " , [Pedana], [CodArticolo],[Descrizione] ,[Colore] ,[PartNumber]").append(

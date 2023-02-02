@@ -28,7 +28,7 @@ public class QueryScartiFromTAP extends CustomQuery{
   public String toSQLString() throws QueryException {
 
     StringBuffer str=new StringBuffer("SELECT REPLACE(SUBSTRING(CHAR((TSDTIN)), 1, 10),'-',''),TICART AS CODART").append(
-                                     " ,1 as qta, TSCAUS , TICOMM , TINCOL ,TSIDSP , TSBARP,  TSPLGT , TSPLGR     \n ");
+                                     " ,1 as qta, TSCAUS , TICOMM , TINCOL ,TSIDSP , trim(TSBARP),  TSPLGT , TSPLGR     \n ");
    
    
     StringBuffer sub1=new StringBuffer( " select  TSBARP ,TSCAUS ,  TSPLGT , TSPLGR ,max(TSDTIN) AS TSDTIN,max(TSIDSP) AS  TSIDSP,MAX(TSDTEL) AS TSDTEL  " ).append(
