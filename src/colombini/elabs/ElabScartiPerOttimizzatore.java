@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import utils.ArrayUtils;
 import utils.ClassMapper;
 import utils.DateUtils;
-import utils.MapUtils;
 import utils.StringUtils;
 
 /**
@@ -52,8 +51,8 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
    
       private final String UPD_CustomerImportParts=" UPDATE IMAIPCNET_2210000136_Transfer.dbo.Customer_Import_Parts"
                                    + " set State= 150 ,Info9=? ,Update_User='JAVA_BATCH' ,Update_TS= ?"
-                                   +" WHERE Barcode = ? ";
-                                   
+                                   +" WHERE Barcode = ? ";    
+                                 
   
    
   @Override
@@ -172,6 +171,7 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
   private void updatePzOndDbOttimizzatore(List<List> infoS,Date data) throws SQLException  {
     Connection con=null;
     PreparedStatement ps = null;
+    PreparedStatement psStato5 = null;
     String barcode=null;
     String oraS=null;
     
@@ -188,6 +188,7 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
       ps=con.prepareStatement(UPD_CustomerImportParts); 
       for(List el:infoS){
         try{
+                 
           barcode=ClassMapper.classToString(el.get(7));
           ps.setString(1, "SCARTI_"+dateS+oraS );
           ps.setTimestamp(2, new java.sql.Timestamp(data.getTime()) );
@@ -301,7 +302,7 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
             
             //Per il campo VersoVena: Gestione 0 e 9: Per il combicut va bene il valore 9, ma per la wn va bene il valore 9, per questo motivo su alcune tabelle c'e il 0 e su altre tabelle c'e il 9.
             
-            "select distinct commessa,datacommessa,collo ,linealogica as Linea").append(
+         /*   "select distinct commessa,datacommessa,collo ,linealogica as Linea").append(
             ",case when ([Box]<= 7 OR Box=15 OR (Box>16 and Box<=21))  then 'O' else 'P' end ").append(
             ",Pedana ,CodArticolo ,descrizione ,colore ,partnumber").append(
             ",codsemilavorato as CodiceComponente ,convert(int,[DIM1_GREZZO]) ,convert(int,[DIM2_GREZZO]) , convert(int,[SPESSORE_IMPIANTO])").append(
@@ -309,9 +310,9 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
             ",colore + CONVERT(varchar,convert(int,[SPESSORE_IMPIANTO])) as Materiale, 1 as Qta").append(
             " FROM [DesmosColombini].[dbo].[DatiProduzione] a").append( 
             " inner join ( select distinct a as  pnumber from ( ").append(sqlCodici).append(
-            " ) c )b  on a.partnumber=b.pnumber  where 1=1"    );       
+            " ) c )b  on a.partnumber=b.pnumber  where 1=1"    );     */  
             
-            /* Metodo vecchio -- c'è il problema che la LDL viene pulita ogni tanto
+           /* Metodo vecchio -- c'è il problema che la LDL viene pulita ogni tanto*/
        " SELECT distinct [Commessa],[DataCommessa],[Collo] ,[Linea] ").append(
           " ,case when ([Box]<= 7 OR Box=15 OR (Box>16 and Box<=21))  then 'O' else 'P' end  ").append(
           " , [Pedana], [CodArticolo],[Descrizione] ,[Colore] ,[PartNumber]").append(
@@ -319,8 +320,8 @@ public class ElabScartiPerOttimizzatore extends ElabClass{
           " , [VersoVena] ,[NomeEtichetta] ,[Materiale] ,[Qta] ").append(
      " \n FROM [DesmosColombini].[dbo].[LDL09_FILE_TXT_BS_SEZ_PIANO4] a").append(
              " inner join ( select distinct a as  pnumber from ( ").append(sqlCodici).append(
-             " ) c )b  on a.partnumber=b.pnumber  where 1=1"   );*/
-
+             " ) c )b  on a.partnumber=b.pnumber  where 1=1"   );
+      
     
     return b.toString();
   }
