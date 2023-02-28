@@ -56,6 +56,10 @@ public class QueryPzR1P41_SpuntaInt extends CustomQuery {
                " ,[Descrizione]\n" +
                " ,[PartNumber] as barcode "+
                " ,case \n"+
+                    "when [descfase20] "+Operatore+ultimaFaseCondition+" and [descfase30] is not null and substring(ltrim([descfase30]),1,2) not in ('**') then [descfase30] \n"+
+                    "when [descfase20] "+Operatore+ultimaFaseCondition+" and [descfase40] is not null and substring(ltrim([descfase40]),1,2) not in ('**') then [descfase40] \n"+
+                    "when [descfase20] "+Operatore+ultimaFaseCondition+" and [descfase50] is not null and substring(ltrim([descfase50]),1,2) not in ('**') then [descfase50] \n"+
+                    "when [descfase20] "+Operatore+ultimaFaseCondition+" then lineadestinazione \n"+   
                     "when [descfase30] "+Operatore+ultimaFaseCondition+" and [descfase40] is not null and substring(ltrim([descfase40]),1,2) not in ('**') then [descfase40] \n"+
                     "when [descfase30] "+Operatore+ultimaFaseCondition+" and [descfase50] is not null and substring(ltrim([descfase50]),1,2) not in ('**') then [descfase50] \n"+
                     "when [descfase30] "+Operatore+ultimaFaseCondition+" then lineadestinazione \n"+
