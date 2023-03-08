@@ -162,7 +162,7 @@ public class ElabFilesArtecInFebal extends ElabClass {
           List<List> precommesseGg=getPreCommesseFebalToElab( dataElab, commessa);
 
           for(List infoComm:precommesseGg){
-            _logger.info("Elaborazione commessa " + infoComm.toString());
+            _logger.info("Elaborazione precommessa " + infoComm.toString());
             elabFilesPreCommessa(con,conDesmosFebal,pathFileS1,pathFileS2, pathFileDest,filesS1,filesS2,infoComm,Boolean.FALSE);
           }
         }  
@@ -220,27 +220,32 @@ public class ElabFilesArtecInFebal extends ElabClass {
       
       for(int i=0;i<listFileNames1.size();i++){
         String fileS1=listFileNames1.get(i);
+        String fileSF=listFileNames2.get(i);
         
         String nFileTmp1=dirS1+"/"+fileS1.replace("$$$",nCommS);
+        String nFileTmpF=dirS2+"/"+fileSF.replace("$$$",nCommS);
         File f1=new File(nFileTmp1);
+        File fF=new File(nFileTmpF);
         String fileDestTmp=dirDest+"/"+fileS1.replace("$$$",nCommS);
         
         //se il file esiste già e non c'è impostato il parametro per la forzatura
         //allora non faccio niente
         File fDestAppo=new File(fileDestTmp);
         Date dataFS=new Date(f1.lastModified());
+        Date dataFS2=new Date(fF.lastModified());
         Date dataFD=new Date(fDestAppo.lastModified());
         
         if(fDestAppo.exists()){
           int numdd=DateUtils.numGiorniDiff(dataFD, dataFS);
-          if(numdd<=28 && !forceWrite){
+          int numdd2=DateUtils.numGiorniDiff(dataFD, dataFS2);
+          if(numdd<27 && numdd2<27 && !forceWrite){
             //se la differenza di giorni è maggiore di 0 segnalo anomalia
             // se la differenza giorni è=0 significa che il file è stato già copiato
             if(numdd>0){   
               addWarning("Attenzione file "+fileDestTmp+ " non processato perchè già presente nella cartella di destinazione");
             }
             continue;
-          }else  if((forceWrite|| numdd>=30) ){
+          }else  if((forceWrite|| numdd>=27 || numdd2>=27) ){
             fDestAppo.delete();
           }
         }
@@ -262,7 +267,7 @@ public class ElabFilesArtecInFebal extends ElabClass {
             _logger.error("Errore in fase di generazione del file "+f1+"-->"+e.getMessage());
             addError("Errore in fase di generazione del file "+f1);
           }
-        } 
+        }
         
         
         if(f1.exists()){
