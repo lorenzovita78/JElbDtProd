@@ -10,7 +10,6 @@ import db.persistence.PersistenceManager;
 import colombini.conn.ColombiniConnections;
 import colombini.costant.NomiLineeColomb;
 import colombini.costant.TAPWebCostant;
-import colombini.logFiles.R1P3.FileTabulatoAnteRem;
 import colombini.model.persistence.BeanInfoColloComForTAP;
 import colombini.model.persistence.BeanInfoAggColloComForTAP;
 import colombini.query.datiComm.FilterFieldCostantXDtProd;
@@ -46,7 +45,6 @@ import elabObj.ElabClass;
 import elabObj.ALuncherElabs;
 import exception.QueryException;
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -64,7 +62,6 @@ import utils.ArrayUtils;
 import utils.ClassMapper;
 import utils.DateUtils;
 import static utils.DateUtils.dateToStr;
-import utils.FileUtils;
 import utils.StringUtils;
 
 /**

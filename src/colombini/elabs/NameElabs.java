@@ -349,7 +349,7 @@ public class NameElabs {
   
   
   public static final String MESSAGE_COLLIEXTVDL="COLLIEXTVDL";
- 
+  public static final String MESSAGE_COLLIEXTVDL2="COLLIEXTVDL2";
   
   
   

@@ -93,7 +93,11 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
     //elaborazione dati
     
     Map<Date, ClientiSped > mappaToMail=new HashMap();
+    Map<Date, Sped > mappaToMailSped=new HashMap();
+
     List<List> listGg=new ArrayListSorted(0);
+    List<List> listGgSped=new ArrayListSorted(0);
+
     if(colli!=null && !colli.isEmpty()){
       //System.out.println("COLLO;DATAULTMOD;VETT;CODICECLI;STATOCOLLO;PROVENIENZA;DATASPE;STATOVETT");
       
@@ -105,6 +109,8 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
           Integer numSpe=bCollo.getNumSpe();
           //Long dSpeN=DateUtils.getDataForMovex(bCollo.getDataSped());
           ClientiSped info;
+          Sped infoPed;
+          
           if(mappaToMail.containsKey(dSpe)){
             info=mappaToMail.get(dSpe);
             
@@ -114,7 +120,19 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
             rec.add(dSpe);
             listGg.add(rec);
           }
+          
+           if(mappaToMailSped.containsKey(dSpe)){
+            infoPed=mappaToMailSped.get(dSpe);
+            
+          }else{
+            infoPed=new Sped(dSpe);
+            List recSped=new ArrayList();
+            recSped.add(dSpe);
+            listGgSped.add(recSped);
+          }
+           
           info.addElementToList(bCollo.getNumSpe(),bCollo.getCodiceCli(), bCollo.getDescrCli(), bCollo.getProvenienza());
+          infoPed.addElementToList(bCollo.getNumSpe(),bCollo.getCodiceCli(), bCollo.getDescrCli(), bCollo.getProvenienza(), bCollo.getVol(), bCollo.getBox(), bCollo.getPedana());
           if(!info.isPresentOrderCli(bCollo.getCodiceCli(), bCollo.getNumeroOrd())){
             try{
               Double volOrd=InfoMancanteVdlBean.getVolumeNumOrdine(con, bCollo.getNumeroOrd(), bCollo.getNumSpe());  
@@ -127,6 +145,7 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
           }
           
           mappaToMail.put(dSpe, info);
+          mappaToMailSped.put(dSpe, infoPed);
 
       }
       StringBuilder text=new StringBuilder(" ");
@@ -144,24 +163,59 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
          }
       }
       
+      
+      StringBuilder textSped=new StringBuilder(" ");
+      List totSped=new ArrayList();
+      List columnsSped=new ArrayList(); 
+      columnsSped.add("DataSpedizione");columnsSped.add("NumSpedizione");
+      columnsSped.add("Colli in Magazzino");columnsSped.add("Mc Magazzino");
+      columnsSped.add("Colli su Pedane");columnsSped.add("Nro di Pedane");columnsSped.add("Mc Pedane");
+      columnsSped.add("Tot. Colli");columnsSped.add("Tot. Volume (m3)");
+      totSped.add(columnsSped);
+      for(List recSped:listGgSped){
+         Date dTmpSped=ClassMapper.classToClass(recSped.get(0),Date.class);
+         List<InfoClienteColli> lstTmpSped=mappaToMailSped.get(dTmpSped).getListColliSped();
+         for(InfoClienteColli Sped :lstTmpSped){
+           totSped.add(Sped.getListInfoSped());
+         }
+      }
+      
+      
       //System.out.println(text.toString());
 
         //invio maillvita
         if(invioMail){
           XlsXCsvFileGenerator gen=null;
+          XlsXCsvFileGenerator genSped=null;
           try{
             MailSender mS=new MailSender();
             MailMessageInfoBean beanInfo=mS.getInfoBaseMailMessage(con,NameElabs.MESSAGE_COLLIEXTVDL);
-            String nomeFileAtt=InfoMapLineeUtil.getLogFileName(beanInfo.getFileAttachName(), dataRif);
-            gen= new XlsXCsvFileGenerator(nomeFileAtt, XlsXCsvFileGenerator.FILE_CSV,"Colli Estero");
+            MailMessageInfoBean beanInfoSped=mS.getInfoBaseMailMessage(con,NameElabs.MESSAGE_COLLIEXTVDL2);
 
+            String nomeFileAtt=InfoMapLineeUtil.getLogFileName(beanInfo.getFileAttachName(), dataRif);
+            String nomeFileAttSped=nomeFileAtt.replaceAll("ColliExtVDL", "ColliExtVDLSped");
+            gen= new XlsXCsvFileGenerator(nomeFileAtt, XlsXCsvFileGenerator.FILE_CSV,"Colli Estero");
+            genSped= new XlsXCsvFileGenerator(nomeFileAttSped , XlsXCsvFileGenerator.FILE_CSV,"Colli Estero per spedizioni");
+            
             File attach=gen.generateFile(tot);
+            File attachSped=genSped.generateFile(totSped);
 
             beanInfo.setObject(beanInfo.getObject().trim()+" alla data "+DateUtils.dateToStr(dataRif, "dd/MM/yyyy"));
             beanInfo.setText(" In allegato il quantitativo dei colli clienti esteri, \n presenti nel sistema Vanderlande, suddivisi per data di spedizione e cliente . " );
             beanInfo.addFileAttach(attach);
             System.out.println(beanInfo.getText());
+            
+            
+            beanInfoSped.setObject(beanInfoSped.getObject().trim()+" alla data "+DateUtils.dateToStr(dataRif, "dd/MM/yyyy"));
+            beanInfoSped.setText(" In allegato il quantitativo dei colli clienti esteri con il numero di pedane, \n presenti nel sistema Vanderlande, suddivisi per spedizione . " );
+            beanInfoSped.addFileAttach(attachSped);
+            System.out.println(beanInfoSped.getText());
+            
+            
             mS.send(beanInfo);
+            mS.send(beanInfoSped);
+            
+            
           } catch(FileNotFoundException s){
             addError("Errore in fase di generazione del file "+gen.getFileName() +" --> "+s.toString());
             _logger.error("Errore in fase di generazione del file -->"+s.getMessage());
@@ -203,21 +257,23 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
     String riga;
     long countadd=0;
     long count=1;
+             
     try{
       fR = new FileReader(fileName);
       bfR=new BufferedReader(fR);
       riga = bfR.readLine();  
       
-      while(riga!=null && !riga.isEmpty()){
+      while(riga!=null && !riga.isEmpty() ){
         if(count>1){
           List l =ArrayUtils.getListFromArray(riga.split(";"));
           InfoColloIntoVDL bean=new InfoColloIntoVDL();
           
-          bean.setCodiceCollo(ClassMapper.classToString(l.get(0)));
+          String codColl=ClassMapper.classToString(l.get(0));
+          bean.setCodiceCollo(codColl);
           bean.setDataUltimaMod(ClassMapper.classToClass(l.get(1),Date.class));
           bean.setDescrizioneVett(ClassMapper.classToString(l.get(2)));
-          
-          bean.setNumeroOrd(ClassMapper.classToString(l.get(3)));
+          String NOrd=ClassMapper.classToString(l.get(3));
+          bean.setNumeroOrd(NOrd);
           String codCli=ClassMapper.classToString(l.get(4));
           bean.setCodiceCli(codCli);
           if(!clienti.containsKey(codCli)){
@@ -238,14 +294,23 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
           bean.setStatoCollo(ClassMapper.classToClass(l.get(6),Integer.class));
           bean.setProvenienza(ClassMapper.classToString(l.get(7)));
           bean.setDataSped(ClassMapper.classToClass(l.get(8),Date.class));
-          String nSpeS=numIniSpe+ClassMapper.classToString(l.get(9));
+          String sPed=ClassMapper.classToString(l.get(9));
+          String nSpeS=numIniSpe+sPed;
           bean.setNumSpe(ClassMapper.classToClass(nSpeS,Integer.class));
           bean.setStatoVett(ClassMapper.classToClass(l.get(10),Integer.class));
-          
+
           //considero  solo colli di clienti estero che non sono stati spediti
           if(bean.getArea()<AREACARICO && bean.getStatoVett()<STVETTINPART &&  bean.getStatoCollo()<STVETTINPART
                   && !StringUtils.isEmpty(bean.getDescrCli()) && bean.getDataSped().before(dataRif)){
             
+          //Prendo Box Pedana e Vol per collo
+         try{
+           InfoMancanteVdlBean.getBoxPedNumVol(con, NOrd , codColl, bean);
+          }catch(SQLException s){
+              _logger.error("Errore in fase di verifica query al AvanzamentoVDl (box e pedana) "+s.toString());
+              addError("Errore in fase di lettura dei dati del cliente Box e Pedana "+codCli);
+           }   
+              
             colli.add(bean);
             countadd++;
           }  
@@ -258,20 +323,23 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
     } catch(IOException i){
       _logger.error("Errore in fase di accesso al file dei mancanti da VDL -->"+i.getMessage());
       addError("Errore in fase di accesso al file dei mancanti prodotto da VDL"+i.toString());
-      
-    }  finally{
+    } finally{
        try {
         if(bfR!=null)
           bfR.close();
       
          if(fR!=null)
           fR.close();
+         
+        
         } catch (IOException ex) {
           _logger.error("Errore in fase di chiusura del file "+fileName);
-        }  
+        }   
     }  
-    
-    return colli;
+
+     return colli;
+
+  
   }
   
  
@@ -337,6 +405,97 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
   }
   
   
+    public class Sped{
+    private Date dataSpe;
+    private Map<Integer,InfoClienteColli> mappaSped;
+    private Map<String, List<String>> mappaBoxPed = new HashMap<String, List<String>>();    
+    
+    public Sped(Date dS ){
+      this.dataSpe=dS;
+      mappaSped= new HashMap();
+    }
+    
+    public Date getDataSpe() {
+      return dataSpe;
+    }
+
+    public void addElementToList (Integer numSpe,String codCli,String descrCli,String prov,Double vol, String box, String pedana){
+      InfoClienteColli infoCC=null;
+      if(mappaSped.containsKey(numSpe)){
+        infoCC=mappaSped.get(numSpe);
+      }else{
+        infoCC=new InfoClienteColli(dataSpe,numSpe,codCli,descrCli);
+      }
+      infoCC.addNumColli(prov);
+      infoCC.addVolTot(vol);
+      infoCC.addVolPedCarr(prov,vol);
+      
+      if(prov.equals(InfoClienteColli.provP)){
+        if(  mappaBoxPed.containsKey(pedana)){
+          List<String> b;
+          b=mappaBoxPed.get(pedana);
+          if(!b.contains(box)){
+              infoCC.addNroPed();
+              b.add(box);
+              mappaBoxPed.put(pedana, b);
+          }
+        }
+        else{
+        List<String> bNew = new ArrayList<String>();
+        bNew.add(box);
+        infoCC.addNroPed();
+        mappaBoxPed.put(pedana, bNew);
+        }
+      }
+      
+      mappaSped.put(numSpe,infoCC);
+    }
+    
+     public void addElementToList (Integer numSpe,String codCli,String descrCli,String prov, String Ped){
+      InfoClienteColli infoCC=null;
+      if(mappaSped.containsKey(codCli)){
+        infoCC=mappaSped.get(codCli);
+      }else{
+        infoCC=new InfoClienteColli(dataSpe,numSpe,codCli,descrCli);
+      }
+      infoCC.addNumColli(prov);
+      mappaSped.put(numSpe,infoCC);
+    }
+    
+    public List<InfoClienteColli> getListColliSped() {
+      List lsort=new ArrayListSorted("numSpe");
+      
+      Set keys=mappaSped.keySet();
+      Iterator iter=keys.iterator();
+      while (iter.hasNext()){
+        Integer numSped=ClassMapper.classToClass(iter.next(), Integer.class);
+        lsort.add(mappaSped.get(numSped));
+      }
+      
+      return lsort;
+    }
+
+    public InfoClienteColli getInfoClienteColli(String codCli){
+      return mappaSped.get(codCli);
+    }
+    
+    public Boolean isPresentOrderCli(String codCli,String numOrd){
+      InfoClienteColli i=this.mappaSped.get(codCli);
+      if(i!=null)
+        return i.isOrderPresent(numOrd);
+      
+      return Boolean.FALSE;
+    }
+    
+    public void addInfoOrderCli(String codCli,String numOrd,Double vol){
+      InfoClienteColli i=this.mappaSped.get(codCli);
+      if(i!=null)
+        i.updateOrdersMap(numOrd, vol);
+    }
+    
+  }
+  
+  
   public class InfoClienteColli{
     
     private String codiceCli;
@@ -348,6 +507,9 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
     private Integer numColliC;
     private Map <String,Double> ordersMap  ;
     private Double volTot;
+    private Double volPedane;
+    private Double volMagg;
+    private Integer numPedane;
     
     
     public final static String provW="W";//magazzino
@@ -363,10 +525,54 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
       this.numColliW=Integer.valueOf(0);
       this.numColliP=Integer.valueOf(0);
       this.numColliC=Integer.valueOf(0);
+      this.numPedane=Integer.valueOf(0);
       ordersMap=new HashMap();
       volTot=new Double(0);
+      volMagg=new Double(0);
+      volPedane=new Double(0);
     }
 
+        public Date getDataSpe() {
+            return dataSpe;
+        }
+
+        public void setDataSpe(Date dataSpe) {
+            this.dataSpe = dataSpe;
+        }
+
+        public Integer getNumSpe() {
+            return numSpe;
+        }
+
+        public void setNumSpe(Integer numSpe) {
+            this.numSpe = numSpe;
+        }
+
+        public Double getVolPedane() {
+            return volPedane;
+        }
+
+        public void setVolPedane(Double volPedane) {
+            this.volPedane = volPedane;
+        }
+
+        public Double getVolMagg() {
+            return volMagg;
+        }
+
+        public void setVolMagg(Double volMagg) {
+            this.volMagg = volMagg;
+        }
+
+        public Integer getNumPedane() {
+            return numPedane;
+        }
+
+        public void setNumPedane(Integer numPedane) {
+            this.numPedane = numPedane;
+        }
+    
+ 
     
     public String getCodiceCli() {
       return codiceCli;
@@ -402,6 +608,22 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
       }
     }
     
+    public void addVolTot(Double Vol){
+        volTot+=Vol;
+      }
+    
+    public void addVolPedCarr(String prov,Double Vol){
+      if(provW.equals(prov)){
+        volMagg+=Vol;
+      }else if(provP.equals(prov)){
+        volPedane+=Vol;
+      }
+     }
+    
+     public void addNroPed(){
+       numPedane++;
+      }
+    
     public void updateOrdersMap(String numOrd,Double volOrd){
       if(!ordersMap.containsKey(numOrd)){
         ordersMap.put(numOrd, volOrd);
@@ -422,16 +644,6 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
     
     
     
-    
-//    public void setNumColliW(Integer numColliW) {
-//      this.numColliW = numColliW;
-//    }
-//    public void setNumColliP(Integer numColliP) {
-//      this.numColliP = numColliP;
-//    }
-//    public void setNumColliC(Integer numColliC) {
-//      this.numColliC = numColliC;
-//    }
     
     public String printInfo(){
       return "Data : "+DateUtils.dateToStr(dataSpe, "dd/MM/yyyy")+ " -  Cliente :"+
@@ -454,7 +666,24 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
       return l;
     }
     
+     public List getListInfoSped(){
+      List l=new ArrayList();
+      l.add(DateUtils.RemoveTime(dataSpe));
+      l.add(numSpe);
+      l.add(numColliW);
+      l.add(volMagg);
+      l.add(numColliP);
+      l.add(numPedane);
+      l.add(volPedane);
+      l.add(numColliC+numColliW+numColliP);
+      l.add(volTot);
+      
+      return l;
+    }
+    
   }
+  
+  
   
   
   public class InfoColloIntoVDL{
@@ -470,6 +699,33 @@ public class ElabGestColliEsteroInVDL extends ElabClass{
     private Date dataSped;
     private Integer numSpe;
     private Integer statoVett;
+    private String Box;
+    private String Pedana;
+    private Double vol;
+
+        public Double getVol() {
+            return vol;
+        }
+
+        public void setVol(Double vol) {
+            this.vol = vol;
+        }
+
+        public String getBox() {
+            return Box;
+        }
+
+        public void setBox(String Box) {
+            this.Box = Box;
+        }
+
+        public String getPedana() {
+            return Pedana;
+        }
+
+        public void setPedana(String Pedana) {
+            this.Pedana = Pedana;
+        }
 
     public String getCodiceCollo() {
       return codiceCollo;

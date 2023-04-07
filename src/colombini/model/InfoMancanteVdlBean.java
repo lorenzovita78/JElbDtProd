@@ -8,6 +8,8 @@ package colombini.model;
 
 import colombini.conn.ColombiniConnections;
 import colombini.costant.CostantsColomb;
+import colombini.elabs.ElabGestColliEsteroInVDL;
+import db.ResultSetHelper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import utils.ClassMapper;
 import db.persistence.IBeanPersSIMPLE;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -81,11 +84,50 @@ public class InfoMancanteVdlBean  implements IBeanPersSIMPLE{
                                       + " and EACONN=?"
                                       ;  
   
+  /*  private final static String STM_FOR_BOX_PED_VOL="SELECT Substring(ORDLMO, 9, 2) AS Box,Substring(ORDLMO, 11, 2) AS Ped,ORVOM3 AS Vol  FROM " +
+                                            " mcobmoddta.ZCOMME " +
+                                            " INNER JOIN mvxbdta.DCONSI ON zccono=dacono AND zccdld = dacdld " +
+                                            " INNER JOIN mvxbdta.DOHEAD ON DACONO=EACONO AND DACONN=EACONN " +
+                                            " INNER JOIN mvxbdta.MDNHEA ON EACONO=OQCONO AND EAORNO=OQRIDN " +
+                                            " INNER JOIN mvxbdta.MPTRNS ON OQCONO=ORCONO AND OQWHLO=ORWHLO AND OQDNNO=ORDNNO " +
+                                            " WHERE 1=1 " +
+                                            " AND OQCONO=? " +
+                                            " AND substring(ORDLMO,1,3)=? " +
+                                            " AND substring(ORDLMO,4,5)=? " +
+                                            " AND OQRIDN=? " ;*/
+              /*                              "UNION " +
+                                            "SELECT Substring(ORDLMO,9,2) AS Box,Substring(ORDLMO,11,2) AS Ped,ORVOM3 AS Vol  FROM " +
+                                            "mcobmoddta.ZCOMME " +
+                                            "INNER JOIN mvxbdta.DCONSI ON zccono=dacono AND zccdld = dacdld " +
+                                            "INNER JOIN mvxbdta.DOHEAD ON DACONO=EACONO AND DACONN=EACONN " +
+                                            "INNER JOIN mcobmoddta.ZMDNHEA ON EACONO=OQCONO AND EAORNO=OQRIDN " +
+                                            "INNER JOIN mcobmoddta.ZMPTRNS ON OQCONO=ORCONO AND OQWHLO=ORWHLO AND OQDNNO=ORDNNO " +
+                                            "WHERE 1=1 " +
+                                            "AND OQCONO=30 " +
+                                            "AND substring(ORDLMO,1,3)=? " +
+                                            "AND substring(ORDLMO,4,5)=? " +
+                                            "AND OQRIDN=? " +
+                                            "FETCH FIRST 1 ROWS ONLY ";
+           */
+    /*       "SELECT MAX(BoxId) as Box, MAX(PlateId) as Pedana from ( "
+                                        + "SELECT TruckloadNumber,ColloID,BoxId,PlateId " +
+                                        "FROM [AvanzamentoVDL].[dbo].[V2H_ColloInfo_Header]" +
+                                        "where TruckloadNumber=? " +
+                                        "and ColloID=? " +
+                                        "UNION " +
+                                        "SELECT TruckloadNumber,ColloID,BoxId,PlateId " +
+                                        "FROM [AvanzamentoVDL].[dbo].[Storico_ColloInfo_Header] " +
+                                        "where TruckloadNumber=? " + 
+                                        " and ColloID=? " +
+                                        ") as a group by TruckloadNumber,ColloID "*/
+                                        ; 
   
   private  static final String CLMN_TIPOCLI="TIPOCLI";
   private  static final String CLMN_NOMECLI="NOMECLI";
   private  static final String CLMN_VOL="VOLUME";
-          
+  private  static final String CLMN_BOX="BOX";
+  private  static final String CLMN_PEDANA="PED";
+  private  static final String CLMN_VOLCOL="VOL";  
           
   private final static Integer ST500=Integer.valueOf(500);
   
@@ -382,6 +424,69 @@ public class InfoMancanteVdlBean  implements IBeanPersSIMPLE{
   }
   
   
+    public static void getBoxPedNumVol(Connection con,String Ord, String Collo, ElabGestColliEsteroInVDL.InfoColloIntoVDL bean) throws SQLException{
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    int boxPedRet[];
+          boxPedRet = new int[3];
+    String box;
+    String ped;
+    Double vol;
+    
+    String collo=Collo.substring(3,8);
+    String Comm=Collo.substring(0,3);
+    List<List> Result=new ArrayList();
+    
+    try{
+  
+      String qery="SELECT CAST(Substring(ORDLMO, 9, 2) as varchar(5)) AS Box,CAST(Substring(ORDLMO, 11, 2) as varchar(5)) AS Ped,ORVOM3 AS Vol  FROM " +
+                                            " mcobmoddta.ZCOMME " +
+                                            " INNER JOIN mvxbdta.DCONSI ON zccono=dacono AND zccdld = dacdld " +
+                                            " INNER JOIN mvxbdta.DOHEAD ON DACONO=EACONO AND DACONN=EACONN " +
+                                            " INNER JOIN mvxbdta.MDNHEA ON EACONO=OQCONO AND EAORNO=OQRIDN " +
+                                            " INNER JOIN mvxbdta.MPTRNS ON OQCONO=ORCONO AND OQWHLO=ORWHLO AND OQDNNO=ORDNNO " +
+                                            " WHERE 1=1 " +
+                                            " AND OQCONO=" + CostantsColomb.AZCOLOM + 
+                                            " AND substring(ORDLMO,1,3)='" + Comm +  "'" + 
+                                            " AND substring(ORDLMO,4,5)='" + collo + "'" + 
+                                            " AND OQRIDN='" + Ord + "'" +
+                                            " FETCH FIRST 1 ROWS ONLY" ;
+       ResultSetHelper.fillListList(con, qery, Result);
+       
+       if(Result.size() == 0){
+             String qery2="SELECT CAST(Substring(ORDLMO, 9, 2) as varchar(5)) AS Box,CAST(Substring(ORDLMO, 11, 2) as varchar(5)) AS Ped,ORVOM3 AS Vol  FROM " +
+                                            " mcobmoddta.ZCOMME " +
+                                            " INNER JOIN mvxbdta.DCONSI ON zccono=dacono AND zccdld = dacdld " +
+                                            " INNER JOIN mvxbdta.DOHEAD ON DACONO=EACONO AND DACONN=EACONN " +
+                                            " INNER JOIN mcobmoddta.ZMDNHEA ON EACONO=OQCONO AND EAORNO=OQRIDN " +
+                                            " INNER JOIN mcobmoddta.ZMPTRNS ON OQCONO=ORCONO AND OQWHLO=ORWHLO AND OQDNNO=ORDNNO " +
+                                            " WHERE 1=1 " +
+                                            " AND OQCONO=" + CostantsColomb.AZCOLOM + 
+                                            " AND substring(ORDLMO,1,3)='" + Comm +  "'" + 
+                                            " AND substring(ORDLMO,4,5)='" + collo + "'" + 
+                                            " AND OQRIDN='" + Ord + "'"+
+                                            " FETCH FIRST 1 ROWS ONLY" ;
+          ResultSetHelper.fillListList(con, qery2, Result);
+       }
+       
+       for(List rec:Result){
+       bean.setBox(ClassMapper.classToString(rec.get(0)));
+       bean.setPedana(ClassMapper.classToString(rec.get(1)));
+       bean.setVol(ClassMapper.classToClass(rec.get(2),Double.class));
+       }
+       
+     }catch(SQLException s ){
+      _logger.error("Errore in fase di interrogazione db -->"+s.getMessage())  ; 
+         
+     } finally{
+      if(ps!=null)
+        ps.close();
+      if(rs!=null)
+        rs.close();
+    } 
+    //return "";
+  }
+    
   public static Double getVolumeNumOrdine(Connection con,String numOrdine,Integer numSpe) throws SQLException{
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -408,7 +513,34 @@ public class InfoMancanteVdlBean  implements IBeanPersSIMPLE{
     
     return vol3;
   }
+      
   
+    public static Double getVolumeNumOrdineCollo(Connection con,String numOrdine,Integer numSpe,String collo) throws SQLException{
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    Double  vol3=Double.valueOf(0);
+    
+    try{
+      ps = con.prepareStatement(STM_FOR_VOLORD); 
+      ps.setInt(1, CostantsColomb.AZCOLOM); //fisso l'azienda 
+      ps.setString(2, numOrdine);
+      ps.setInt(3, numSpe);
+      
+      rs=ps.executeQuery();
+      while(rs.next()){
+        vol3=rs.getDouble(CLMN_VOL);
+        
+      }
+     }finally{
+      if(ps!=null)
+        ps.close();
+      if(rs!=null)
+        rs.close();
+    } 
+    
+    
+    return vol3;
+  }
   
   public Boolean isVettoreAttivo(){
    if(ST550.equals(this.statoVettore) || ST560.equals(this.statoVettore) || ST570.equals(this.statoVettore) )
@@ -570,7 +702,7 @@ public class InfoMancanteVdlBean  implements IBeanPersSIMPLE{
   }
   
   
-  
+  private static final Logger _logger = Logger.getLogger(InfoMancanteVdlBean.class);
   
   
 }
